@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Leave Type - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Delete Leave Type</h1>
+    <a href="{% url 'settings' %}" class="btn btn-secondary">← Back to Settings</a>
+</div>
+
+<div class="card">
+    <div class="card-header" style="background: #FEE2E2; color: #991B1B; border-color: #FCA5A5;">
+        ⚠️ Confirm Deletion
+    </div>
+
+    <div style="padding: 2rem;">
+        <p style="font-size: 1.125rem; margin-bottom: 1.5rem;">
+            Are you sure you want to delete the leave type <strong>"{{ leave_type.name }}"</strong>?
+        </p>
+
+        <div
+            style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 0.375rem; padding: 1rem; margin-bottom: 1.5rem;">
+            <p style="color: #92400E; margin-bottom: 0.5rem;">
+                <strong>Warning:</strong> This action cannot be undone.
+            </p>
+            <p style="color: #92400E; margin: 0;">
+                Deleting this leave type may affect existing leave requests and balances.
+            </p>
+        </div>
+
+        <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1.5rem;">
+            <p style="margin: 0; color: var(--text-secondary);">
+                <strong>Leave Type Details:</strong><br>
+                Name: {{ leave_type.name }}<br>
+                Code: {{ leave_type.code }}<br>
+                Default Days: {{ leave_type.default_days }}<br>
+                Type: {% if leave_type.is_paid %}Paid{% else %}Unpaid{% endif %}
+            </p>
+        </div>
+
+        <form method="post" style="display: flex; gap: 1rem;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete Leave Type</button>
+            <a href="{% url 'settings' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

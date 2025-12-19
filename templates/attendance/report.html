@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance Report - HRM System{% endblock %}
+
+{% block content %}
+<h1>Attendance Report</h1>
+
+<!-- Date Selector -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <form method="get" style="display: flex; gap: 1rem; align-items: end;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" id="date" name="date" class="form-control" value="{{ date }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">View Report</button>
+        <a href="?date={{ date }}" class="btn btn-secondary">Refresh</a>
+    </form>
+</div>
+
+<!-- Statistics -->
+<div class="grid grid-4">
+    <div class="stat-card" style="background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);">
+        <h3>{{ total_employees }}</h3>
+        <p>Total Employees</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+        <h3>{{ present }}</h3>
+        <p>Present</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);">
+        <h3>{{ absent }}</h3>
+        <p>Absent</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+        <h3>{{ late }}</h3>
+        <p>Late Arrivals</p>
+    </div>
+</div>
+
+<!-- Attendance Table -->
+<div class="card">
+    <div class="card-header">
+        Attendance for {{ date|date:"l, F d, Y" }}
+    </div>
+
+    {% if attendance_records %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Hours</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in attendance_records %}
+            <tr>
+                <td><strong>{{ record.employee.employee_id }}</strong></td>
+                <td>{{ record.employee.get_full_name }}</td>
+                <td>{{ record.employee.department|default:"N/A" }}</td>
+                <td>
+                    {{ record.check_in_time|default:"--:--" }}
+                    {% if record.is_late %}
+                    <span class="badge badge-warning" style="margin-left: 0.5rem;">Late</span>
+                    {% endif %}
+                </td>
+                <td>{{ record.check_out_time|default:"--:--" }}</td>
+                <td>{{ record.total_hours|default:"0.0" }}</td>
+                <td>
+                    {% if record.status == 'PR' %}
+                    <span class="badge badge-success">Present</span>
+                    {% elif record.status == 'LT' %}
+                    <span class="badge badge-warning">Late</span>
+                    {% elif record.status == 'AB' %}
+                    <span class="badge badge-danger">Absent</span>
+                    {% elif record.status == 'HL' %}
+                    <span class="badge badge-info">Half Day</span>
+                    {% elif record.status == 'LV' %}
+                    <span class="badge badge-secondary">On Leave</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+        No attendance records for this date.
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}My Dashboard - HRM System{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 2rem;">Welcome, {{ employee.get_full_name }}!</h1>
+
+<!-- Quick Stats -->
+<div class="grid grid-4">
+    <div class="stat-card" style="background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);">
+        <h3>{{ present_days }}</h3>
+        <p>Days Present (This Month)</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+        <h3>{{ total_hours }}</h3>
+        <p>Total Hours (This Month)</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+        <h3>{{ late_days }}</h3>
+        <p>Late Arrivals (This Month)</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);">
+        <h3>{{ leave_balances.count }}</h3>
+        <p>Leave Types Available</p>
+    </div>
+</div>
+
+<!-- Today's Status & Punch -->
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-header">Today's Status</div>
+        {% if today_attendance %}
+        <div style="padding: 1rem;">
+            <p><strong>Check In:</strong> {{ today_attendance.check_in_time|default:"Not punched in" }}</p>
+            <p><strong>Check Out:</strong> {{ today_attendance.check_out_time|default:"Not punched out" }}</p>
+            <p><strong>Total Hours:</strong> {{ today_attendance.total_hours|default:"0.0" }}</p>
+            <p><strong>Status:</strong>
+                {% if today_attendance.status == 'PR' %}
+                <span class="badge badge-success">Present</span>
+                {% elif today_attendance.status == 'LT' %}
+                <span class="badge badge-warning">Late</span>
+                {% endif %}
+            </p>
+        </div>
+        {% else %}
+        <p style="text-align: center; padding: 2rem; color: var(--text-secondary);">No attendance record for today</p>
+        {% endif %}
+
+        <!-- <div style="text-align: center; margin-top: 1rem;">
+            <a href="{% url 'punch_attendance' %}" class="btn btn-primary">Go to Punch In/Out</a>
+        </div> -->
+    </div>
+
+    <div class="card">
+        <div class="card-header">Leave Balance</div>
+        {% if leave_balances %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Leave Type</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for balance in leave_balances %}
+                <tr>
+                    <td>{{ balance.leave_type.name }}</td>
+                    <td><strong>{{ balance.balance }}</strong> / {{ balance.allocated }} days</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="text-align: center; padding: 2rem; color: var(--text-secondary);">No leave balance information</p>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="{% url 'leave_apply' %}" class="btn btn-success">Apply for Leave</a>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Attendance -->
+<div class="card">
+    <div class="card-header">
+        Recent Attendance (Last 7 Days)
+        <a href="{% url 'my_attendance' %}" class="btn btn-sm btn-primary" style="float: right;">View All</a>
+    </div>
+
+    {% if recent_attendance %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Hours</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attendance in recent_attendance %}
+            <tr>
+                <td>{{ attendance.date }}</td>
+                <td>{{ attendance.check_in_time|default:"--:--" }}</td>
+                <td>{{ attendance.check_out_time|default:"--:--" }}</td>
+                <td>{{ attendance.total_hours|default:"0.0" }}</td>
+                <td>
+                    {% if attendance.status == 'PR' %}
+                    <span class="badge badge-success">Present</span>
+                    {% elif attendance.status == 'LT' %}
+                    <span class="badge badge-warning">Late</span>
+                    {% elif attendance.status == 'AB' %}
+                    <span class="badge badge-danger">Absent</span>
+                    {% elif attendance.status == 'HL' %}
+                    <span class="badge badge-info">Half Day</span>
+                    {% elif attendance.status == 'LV' %}
+                    <span class="badge badge-secondary">On Leave</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 2rem; color: var(--text-secondary);">No recent attendance records</p>
+    {% endif %}
+</div>
+
+<!-- Recent Leave Requests -->
+<div class="card">
+    <div class="card-header">
+        My Leave Requests
+        <a href="{% url 'my_leaves' %}" class="btn btn-sm btn-primary" style="float: right;">View All</a>
+    </div>
+
+    {% if recent_leaves %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Leave Type</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Days</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in recent_leaves %}
+            <tr>
+                <td>{{ leave.leave_type.name }}</td>
+                <td>{{ leave.start_date }}</td>
+                <td>{{ leave.end_date }}</td>
+                <td>{{ leave.total_days }}</td>
+                <td>
+                    {% if leave.status == 'PE' %}
+                    <span class="badge badge-warning">Pending</span>
+                    {% elif leave.status == 'AP' %}
+                    <span class="badge badge-success">Approved</span>
+                    {% elif leave.status == 'RJ' %}
+                    <span class="badge badge-danger">Rejected</span>
+                    {% elif leave.status == 'CA' %}
+                    <span class="badge badge-secondary">Cancelled</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 2rem; color: var(--text-secondary);">No leave requests</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Admin Dashboard</h1>
+    <div style="display: flex; gap: 0.5rem;">
+
+        <style>
+            .custom-dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .custom-dropdown-content {
+                display: none;
+                position: absolute;
+                right: 0;
+                background-color: white;
+                min-width: 180px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.375rem;
+            }
+
+            .custom-dropdown:hover .custom-dropdown-content {
+                display: block;
+            }
+
+            .custom-dropdown-item {
+                display: block;
+                padding: 0.75rem 1rem;
+                text-decoration: none;
+                color: #374151;
+                border-bottom: 1px solid #f3f4f6;
+            }
+
+            .custom-dropdown-item:hover {
+                background-color: #f9fafb;
+                color: #4f46e5;
+            }
+        </style>
+
+        <div class="custom-dropdown">
+            <button class="btn btn-primary" style="display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔄</span> Sync Attendance ▼
+            </button>
+            <div class="custom-dropdown-content">
+                <a href="{% url 'sync_attendance_data' %}?range=today" class="custom-dropdown-item">📅 Today</a>
+                <a href="{% url 'sync_attendance_data' %}?range=yesterday" class="custom-dropdown-item">⏮ Yesterday</a>
+                <a href="{% url 'sync_attendance_data' %}?range=this_week" class="custom-dropdown-item">📅 This Week</a>
+                <a href="{% url 'sync_attendance_data' %}?range=last_week" class="custom-dropdown-item">⏮ Last Week</a>
+                <a href="{% url 'sync_attendance_data' %}?range=last_month" class="custom-dropdown-item">🗓 Last
+                    Month</a>
+                <a href="{% url 'sync_attendance_data' %}?range=all" class="custom-dropdown-item"
+                    style="color: #ef4444;">⚠️ All Data</a>
+            </div>
+        </div>
+
+        <a href="{% url 'test_device_connection' %}" class="btn btn-secondary"
+            style="display: flex; align-items: center; gap: 0.5rem;">
+            <span>📶</span> Test Connection
+        </a>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="grid grid-4" style="margin-bottom: 2rem;">
+    <div class="stat-card" style="background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);">
+        <h3>{{ total_employees }}</h3>
+        <p>Total Employees</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+        <h3>{{ present_today }}</h3>
+        <p>Present Today</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);">
+        <h3>{{ absent_today }}</h3>
+        <p>Absent Today</p>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+        <h3>{{ pending_leaves }}</h3>
+        <p>Pending Leaves</p>
+    </div>
+</div>
+
+<!-- Today's Attendance -->
+<div class="card">
+    <div class="card-header">
+        Today's Attendance
+        <a href="{% url 'attendance_report' %}" class="btn btn-sm btn-primary" style="float: right;">View All</a>
+    </div>
+
+    {% if recent_attendance %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Hours</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attendance in recent_attendance %}
+            <tr {% if attendance.is_late or attendance.status == 'LT' %}style="background-color: #FEE2E2;" {% endif %}>
+                <td>{{ attendance.employee.get_full_name }}</td>
+                <td>{{ attendance.employee.department.name|default:"N/A" }}</td>
+                <td>
+                    {{ attendance.check_in_time|default:"--:--" }}
+                    {% if attendance.is_late %}
+                    <span style="color: #DC2626; font-size: 0.75rem; margin-left: 0.25rem;">⏰</span>
+                    {% endif %}
+                </td>
+                <td>{{ attendance.check_out_time|default:"--:--" }}</td>
+                <td>{{ attendance.total_hours|default:"0.0" }}</td>
+                <td>
+                    {% if attendance.status == 'PR' %}
+                    <span class="badge badge-success">Present</span>
+                    {% elif attendance.status == 'LT' %}
+                    <span class="badge badge-warning">Late</span>
+                    {% elif attendance.status == 'AB' %}
+                    <span class="badge badge-danger">Absent</span>
+                    {% elif attendance.status == 'HL' %}
+                    <span class="badge badge-info">Half Day</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 2rem; color: var(--text-secondary);">No attendance records for today</p>
+    {% endif %}
+</div>
+
+<!-- Pending Leave Requests -->
+<div class="card">
+    <div class="card-header">
+        Pending Leave Requests
+        <a href="{% url 'leave_requests' %}" class="btn btn-sm btn-primary" style="float: right;">View All</a>
+    </div>
+
+    {% if pending_leave_requests %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Leave Type</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Days</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in pending_leave_requests %}
+            <tr>
+                <td>{{ leave.employee.get_full_name }}</td>
+                <td>{{ leave.leave_type.name }}</td>
+                <td>{{ leave.start_date }}</td>
+                <td>{{ leave.end_date }}</td>
+                <td>{{ leave.total_days }}</td>
+                <td>
+                    <a href="{% url 'leave_detail' leave.id %}" class="btn btn-sm btn-primary">Review</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 2rem; color: var(--text-secondary);">No pending leave requests</p>
+    {% endif %}
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-3">
+    <a href="{% url 'employee_create' %}" class="card"
+        style="text-decoration: none; text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
+        <h3>Add Employee</h3>
+        <p style="color: var(--text-secondary);">Create new employee account</p>
+    </a>
+
+    <a href="{% url 'attendance_report' %}" class="card"
+        style="text-decoration: none; text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+        <h3>View Reports</h3>
+        <p style="color: var(--text-secondary);">Attendance and leave reports</p>
+    </a>
+
+    <a href="/admin/" class="card" style="text-decoration: none; text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⚙️</div>
+        <h3>Settings</h3>
+        <p style="color: var(--text-secondary);">System configuration</p>
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}System Settings - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>⚙️ System Settings</h1>
+    <a href="{% url 'leave_type_create' %}" class="btn btn-primary">+ Add Leave Type</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        Leave Types Configuration
+    </div>
+
+    {% if leave_types %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Default Days/Year</th>
+                <th>Type</th>
+                <th>Approval Required</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave_type in leave_types %}
+            <tr>
+                <td><strong>{{ leave_type.name }}</strong></td>
+                <td><code>{{ leave_type.code }}</code></td>
+                <td>{{ leave_type.default_days }} days</td>
+                <td>
+                    {% if leave_type.is_paid %}
+                    <span class="badge badge-success">Paid</span>
+                    {% else %}
+                    <span class="badge badge-secondary">Unpaid</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if leave_type.requires_approval %}
+                    <span class="badge badge-warning">Yes</span>
+                    {% else %}
+                    <span class="badge badge-info">No</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if leave_type.is_active %}
+                    <span class="badge badge-success">Active</span>
+                    {% else %}
+                    <span class="badge badge-danger">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'leave_type_edit' leave_type.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                    <a href="{% url 'leave_type_delete' leave_type.id %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+        No leave types configured yet. <a href="{% url 'leave_type_create' %}">Create one now</a>
+    </p>
+    {% endif %}
+</div>
+
+<!-- Office Hours Settings -->
+<div class="card" style="margin-top: 1.5rem;">
+    <div class="card-header">
+        ⏰ Office Hours Configuration
+    </div>
+    <div style="padding: 1.5rem;">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="update_office_hours" value="1">
+
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label for="office_start_time" class="form-label">Office Start Time *</label>
+                    <input type="time" id="office_start_time" name="office_start_time" class="form-control"
+                        value="{{ system_settings.office_start_time|time:'H:i' }}" required>
+                    <small style="color: var(--text-secondary);">e.g., 09:00</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="office_end_time" class="form-label">Office End Time *</label>
+                    <input type="time" id="office_end_time" name="office_end_time" class="form-control"
+                        value="{{ system_settings.office_end_time|time:'H:i' }}" required>
+                    <small style="color: var(--text-secondary);">e.g., 17:00</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="late_threshold_minutes" class="form-label">Late Threshold (Minutes) *</label>
+                    <input type="number" id="late_threshold_minutes" name="late_threshold_minutes" class="form-control"
+                        value="{{ system_settings.late_threshold_minutes }}" required min="0" max="120">
+                    <small style="color: var(--text-secondary);">Grace period</small>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-light); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+                <p style="color: var(--text-secondary); margin: 0; font-size: 0.875rem;">
+                    <strong>Current:</strong> Office {{ system_settings.office_start_time|time:'h:i A' }} - {{
+                    system_settings.office_end_time|time:'h:i A' }}
+                    | Late after {{ system_settings.late_threshold_minutes }} minutes
+                </p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">💾 Update Office Hours</button>
+        </form>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 1.5rem;">
+    <div class="card-header">
+        About Leave Types
+    </div>
+    <div style="padding: 1.5rem;">
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Leave types define the different categories of leave available to employees. Each leave type has:
+        </p>
+        <ul style="color: var(--text-secondary); margin-left: 2rem;">
+            <li><strong>Default Days:</strong> The number of days allocated to each employee per year</li>
+            <li><strong>Paid/Unpaid:</strong> Whether the leave is paid or unpaid</li>
+            <li><strong>Approval Required:</strong> Whether the leave requires manager approval</li>
+            <li><strong>Status:</strong> Active leave types are available for employees to request</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

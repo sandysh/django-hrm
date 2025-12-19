@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Designations - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Designations</h1>
+    <a href="{% url 'designation_create' %}" class="btn btn-primary">+ Add Designation</a>
+</div>
+
+<!-- Search -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <form method="get" style="display: flex; gap: 1rem; align-items: end;">
+        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label for="search" class="form-label">Search</label>
+            <input type="text" id="search" name="search" class="form-control" placeholder="Designation name or code..."
+                value="{{ search_query|default:'' }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{% url 'designation_list' %}" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+
+<!-- Designation List -->
+<div class="card">
+    <div class="card-header">
+        {{ designations.count }} Designation{{ designations.count|pluralize }}
+    </div>
+
+    {% if designations %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Department</th>
+                <th>Description</th>
+                <th>Employees</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for desig in designations %}
+            <tr>
+                <td><strong>{{ desig.name }}</strong></td>
+                <td>{{ desig.code }}</td>
+                <td>{{ desig.department.name|default:"N/A" }}</td>
+                <td>{{ desig.description|default:"N/A"|truncatewords:10 }}</td>
+                <td>{{ desig.employees.count }}</td>
+                <td>
+                    {% if desig.is_active %}
+                    <span class="badge badge-success">Active</span>
+                    {% else %}
+                    <span class="badge badge-secondary">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'designation_edit' desig.id %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'designation_delete' desig.id %}" class="btn btn-sm btn-danger"
+                        onclick="return confirm('Delete this designation?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+        No designations found. <a href="{% url 'designation_create' %}">Create one now</a>
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

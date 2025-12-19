@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}My Leaves - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>My Leave Requests</h1>
+    <a href="{% url 'leave_apply' %}" class="btn btn-success">+ Apply for Leave</a>
+</div>
+
+<div class="card">
+    {% if leave_requests %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Leave Type</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Days</th>
+                <th>Status</th>
+                <th>Applied On</th>
+                <th>Approved By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leave_requests %}
+            <tr>
+                <td><strong>{{ leave.leave_type.name }}</strong></td>
+                <td>{{ leave.start_date }}</td>
+                <td>{{ leave.end_date }}</td>
+                <td>{{ leave.total_days }}</td>
+                <td>
+                    {% if leave.status == 'PE' %}
+                    <span class="badge badge-warning">⏳ Pending</span>
+                    {% elif leave.status == 'AP' %}
+                    <span class="badge badge-success">✓ Approved</span>
+                    {% elif leave.status == 'RJ' %}
+                    <span class="badge badge-danger">✗ Rejected</span>
+                    {% elif leave.status == 'CA' %}
+                    <span class="badge badge-secondary">Cancelled</span>
+                    {% endif %}
+                </td>
+                <td>{{ leave.created_at|date:"M d, Y" }}</td>
+                <td>
+                    {% if leave.approved_by %}
+                    {{ leave.approved_by.get_full_name }}
+                    {% else %}
+                    <span style="color: var(--text-secondary);">-</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% if leave.reason %}
+            <tr style="background: var(--bg-light);">
+                <td colspan="7" style="padding-left: 2rem;">
+                    <strong>Reason:</strong> {{ leave.reason }}
+                    {% if leave.approval_notes %}
+                    <br><strong>Notes:</strong> {{ leave.approval_notes }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+        You haven't applied for any leaves yet.<br>
+        <a href="{% url 'leave_apply' %}" class="btn btn-success" style="margin-top: 1rem;">Apply for Leave</a>
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

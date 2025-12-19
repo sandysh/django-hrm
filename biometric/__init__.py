@@ -1,0 +1,1 @@
+# Biometric app initialization

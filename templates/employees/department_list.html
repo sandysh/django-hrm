@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Departments - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Departments</h1>
+    <a href="{% url 'department_create' %}" class="btn btn-primary">+ Add Department</a>
+</div>
+
+<!-- Search -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <form method="get" style="display: flex; gap: 1rem; align-items: end;">
+        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label for="search" class="form-label">Search</label>
+            <input type="text" id="search" name="search" class="form-control" placeholder="Department name or code..."
+                value="{{ search_query|default:'' }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{% url 'department_list' %}" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+
+<!-- Department List -->
+<div class="card">
+    <div class="card-header">
+        {{ departments.count }} Department{{ departments.count|pluralize }}
+    </div>
+
+    {% if departments %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Employees</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dept in departments %}
+            <tr>
+                <td><strong>{{ dept.name }}</strong></td>
+                <td>{{ dept.code }}</td>
+                <td>{{ dept.description|default:"N/A"|truncatewords:10 }}</td>
+                <td>{{ dept.employees.count }}</td>
+                <td>
+                    {% if dept.is_active %}
+                    <span class="badge badge-success">Active</span>
+                    {% else %}
+                    <span class="badge badge-secondary">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'department_edit' dept.id %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'department_delete' dept.id %}" class="btn btn-sm btn-danger"
+                        onclick="return confirm('Delete this department?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+        No departments found. <a href="{% url 'department_create' %}">Create one now</a>
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

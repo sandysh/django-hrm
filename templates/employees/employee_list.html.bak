@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Employees - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Employees</h1>
+    <a href="{% url 'employee_create' %}" class="btn btn-primary">+ Add Employee</a>
+</div>
+
+<!-- Filters -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <form method="get" style="display: flex; gap: 1rem; align-items: end;">
+        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label for="search" class="form-label">Search</label>
+            <input type="text" id="search" name="search" class="form-control" placeholder="Employee ID, Name, Email..."
+                value="{{ search_query|default:'' }}">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" name="status" class="form-control">
+                <option value="">All</option>
+                <option value="AC" {% if status_filter == "AC" %}selected{% endif %}>Active</option>
+                <option value="IN" {% if status_filter == "IN" %}selected{% endif %}>Inactive</option>
+                <option value="TR" {% if status_filter == "TR" %}selected{% endif %}>Terminated</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{% url 'employee_list' %}" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+
+<!-- Employee List -->
+<div class="card">
+    <div class="card-header">
+        {{ employees.count }} Employee{{ employees.count|pluralize }}
+    </div>
+
+    {% if employees %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Status</th>
+                <th>Biometric</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td><strong>{{ employee.employee_id }}</strong></td>
+                <td>{{ employee.get_full_name }}</td>
+                <td>{{ employee.email|default:"N/A" }}</td>
+                <td>{{ employee.department|default:"N/A" }}</td>
+                <td>{{ employee.designation|default:"N/A" }}</td>
+                <td>
+                    {% if employee.status == 'AC' %}
+                    <span class="badge badge-success">Active</span>
+                    {% elif employee.status == 'IN' %}
+                    <span class="badge badge-secondary">Inactive</span>
+                    {% elif employee.status == 'TR' %}
+                    <span class="badge badge-danger">Terminated</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if employee.biometric_synced %}
+                    <span class="badge badge-success">✓ Synced</span>
+                    {% else %}
+                    <span class="badge badge-warning">Pending</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'employee_detail' employee.id %}" class="btn btn-sm btn-primary">View</a>
+                    <a href="{% url 'employee_edit' employee.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+        No employees found. <a href="{% url 'employee_create' %}">Create one now</a>
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Employee - HRM System{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; margin-top: 3rem;">
+    <div class="card">
+        <div class="card-header" style="background-color: #FEE2E2; color: #991B1B; border-bottom: 1px solid #FCA5A5;">
+            Delete Employee
+        </div>
+
+        <div style="padding: 2rem; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+
+            <h2 style="margin-bottom: 1rem;">Are you sure?</h2>
+
+            <p style="margin-bottom: 2rem; color: var(--text-secondary); font-size: 1.1rem;">
+                You are about to delete employee <strong>{{ employee.get_full_name }}</strong> (ID: {{
+                employee.employee_id }}).
+                <br><br>
+                This action cannot be undone. All attendance records and leave requests for this employee will also be
+                deleted.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <a href="{% url 'employee_list' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-danger">Yes, Delete Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

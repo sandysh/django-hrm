@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ employee.get_full_name }} - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>{{ employee.get_full_name }}</h1>
+    {% if user.is_staff %}
+    <div style="display: flex; gap: 0.5rem;">
+        <a href="{% url 'employee_edit' employee.id %}" class="btn btn-primary">Edit</a>
+        {% if employee.employment_type == 'IN' %}
+        <a href="{% url 'employee_promote' employee.id %}" class="btn btn-success">🎉 Promote to Employee</a>
+        {% endif %}
+        <a href="{% url 'employee_sync' employee.id %}" class="btn btn-secondary">Sync to Device</a>
+        <a href="{% url 'employee_delete' employee.id %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'employee_list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="grid grid-2">
+    <!-- Personal Information -->
+    <div class="card">
+        <div class="card-header">Personal Information</div>
+        <table class="table">
+            <tr>
+                <th style="width: 40%;">Employee ID</th>
+                <td><strong>{{ employee.employee_id }}</strong></td>
+            </tr>
+            <tr>
+                <th>Full Name</th>
+                <td>{{ employee.get_full_name }}</td>
+            </tr>
+            <tr>
+                <th>Username</th>
+                <td>{{ employee.username }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ employee.email|default:"Not provided" }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td>{{ employee.phone_number|default:"Not provided" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Employment Details -->
+    <div class="card">
+        <div class="card-header">Employment Details</div>
+        <table class="table">
+            <tr>
+                <th style="width: 40%;">Department</th>
+                <td>{{ employee.department|default:"Not assigned" }}</td>
+            </tr>
+            <tr>
+                <th>Designation</th>
+                <td>{{ employee.designation|default:"Not assigned" }}</td>
+            </tr>
+            <tr>
+                <th>Employment Type</th>
+                <td>
+                    {% if employee.employment_type == "FT" %}Full Time
+                    {% elif employee.employment_type == "PT" %}Part Time
+                    {% elif employee.employment_type == "CT" %}Contract
+                    {% elif employee.employment_type == "IN" %}Intern
+                    {% else %}{{ employee.employment_type }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>
+                    {% if employee.status == "AC" %}
+                    <span class="badge badge-success">Active</span>
+                    {% elif employee.status == "IN" %}
+                    <span class="badge badge-secondary">Inactive</span>
+                    {% elif employee.status == "TR" %}
+                    <span class="badge badge-danger">Terminated</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Join Date</th>
+                <td>{{ employee.date_joined|date:"M d, Y" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Biometric Information -->
+    <div class="card">
+        <div class="card-header">Biometric Information</div>
+        <table class="table">
+            <tr>
+                <th style="width: 40%;">Biometric User ID</th>
+                <td>{{ employee.biometric_user_id|default:"Not assigned" }}</td>
+            </tr>
+            <tr>
+                <th>Sync Status</th>
+                <td>
+                    {% if employee.biometric_synced %}
+                    <span class="badge badge-success">✓ Synced</span>
+                    {% else %}
+                    <span class="badge badge-warning">⏳ Pending</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Last Sync</th>
+                <td>{{ employee.last_biometric_sync|date:"M d, Y H:i"|default:"Never" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- System Information -->
+    <div class="card">
+        <div class="card-header">System Information</div>
+        <table class="table">
+            <tr>
+                <th style="width: 40%;">Admin User</th>
+                <td>
+                    {% if employee.is_staff %}
+                    <span class="badge badge-info">Yes</span>
+                    {% else %}
+                    <span class="badge badge-secondary">No</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Account Created</th>
+                <td>{{ employee.date_joined|date:"M d, Y H:i" }}</td>
+            </tr>
+            <tr>
+                <th>Last Login</th>
+                <td>{{ employee.last_login|date:"M d, Y H:i"|default:"Never" }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+{% if user.is_staff %}
+<!-- Leave Balance -->
+<div class="card">
+    <div class="card-header">Leave Balance ({{ employee.date_joined.year }})</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Leave Type</th>
+                <th>Allocated</th>
+                <th>Used</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for balance in employee.leave_balances.all %}
+            <tr>
+                <td>{{ balance.leave_type.name }}</td>
+                <td>{{ balance.allocated }} days</td>
+                <td>{{ balance.used }} days</td>
+                <td>
+                    <span
+                        class="badge {% if balance.balance > 5 %}badge-success{% elif balance.balance > 0 %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ balance.balance }} days
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-secondary);">
+                    No leave balance information available
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

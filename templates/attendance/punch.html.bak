@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Punch In/Out - HRM System{% endblock %}
+
+{% block content %}
+<style>
+    .punch-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .punch-card {
+        text-align: center;
+        padding: 3rem;
+        background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+        color: white;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .current-time {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .current-date {
+        font-size: 1.25rem;
+        opacity: 0.9;
+    }
+
+    .punch-button {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: none;
+        font-size: 1.5rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        margin: 2rem auto;
+        display: block;
+    }
+
+    .punch-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .punch-button:active {
+        transform: scale(0.95);
+    }
+
+    .punch-in-btn {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: white;
+    }
+
+    .punch-out-btn {
+        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        color: white;
+    }
+
+    .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .status-in {
+        background: #10B981;
+    }
+
+    .status-out {
+        background: #EF4444;
+    }
+</style>
+
+<div class="punch-container">
+    <div class="punch-card">
+        <div class="current-time" id="current-time">{{ current_time|date:"H:i:s" }}</div>
+        <div class="current-date">{{ current_time|date:"l, F d, Y" }}</div>
+    </div>
+
+    {% if today_attendance %}
+    <div class="card">
+        <div class="card-header">Today's Summary</div>
+        <div style="padding: 1.5rem;">
+            <div class="grid grid-2">
+                <div>
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Check In</p>
+                    <p style="font-size: 1.5rem; font-weight: 600;">
+                        {{ today_attendance.check_in_time|default:"--:--" }}
+                    </p>
+                </div>
+                <div>
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Check Out</p>
+                    <p style="font-size: 1.5rem; font-weight: 600;">
+                        {{ today_attendance.check_out_time|default:"--:--" }}
+                    </p>
+                </div>
+                <div>
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Total Hours</p>
+                    <p style="font-size: 1.5rem; font-weight: 600;">
+                        {{ today_attendance.total_hours|default:"0.0" }}
+                    </p>
+                </div>
+                <div>
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Status</p>
+                    <p style="font-size: 1.5rem; font-weight: 600;">
+                        {% if today_attendance.is_late %}
+                        <span class="badge badge-warning">Late</span>
+                        {% else %}
+                        <span class="badge badge-success">On Time</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card" style="text-align: center;">
+        <div style="padding: 2rem;">
+            <p style="font-size: 1.25rem; margin-bottom: 1rem;">
+                <span
+                    class="status-indicator {% if next_punch_type == 'IN' %}status-out{% else %}status-in{% endif %}"></span>
+                {% if next_punch_type == 'IN' %}
+                You are currently <strong>Punched Out</strong>
+                {% else %}
+                You are currently <strong>Punched In</strong>
+                {% endif %}
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="punch_type" value="{{ next_punch_type }}">
+                <button type="submit"
+                    class="punch-button {% if next_punch_type == 'IN' %}punch-in-btn{% else %}punch-out-btn{% endif %}">
+                    {{ next_punch_label }}
+                </button>
+            </form>
+
+            <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                Click the button above to {{ next_punch_label|lower }}
+            </p>
+        </div>
+    </div>
+
+    {% if today_punches %}
+    <div class="card">
+        <div class="card-header">Today's Punch History</div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>Source</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for punch in today_punches %}
+                <tr>
+                    <td>{{ punch.punch_time|date:"H:i:s" }}</td>
+                    <td>
+                        {% if punch.punch_type == 'IN' %}
+                        <span class="badge badge-success">Punch In</span>
+                        {% else %}
+                        <span class="badge badge-danger">Punch Out</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if punch.is_manual %}
+                        <span class="badge badge-info">Web</span>
+                        {% else %}
+                        <span class="badge badge-secondary">Biometric</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Update time every second
+    function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+{% endblock %}
