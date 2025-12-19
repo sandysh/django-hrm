@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Holiday Calendar - HRM System{% endblock %}
+
+{% block extra_css %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<style>
+    /* Highlight Saturday columns */
+    .fc-day-sat {
+        background-color: #fee2e2 !important;
+        /* Light red background for Saturday */
+    }
+
+    #calendar {
+        min-height: 800px;
+    }
+
+    .fc-event {
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div>
+        <h1>Holiday Calendar</h1>
+        <p style="color: var(--text-secondary);">Click on a date to add a holiday. Click on a holiday to delete it.</p>
+    </div>
+    <a href="{% url 'settings' %}" class="btn btn-secondary">Back to Settings</a>
+</div>
+
+<div class="card">
+    <div id='calendar'></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listYear'
+            },
+            events: '{% url "holiday_api" %}',
+            editable: false,
+            selectable: true,
+            firstDay: 0, // Sunday first
+
+            select: function (info) {
+                var title = prompt('Enter Holiday Name for ' + info.startStr + ':');
+                if (title) {
+                    // Create holiday
+                    fetch('{% url "holiday_api" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            date: info.startStr,
+                            name: title
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                alert(data.error);
+                            } else {
+                                calendar.refetchEvents();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to save holiday');
+                        });
+                }
+                calendar.unselect();
+            },
+
+            eventClick: function (info) {
+                if (confirm("Delete holiday '" + info.event.title + "'?")) {
+                    fetch('/leaves/api/holidays/' + info.event.id + '/', {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                alert(data.error);
+                            } else {
+                                info.event.remove();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to delete holiday');
+                        });
+                }
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

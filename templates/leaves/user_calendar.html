@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}My Calendar - HRM System{% endblock %}
+
+{% block extra_css %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<style>
+    .fc-day-sat {
+        background-color: #f3f4f6;
+        /* Subtle gray for Saturday */
+    }
+
+    #calendar {
+        min-height: 800px;
+    }
+
+    .fc-event {
+        cursor: default;
+    }
+
+    .legend {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>📅 My Calendar</h1>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="dot" style="background-color: #EF4444;"></div>
+            <span>Public Holidays</span>
+        </div>
+        <div class="legend-item">
+            <div class="dot" style="background-color: #3B82F6;"></div>
+            <span>My Leaves</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div id='calendar'></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listWeek,listYear'
+            },
+            events: '{% url "user_calendar_api" %}',
+            editable: false,
+            selectable: false,
+            firstDay: 0,
+
+            eventClick: function (info) {
+                // Prevent default behavior
+            },
+
+            eventDidMount: function (info) {
+                // Add tooltip-like behavior if needed using title attribute
+                info.el.title = info.event.title;
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

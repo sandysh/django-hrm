@@ -13,4 +13,13 @@ urlpatterns = [
     path('type/create/', settings_views.leave_type_create, name='leave_type_create'),
     path('type/<int:pk>/edit/', settings_views.leave_type_edit, name='leave_type_edit'),
     path('type/<int:pk>/delete/', settings_views.leave_type_delete, name='leave_type_delete'),
+    
+    # Holiday Management
+    path('holidays/', web_views.holiday_calendar, name='holiday_calendar'),
+    path('api/holidays/', web_views.holiday_api, name='holiday_api'),
+    path('api/holidays/<int:pk>/', web_views.holiday_delete, name='holiday_delete'),
+]
+urlpatterns += [
+    path('calendar/', web_views.user_calendar, name='user_calendar'),
+    path('api/calendar/', web_views.user_calendar_api, name='user_calendar_api'),
 ]

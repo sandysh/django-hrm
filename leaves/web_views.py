@@ -5,8 +5,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
-from datetime import datetime
-from leaves.models import LeaveRequest, LeaveType
+from datetime import datetime, timedelta
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+import json
+from leaves.models import LeaveRequest, LeaveType, Holiday
 
 
 @login_required
@@ -173,3 +176,112 @@ def leave_reject(request, pk):
     
     messages.success(request, 'Leave request rejected!')
     return redirect('leave_requests')
+
+
+@login_required
+def holiday_calendar(request):
+    """Render the holiday calendar view."""
+    if not request.user.is_staff:
+         messages.error(request, 'You do not have permission to view this page')
+         return redirect('dashboard')
+    return render(request, 'leaves/holidays.html')
+
+
+@login_required
+def holiday_api(request):
+    """API for managing holidays."""
+    if not request.user.is_staff:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+        
+    if request.method == 'GET':
+        holidays = Holiday.objects.all()
+        events = []
+        for h in holidays:
+            events.append({
+                'id': h.id,
+                'title': f"{h.name}",
+                'start': h.date.isoformat(),
+                'allDay': True,
+                'backgroundColor': '#EF4444', # Red
+                'borderColor': '#EF4444',
+                'extendedProps': {
+                    'description': h.description
+                }
+            })
+        return JsonResponse(events, safe=False)
+    
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            date = data.get('date')
+            name = data.get('name')
+            
+            if not date or not name:
+                return JsonResponse({'error': 'Date and name required'}, status=400)
+            
+            # Check for existing
+            if Holiday.objects.filter(date=date).exists():
+                return JsonResponse({'error': 'Holiday already exists for this date'}, status=400)
+
+            holiday = Holiday.objects.create(date=date, name=name, is_optional=False)
+            return JsonResponse({'id': holiday.id, 'message': 'Holiday created'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def holiday_delete(request, pk):
+    if not request.user.is_staff:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+        
+    try:
+        holiday = Holiday.objects.get(pk=pk)
+        holiday.delete()
+        return JsonResponse({'message': 'Deleted'})
+    except Holiday.DoesNotExist:
+        return JsonResponse({'error': 'Not found'}, status=404)
+
+@login_required
+def user_calendar(request):
+    """Render the user calendar view."""
+    return render(request, 'leaves/user_calendar.html')
+
+@login_required
+def user_calendar_api(request):
+    """API for user calendar events (Holidays + My Approved Leaves)."""
+    events = []
+    
+    # 1. Holidays
+    holidays = Holiday.objects.all()
+    for h in holidays:
+        # Event bubble
+        events.append({
+             'title': f"🌴 {h.name}",
+             'start': h.date.isoformat(),
+             'allDay': True,
+             'backgroundColor': '#EF4444', # Red
+             'borderColor': '#EF4444',
+             'extendedProps': {'type': 'holiday'}
+        })
+
+    # 2. My Approved Leaves
+    leaves = LeaveRequest.objects.filter(employee=request.user, status='AP')
+    for l in leaves:
+        title = f"🏖️ On Leave: {l.leave_type.name}"
+        # FullCalendar end date is exclusive, so add 1 day
+        end_date = l.end_date + timedelta(days=1)
+        
+        events.append({
+            'title': title,
+            'start': l.start_date.isoformat(),
+            'end': end_date.isoformat(),
+            'allDay': True,
+            'backgroundColor': '#3B82F6', # Blue
+            'borderColor': '#3B82F6',
+            'extendedProps': {'type': 'leave'}
+        })
+
+    return JsonResponse(events, safe=False)

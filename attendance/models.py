@@ -131,3 +131,6 @@ class AttendanceSettings(models.Model):
     
     def __str__(self):
         return f"Attendance Settings (Updated: {self.updated_at})"
+
+
+

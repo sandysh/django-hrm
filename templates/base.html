@@ -329,6 +329,9 @@
                 <li><a href="{% url 'dashboard' %}"
                         class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
                 </li>
+                <li><a href="{% url 'user_calendar' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'user_calendar' %}active{% endif %}">Calendar</a>
+                </li>
 
                 {% if user.is_staff %}
                 <li><a href="{% url 'employee_list' %}" class="nav-link">Employees</a></li>
