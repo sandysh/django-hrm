@@ -31,22 +31,35 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=dev
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=ref,event=branch
-            type=ref,event=tag
-            type=sha
-      
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Set Docker tags
+        id: docker_tags
+        run: |
+          BRANCH_TAG=""
+          SHA_TAG="sha-${GITHUB_SHA::7}"
+
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            BRANCH_TAG="${GITHUB_REF_NAME}"
+          elif [[ "${GITHUB_REF_NAME}" == "dev" ]]; then
+            BRANCH_TAG="dev"
+          elif [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            BRANCH_TAG="latest"
+          else
+            BRANCH_TAG="unknown"
+          fi
+
+          echo "BRANCH_TAG=${BRANCH_TAG}" >> $GITHUB_ENV
+          echo "SHA_TAG=${SHA_TAG}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_TAG }} .
+
+      - name: Tag image with SHA
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_TAG }} \
+                     ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SHA_TAG }}
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_TAG }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SHA_TAG }}
