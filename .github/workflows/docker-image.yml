@@ -3,6 +3,7 @@ name: Build & Push Django Image to GHCR
 on:
   push:
     branches:
+      - dev
       - main
     tags:
       - "v*.*.*"
@@ -36,6 +37,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
+            type=raw,value=dev,enable={{is_branch('dev')}}
             type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=branch
             type=ref,event=tag
