@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AttendanceRecord, DailyAttendance, AttendanceSettings
+from .models import AttendanceRecord, DailyAttendance
 
 
 @admin.register(AttendanceRecord)
@@ -46,31 +46,3 @@ class DailyAttendanceAdmin(admin.ModelAdmin):
             'fields': ('notes', 'created_at', 'updated_at')
         }),
     )
-
-
-@admin.register(AttendanceSettings)
-class AttendanceSettingsAdmin(admin.ModelAdmin):
-    list_display = ['standard_work_hours', 'shift_start_time', 'shift_end_time', 
-                   'grace_period_minutes', 'updated_at']
-    readonly_fields = ['created_at', 'updated_at']
-    
-    fieldsets = (
-        ('Working Hours', {
-            'fields': ('standard_work_hours', 'shift_start_time', 'shift_end_time')
-        }),
-        ('Policies', {
-            'fields': ('grace_period_minutes', 'lunch_break_duration', 
-                      'overtime_threshold_hours', 'half_day_threshold_hours')
-        }),
-        ('Metadata', {
-            'fields': ('created_at', 'updated_at')
-        }),
-    )
-    
-    def has_add_permission(self, request):
-        # Only allow one settings instance
-        return not AttendanceSettings.objects.exists()
-    
-    def has_delete_permission(self, request, obj=None):
-        # Don't allow deletion of settings
-        return False

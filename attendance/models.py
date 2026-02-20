@@ -98,39 +98,3 @@ class DailyAttendance(models.Model):
     def __str__(self):
         return f"{self.employee.employee_id} - {self.date} ({self.status})"
 
-
-class AttendanceSettings(models.Model):
-    """
-    Global attendance settings.
-    """
-    # Working hours
-    standard_work_hours = models.DecimalField(max_digits=4, decimal_places=2, default=8.00)
-    grace_period_minutes = models.IntegerField(default=15, help_text="Grace period for late arrival")
-    
-    # Shift timings
-    shift_start_time = models.TimeField(default='09:00:00')
-    shift_end_time = models.TimeField(default='17:00:00')
-    
-    # Break settings
-    lunch_break_duration = models.IntegerField(default=60, help_text="Lunch break in minutes")
-    
-    # Overtime
-    overtime_threshold_hours = models.DecimalField(max_digits=4, decimal_places=2, default=8.00)
-    
-    # Half day threshold
-    half_day_threshold_hours = models.DecimalField(max_digits=4, decimal_places=2, default=4.00)
-    
-    # Metadata
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        db_table = 'attendance_settings'
-        verbose_name = 'Attendance Settings'
-        verbose_name_plural = 'Attendance Settings'
-    
-    def __str__(self):
-        return f"Attendance Settings (Updated: {self.updated_at})"
-
-
-

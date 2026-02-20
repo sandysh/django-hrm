@@ -181,7 +181,6 @@ def update_daily_attendance(employee, date):
     """
     Update or create daily attendance summary for an employee.
     """
-    from attendance.models import AttendanceSettings
     
     # Get attendance records for the day
     records = AttendanceRecord.objects.filter(
@@ -217,33 +216,35 @@ def update_daily_attendance(employee, date):
         duration = check_out_dt - check_in_dt
         daily_att.total_hours = round(duration.total_seconds() / 3600, 2)
     
-    # Get attendance settings
+    # Get system settings (consolidated settings)
     try:
-        settings = AttendanceSettings.objects.first()
-        if settings:
-            # Check if late
-            grace_time = datetime.combine(
-                date,
-                settings.shift_start_time
-            ) + timedelta(minutes=settings.grace_period_minutes)
-            
-            check_in_dt = datetime.combine(date, daily_att.check_in_time)
-            daily_att.is_late = check_in_dt > grace_time
-            
-            # Check overtime
-            if daily_att.total_hours and daily_att.total_hours > settings.overtime_threshold_hours:
-                daily_att.is_overtime = True
-                daily_att.overtime_hours = daily_att.total_hours - settings.overtime_threshold_hours
-            
-            # Determine status
-            if daily_att.total_hours:
-                if daily_att.total_hours < settings.half_day_threshold_hours:
-                    daily_att.status = 'HL'
-                elif daily_att.is_late:
-                    daily_att.status = 'LT'
-                else:
-                    daily_att.status = 'PR'
-    except:
+        from core.models import SystemSettings
+        system_settings = SystemSettings.get_settings()
+        
+        # Check if late using SystemSettings
+        grace_time = datetime.combine(
+            date,
+            system_settings.office_start_time
+        ) + timedelta(minutes=system_settings.late_threshold_minutes)
+        
+        check_in_dt = datetime.combine(date, daily_att.check_in_time)
+        daily_att.is_late = check_in_dt > grace_time
+        
+        # Check overtime using SystemSettings
+        if daily_att.total_hours and daily_att.total_hours > system_settings.overtime_threshold_hours:
+            daily_att.is_overtime = True
+            daily_att.overtime_hours = daily_att.total_hours - system_settings.overtime_threshold_hours
+        
+        # Determine status using SystemSettings
+        if daily_att.total_hours:
+            if daily_att.total_hours < system_settings.half_day_threshold_hours:
+                daily_att.status = 'HL'
+            elif daily_att.is_late:
+                daily_att.status = 'LT'
+            else:
+                daily_att.status = 'PR'
+    except Exception as e:
+        logger.warning(f"Error applying attendance settings: {str(e)}")
         pass
     
     daily_att.save()

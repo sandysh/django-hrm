@@ -9,7 +9,7 @@ from django.db.models import Count, Q, Sum
 from django.utils import timezone
 from datetime import datetime, timedelta
 from employees.models import Employee
-from attendance.models import AttendanceRecord, DailyAttendance, AttendanceSettings
+from attendance.models import AttendanceRecord, DailyAttendance
 from leaves.models import LeaveRequest, LeaveBalance, LeaveType
 
 

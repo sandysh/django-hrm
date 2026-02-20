@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AttendanceRecord, DailyAttendance, AttendanceSettings
+from .models import AttendanceRecord, DailyAttendance
 from employees.serializers import EmployeeListSerializer
 
 
@@ -17,13 +17,6 @@ class DailyAttendanceSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = DailyAttendance
-        fields = '__all__'
-        read_only_fields = ['created_at', 'updated_at']
-
-
-class AttendanceSettingsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AttendanceSettings
         fields = '__all__'
         read_only_fields = ['created_at', 'updated_at']
 

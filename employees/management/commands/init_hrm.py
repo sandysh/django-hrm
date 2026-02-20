@@ -6,7 +6,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from employees.models import Employee
 from leaves.models import LeaveType, LeaveBalance
-from attendance.models import AttendanceSettings
+from core.models import SystemSettings
 from biometric.models import BiometricDevice
 
 
@@ -28,21 +28,12 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('✓ HRM system initialized successfully!'))
     
     def create_attendance_settings(self):
-        """Create default attendance settings."""
-        if AttendanceSettings.objects.exists():
-            self.stdout.write(self.style.WARNING('  Attendance settings already exist'))
-            return
-        
-        AttendanceSettings.objects.create(
-            standard_work_hours=8.00,
-            grace_period_minutes=15,
-            shift_start_time='09:00:00',
-            shift_end_time='17:00:00',
-            lunch_break_duration=60,
-            overtime_threshold_hours=8.00,
-            half_day_threshold_hours=4.00
-        )
-        self.stdout.write(self.style.SUCCESS('  ✓ Created attendance settings'))
+        """Create default system settings."""
+        settings = SystemSettings.get_settings()
+        if settings.id:
+            self.stdout.write(self.style.WARNING('  System settings already exist'))
+        else:
+            self.stdout.write(self.style.SUCCESS('  ✓ Created system settings'))
     
     def create_leave_types(self):
         """Create default leave types."""

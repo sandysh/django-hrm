@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
 from datetime import datetime, timedelta
-from attendance.models import AttendanceRecord, DailyAttendance, AttendanceSettings
+from attendance.models import AttendanceRecord, DailyAttendance
 from biometric.tasks import update_daily_attendance
 
 

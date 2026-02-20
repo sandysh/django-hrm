@@ -1,0 +1,2316 @@
+[
+{
+  "model": "core.systemsettings",
+  "pk": 1,
+  "fields": {
+    "office_start_time": "10:00:00",
+    "office_end_time": "18:30:00",
+    "late_threshold_minutes": 15,
+    "standard_work_hours": "8.00",
+    "overtime_threshold_hours": "8.00",
+    "half_day_threshold_hours": "4.00",
+    "lunch_break_duration": 60,
+    "working_days": "1,2,3,4,5",
+    "additional_settings": {},
+    "created_at": "2025-12-19T06:44:50.880Z",
+    "updated_at": "2025-12-22T07:20:00.653Z"
+  }
+},
+{
+  "model": "employees.department",
+  "pk": 1,
+  "fields": {
+    "name": "Executive",
+    "code": "EXE",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-18T11:03:57.773Z",
+    "updated_at": "2025-12-18T11:03:57.773Z"
+  }
+},
+{
+  "model": "employees.department",
+  "pk": 2,
+  "fields": {
+    "name": "Backend Development",
+    "code": "BED",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-18T11:04:28.491Z",
+    "updated_at": "2025-12-18T11:04:28.491Z"
+  }
+},
+{
+  "model": "employees.department",
+  "pk": 3,
+  "fields": {
+    "name": "Frontend Development",
+    "code": "FED",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-18T11:04:40.857Z",
+    "updated_at": "2025-12-18T11:04:40.857Z"
+  }
+},
+{
+  "model": "employees.department",
+  "pk": 4,
+  "fields": {
+    "name": "Marketing",
+    "code": "MKT",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-18T11:04:51.253Z",
+    "updated_at": "2025-12-18T11:04:51.254Z"
+  }
+},
+{
+  "model": "employees.department",
+  "pk": 5,
+  "fields": {
+    "name": "UI/UX",
+    "code": "UX",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-18T11:05:05.602Z",
+    "updated_at": "2025-12-18T11:05:05.602Z"
+  }
+},
+{
+  "model": "employees.department",
+  "pk": 6,
+  "fields": {
+    "name": "QA Tester",
+    "code": "QAT",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T07:49:07.916Z",
+    "updated_at": "2025-12-19T07:49:07.916Z"
+  }
+},
+{
+  "model": "employees.department",
+  "pk": 7,
+  "fields": {
+    "name": "Mobile App Development",
+    "code": "MAD",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T07:49:23.169Z",
+    "updated_at": "2025-12-19T07:49:23.169Z"
+  }
+},
+{
+  "model": "employees.department",
+  "pk": 8,
+  "fields": {
+    "name": "Game Development",
+    "code": "GDT",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T08:07:23.202Z",
+    "updated_at": "2025-12-19T08:07:23.202Z"
+  }
+},
+{
+  "model": "employees.designation",
+  "pk": 1,
+  "fields": {
+    "name": "CTO",
+    "code": "CTO",
+    "department": 1,
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-18T11:06:30.392Z",
+    "updated_at": "2025-12-18T11:06:30.392Z"
+  }
+},
+{
+  "model": "employees.designation",
+  "pk": 2,
+  "fields": {
+    "name": "Junior Python Developer",
+    "code": "JPD",
+    "department": 2,
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T07:47:09.410Z",
+    "updated_at": "2025-12-19T07:47:44.396Z"
+  }
+},
+{
+  "model": "employees.designation",
+  "pk": 3,
+  "fields": {
+    "name": "Mid Level Python Developer",
+    "code": "MLPD",
+    "department": 2,
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T07:47:30.200Z",
+    "updated_at": "2025-12-19T07:47:30.200Z"
+  }
+},
+{
+  "model": "employees.designation",
+  "pk": 4,
+  "fields": {
+    "name": "Mid Level Flutter Developer",
+    "code": "MLFD",
+    "department": 7,
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T07:48:14.841Z",
+    "updated_at": "2025-12-19T07:50:06.671Z"
+  }
+},
+{
+  "model": "employees.designation",
+  "pk": 5,
+  "fields": {
+    "name": "QA Tester",
+    "code": "QAT",
+    "department": 6,
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T07:48:40.959Z",
+    "updated_at": "2025-12-19T07:49:41.863Z"
+  }
+},
+{
+  "model": "employees.designation",
+  "pk": 6,
+  "fields": {
+    "name": "UI/UX Designer",
+    "code": "UXD",
+    "department": 5,
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T08:01:07.971Z",
+    "updated_at": "2025-12-19T08:01:07.971Z"
+  }
+},
+{
+  "model": "employees.designation",
+  "pk": 7,
+  "fields": {
+    "name": "Unity Developer",
+    "code": "UNDP",
+    "department": 8,
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-12-19T08:07:39.362Z",
+    "updated_at": "2025-12-19T08:07:39.362Z"
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$rra6kCdsMw3ZZMn3eUEIz0$/EU4BGpjtNzOuY46/VMzNy0mP51xOBTwEIIpCORaLZQ=",
+    "last_login": "2026-01-31T10:03:16.713Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "Admin",
+    "last_name": "Admin",
+    "email": "admin@admin.com",
+    "is_staff": true,
+    "is_active": true,
+    "employee_id": "100",
+    "phone_number": "",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": null,
+    "designation": null,
+    "date_joined": "2025-12-18T10:36:38.521Z",
+    "employment_type": "FT",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-18T10:36:39.029Z",
+    "updated_at": "2025-12-19T07:32:03.471Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$8HoydwLpWYghl10Y3EvIri$p7wClfBW6aT2FppDmbyX8yU2VSJOE8iqHnRk/G6o9fA=",
+    "last_login": "2026-01-06T10:43:40.656Z",
+    "is_superuser": false,
+    "username": "sandesh",
+    "first_name": "Sandesh",
+    "last_name": "Satyal",
+    "email": "sandeshsatyal@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "employee_id": "101",
+    "phone_number": "9851242075",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": 1,
+    "designation": 1,
+    "date_joined": "2025-12-18T12:16:18.661Z",
+    "employment_type": "FT",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-18T12:16:19.104Z",
+    "updated_at": "2025-12-18T12:16:19.570Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 8,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$cl0ypA0X45htBXg2YIe1Tv$jfOX4zeq8435bcSk1eOkPV2ityYvWw1tnDO7Pe/Y4Aw=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "rupesh",
+    "first_name": "Rupesh",
+    "last_name": "Dahal",
+    "email": "rupesh@darkmattergame.net",
+    "is_staff": false,
+    "is_active": true,
+    "employee_id": "EMP102",
+    "phone_number": "",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": 2,
+    "designation": 2,
+    "date_joined": "2025-12-19T07:58:12.517Z",
+    "employment_type": "FT",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-19T07:58:12.912Z",
+    "updated_at": "2025-12-19T07:58:13.279Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 9,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$x0RFcti3ZoC1XlQRhjcaI4$W0bvN0v21Vkf3aKG4Kf9nlD21wLj+UJgTintvFKs190=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "suzen",
+    "first_name": "Suzen",
+    "last_name": "Shah",
+    "email": "suzen@darkmattergame.net",
+    "is_staff": false,
+    "is_active": true,
+    "employee_id": "EMP103",
+    "phone_number": "",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": 5,
+    "designation": 6,
+    "date_joined": "2025-12-19T08:01:36.057Z",
+    "employment_type": "IN",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-19T08:01:36.462Z",
+    "updated_at": "2025-12-19T08:01:36.858Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 10,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$1Ynu2kUiL0XxhLF54LwkZC$NtkXnHT/OFk3EmUXUDXkrFof/U4oKuD1g2z07AW3yV8=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "nisha",
+    "first_name": "Nisha",
+    "last_name": "S",
+    "email": "nisha@darkmattergame.net",
+    "is_staff": false,
+    "is_active": true,
+    "employee_id": "EMP104",
+    "phone_number": "",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": 6,
+    "designation": 5,
+    "date_joined": "2025-12-19T08:02:39.272Z",
+    "employment_type": "IN",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-19T08:02:39.728Z",
+    "updated_at": "2025-12-19T08:02:40.099Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 11,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$DyaZXQIb5557RmgAowwsQ4$PDHAje9ec7+iUdeEiJl4VmnYnLi8ANEtt+3yjeXWkDY=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ranjan",
+    "first_name": "Shree",
+    "last_name": "Ranjan",
+    "email": "shree@darkmattergame.net",
+    "is_staff": false,
+    "is_active": true,
+    "employee_id": "EMP105",
+    "phone_number": "",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": 2,
+    "designation": 3,
+    "date_joined": "2025-12-19T08:03:24.096Z",
+    "employment_type": "FT",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-19T08:03:24.496Z",
+    "updated_at": "2025-12-19T08:03:24.899Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 12,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$nNn9St9kSJomnZx5G8FDuu$nPMd33GqpeW90cCQ5TECMprQ5dXtGpUSO1EszX/ru70=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "sandeshch",
+    "first_name": "Sandesh",
+    "last_name": "Chhapagain",
+    "email": "sandeshch@darkmattergame.net",
+    "is_staff": false,
+    "is_active": true,
+    "employee_id": "EMP106",
+    "phone_number": "",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": 7,
+    "designation": 4,
+    "date_joined": "2025-12-19T08:06:04.793Z",
+    "employment_type": "FT",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-19T08:06:05.210Z",
+    "updated_at": "2025-12-19T08:06:05.624Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 13,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$vE34Vvs4QThT89sFRjpkeC$keLfguER+RocwWb+NUR4Vxtw8i2IyIXLyBOSwUk/8Xk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "savya",
+    "first_name": "Savya",
+    "last_name": "Shah",
+    "email": "savya@darkmattergame.net",
+    "is_staff": false,
+    "is_active": true,
+    "employee_id": "EMP107",
+    "phone_number": "",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": 8,
+    "designation": 7,
+    "date_joined": "2025-12-19T08:08:10.384Z",
+    "employment_type": "FT",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-19T08:08:10.774Z",
+    "updated_at": "2025-12-19T08:08:11.153Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "employees.employee",
+  "pk": 14,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$WRiCC3hTOiVKRGBg6wNS2V$ptEnt8hAEMItjZosFpd0mH9V9NFTPk/kkFBI18rnO0c=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "mausam",
+    "first_name": "Mausam",
+    "last_name": "M",
+    "email": "mausam@darkmattergame.net",
+    "is_staff": false,
+    "is_active": true,
+    "employee_id": "EMP108",
+    "phone_number": "",
+    "date_of_birth": null,
+    "gender": "M",
+    "address": "",
+    "profile_picture": "",
+    "department": 8,
+    "designation": 7,
+    "date_joined": "2025-12-19T08:08:43.083Z",
+    "employment_type": "IN",
+    "status": "AC",
+    "biometric_user_id": null,
+    "biometric_synced": true,
+    "biometric_sync_date": null,
+    "annual_leave_balance": "15.00",
+    "sick_leave_balance": "10.00",
+    "casual_leave_balance": "5.00",
+    "created_at": "2025-12-19T08:08:43.475Z",
+    "updated_at": "2025-12-19T08:08:43.857Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 16,
+  "fields": {
+    "employee": 11,
+    "punch_time": "2025-12-21T04:15:41Z",
+    "punch_type": "IN",
+    "biometric_user_id": 613,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2025-12-21T08:03:42.212Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 17,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-21T04:15:50Z",
+    "punch_type": "IN",
+    "biometric_user_id": 614,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2025-12-21T08:03:42.304Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 18,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-22T04:17:12Z",
+    "punch_type": "IN",
+    "biometric_user_id": 615,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2025-12-22T05:37:22.167Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 19,
+  "fields": {
+    "employee": 11,
+    "punch_time": "2025-12-22T04:17:33Z",
+    "punch_type": "IN",
+    "biometric_user_id": 616,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2025-12-22T05:37:22.208Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 20,
+  "fields": {
+    "employee": 7,
+    "punch_time": "2025-12-22T07:36:56Z",
+    "punch_type": "IN",
+    "biometric_user_id": 617,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2025-12-22T07:36:58.719Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 21,
+  "fields": {
+    "employee": 7,
+    "punch_time": "2025-12-22T07:39:45Z",
+    "punch_type": "IN",
+    "biometric_user_id": 618,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2025-12-22T07:39:47.030Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 22,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-05T04:15:23Z",
+    "punch_type": "IN",
+    "biometric_user_id": 635,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:46:43.066Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 23,
+  "fields": {
+    "employee": 8,
+    "punch_time": "2026-01-05T04:47:06Z",
+    "punch_type": "IN",
+    "biometric_user_id": 636,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:46:43.105Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 24,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-05T05:07:40Z",
+    "punch_type": "IN",
+    "biometric_user_id": 637,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:46:43.127Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 25,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-06T04:03:07Z",
+    "punch_type": "IN",
+    "biometric_user_id": 638,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:46:43.150Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 26,
+  "fields": {
+    "employee": 8,
+    "punch_time": "2026-01-06T04:40:17Z",
+    "punch_type": "IN",
+    "biometric_user_id": 639,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:46:43.172Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 27,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-06T04:54:01Z",
+    "punch_type": "IN",
+    "biometric_user_id": 640,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:46:43.194Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 28,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-06T10:03:07Z",
+    "punch_type": "IN",
+    "biometric_user_id": 641,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:46:43.216Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 29,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-29T04:14:38Z",
+    "punch_type": "IN",
+    "biometric_user_id": 626,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.659Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 30,
+  "fields": {
+    "employee": 8,
+    "punch_time": "2025-12-29T04:40:15Z",
+    "punch_type": "IN",
+    "biometric_user_id": 627,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.696Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 31,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-30T04:12:02Z",
+    "punch_type": "IN",
+    "biometric_user_id": 628,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.728Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 32,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2025-12-30T10:33:25Z",
+    "punch_type": "IN",
+    "biometric_user_id": 629,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.780Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 33,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-31T04:10:55Z",
+    "punch_type": "IN",
+    "biometric_user_id": 630,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.810Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 34,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-02T04:18:46Z",
+    "punch_type": "IN",
+    "biometric_user_id": 631,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.837Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 35,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-04T04:09:54Z",
+    "punch_type": "IN",
+    "biometric_user_id": 632,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.864Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 36,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-04T05:10:13Z",
+    "punch_type": "IN",
+    "biometric_user_id": 633,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.889Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 37,
+  "fields": {
+    "employee": 10,
+    "punch_time": "2026-01-04T05:10:40Z",
+    "punch_type": "IN",
+    "biometric_user_id": 634,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:02.911Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 38,
+  "fields": {
+    "employee": 11,
+    "punch_time": "2025-12-23T04:01:40Z",
+    "punch_type": "IN",
+    "biometric_user_id": 619,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:07.203Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 39,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-23T04:17:24Z",
+    "punch_type": "IN",
+    "biometric_user_id": 620,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:07.236Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 40,
+  "fields": {
+    "employee": 11,
+    "punch_time": "2025-12-24T04:10:20Z",
+    "punch_type": "IN",
+    "biometric_user_id": 621,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:07.264Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 41,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-24T04:33:47Z",
+    "punch_type": "IN",
+    "biometric_user_id": 622,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:07.290Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 42,
+  "fields": {
+    "employee": 8,
+    "punch_time": "2025-12-24T04:33:54Z",
+    "punch_type": "IN",
+    "biometric_user_id": 623,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:07.312Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 43,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-25T04:24:46Z",
+    "punch_type": "IN",
+    "biometric_user_id": 624,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:07.335Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 44,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2025-12-26T04:27:16Z",
+    "punch_type": "IN",
+    "biometric_user_id": 625,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-06T10:47:07.359Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 45,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-23T04:14:38Z",
+    "punch_type": "IN",
+    "biometric_user_id": 713,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:31.602Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 46,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-23T04:31:39Z",
+    "punch_type": "IN",
+    "biometric_user_id": 714,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:31.641Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 47,
+  "fields": {
+    "employee": 10,
+    "punch_time": "2026-01-23T04:51:50Z",
+    "punch_type": "IN",
+    "biometric_user_id": 715,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:31.667Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 48,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-23T05:44:55Z",
+    "punch_type": "IN",
+    "biometric_user_id": 716,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:31.691Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 49,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-23T12:40:25Z",
+    "punch_type": "IN",
+    "biometric_user_id": 717,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:31.714Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 50,
+  "fields": {
+    "employee": 10,
+    "punch_time": "2026-01-23T12:43:25Z",
+    "punch_type": "IN",
+    "biometric_user_id": 718,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:31.732Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 51,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-23T12:43:56Z",
+    "punch_type": "IN",
+    "biometric_user_id": 719,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:31.748Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 52,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-23T12:44:29Z",
+    "punch_type": "IN",
+    "biometric_user_id": 720,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:31.763Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 53,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-19T04:14:10Z",
+    "punch_type": "IN",
+    "biometric_user_id": 687,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.442Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 54,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-19T04:30:15Z",
+    "punch_type": "IN",
+    "biometric_user_id": 688,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.479Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 55,
+  "fields": {
+    "employee": 8,
+    "punch_time": "2026-01-19T04:41:57Z",
+    "punch_type": "IN",
+    "biometric_user_id": 689,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.503Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 56,
+  "fields": {
+    "employee": 10,
+    "punch_time": "2026-01-19T04:42:11Z",
+    "punch_type": "IN",
+    "biometric_user_id": 690,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.525Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 57,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-19T05:14:47Z",
+    "punch_type": "IN",
+    "biometric_user_id": 691,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.550Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 58,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-19T12:44:47Z",
+    "punch_type": "IN",
+    "biometric_user_id": 692,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.573Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 59,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-19T12:44:55Z",
+    "punch_type": "IN",
+    "biometric_user_id": 693,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.594Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 60,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-20T04:21:12Z",
+    "punch_type": "IN",
+    "biometric_user_id": 694,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.616Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 61,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-20T04:34:16Z",
+    "punch_type": "IN",
+    "biometric_user_id": 695,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.647Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 62,
+  "fields": {
+    "employee": 10,
+    "punch_time": "2026-01-20T04:49:13Z",
+    "punch_type": "IN",
+    "biometric_user_id": 696,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.672Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 63,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-20T05:28:59Z",
+    "punch_type": "IN",
+    "biometric_user_id": 697,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.696Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 64,
+  "fields": {
+    "employee": 8,
+    "punch_time": "2026-01-20T05:29:18Z",
+    "punch_type": "IN",
+    "biometric_user_id": 698,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.720Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 65,
+  "fields": {
+    "employee": 9,
+    "punch_time": "2026-01-20T12:29:54Z",
+    "punch_type": "IN",
+    "biometric_user_id": 699,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.742Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 66,
+  "fields": {
+    "employee": 10,
+    "punch_time": "2026-01-20T12:30:41Z",
+    "punch_type": "IN",
+    "biometric_user_id": 700,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.759Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 67,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-20T12:33:06Z",
+    "punch_type": "IN",
+    "biometric_user_id": 701,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.775Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 68,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-20T12:39:36Z",
+    "punch_type": "IN",
+    "biometric_user_id": 702,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.790Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 69,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-21T04:12:56Z",
+    "punch_type": "IN",
+    "biometric_user_id": 703,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.804Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 70,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-21T04:31:06Z",
+    "punch_type": "IN",
+    "biometric_user_id": 704,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.826Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 71,
+  "fields": {
+    "employee": 8,
+    "punch_time": "2026-01-21T05:04:29Z",
+    "punch_type": "IN",
+    "biometric_user_id": 705,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.851Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 72,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-22T04:29:34Z",
+    "punch_type": "IN",
+    "biometric_user_id": 706,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.872Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 73,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-22T04:29:41Z",
+    "punch_type": "IN",
+    "biometric_user_id": 707,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.893Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 74,
+  "fields": {
+    "employee": 10,
+    "punch_time": "2026-01-22T04:53:18Z",
+    "punch_type": "IN",
+    "biometric_user_id": 708,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.917Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 75,
+  "fields": {
+    "employee": 8,
+    "punch_time": "2026-01-22T05:49:48Z",
+    "punch_type": "IN",
+    "biometric_user_id": 709,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.940Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 76,
+  "fields": {
+    "employee": 14,
+    "punch_time": "2026-01-22T12:41:16Z",
+    "punch_type": "IN",
+    "biometric_user_id": 710,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.963Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 77,
+  "fields": {
+    "employee": 12,
+    "punch_time": "2026-01-22T12:43:50Z",
+    "punch_type": "IN",
+    "biometric_user_id": 711,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:50.983Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "attendance.attendancerecord",
+  "pk": 78,
+  "fields": {
+    "employee": 10,
+    "punch_time": "2026-01-22T12:44:09Z",
+    "punch_type": "IN",
+    "biometric_user_id": 712,
+    "device_id": "",
+    "punch_state": 0,
+    "verify_type": 1,
+    "synced_at": "2026-01-23T12:49:51.004Z",
+    "is_manual": false,
+    "notes": ""
+  }
+},
+{
+  "model": "leaves.leavetype",
+  "pk": 1,
+  "fields": {
+    "name": "Annual Leave",
+    "code": "AL",
+    "description": "Annual vacation leave",
+    "default_days": 15,
+    "is_paid": true,
+    "requires_approval": true,
+    "is_active": true,
+    "created_at": "2025-12-18T10:25:36.503Z",
+    "updated_at": "2025-12-18T10:25:36.503Z"
+  }
+},
+{
+  "model": "leaves.leavetype",
+  "pk": 2,
+  "fields": {
+    "name": "Sick Leave",
+    "code": "SL",
+    "description": "Medical/sick leave",
+    "default_days": 10,
+    "is_paid": true,
+    "requires_approval": true,
+    "is_active": true,
+    "created_at": "2025-12-18T10:25:36.508Z",
+    "updated_at": "2025-12-18T10:25:36.508Z"
+  }
+},
+{
+  "model": "leaves.leavetype",
+  "pk": 3,
+  "fields": {
+    "name": "Casual Leave",
+    "code": "CL",
+    "description": "Casual/personal leave",
+    "default_days": 5,
+    "is_paid": true,
+    "requires_approval": true,
+    "is_active": true,
+    "created_at": "2025-12-18T10:25:36.512Z",
+    "updated_at": "2025-12-18T10:25:36.512Z"
+  }
+},
+{
+  "model": "leaves.leavetype",
+  "pk": 4,
+  "fields": {
+    "name": "Unpaid Leave",
+    "code": "UL",
+    "description": "Leave without pay",
+    "default_days": 0,
+    "is_paid": false,
+    "requires_approval": true,
+    "is_active": true,
+    "created_at": "2025-12-18T10:25:36.516Z",
+    "updated_at": "2025-12-18T10:25:36.516Z"
+  }
+},
+{
+  "model": "leaves.leavetype",
+  "pk": 5,
+  "fields": {
+    "name": "Maternity Leave",
+    "code": "ML",
+    "description": "Maternity leave for female employees",
+    "default_days": 90,
+    "is_paid": true,
+    "requires_approval": true,
+    "is_active": true,
+    "created_at": "2025-12-18T10:25:36.521Z",
+    "updated_at": "2025-12-18T10:25:36.521Z"
+  }
+},
+{
+  "model": "leaves.leavetype",
+  "pk": 6,
+  "fields": {
+    "name": "Paternity Leave",
+    "code": "PL",
+    "description": "Paternity leave for male employees",
+    "default_days": 7,
+    "is_paid": true,
+    "requires_approval": true,
+    "is_active": true,
+    "created_at": "2025-12-18T10:25:36.525Z",
+    "updated_at": "2025-12-18T10:25:36.525Z"
+  }
+},
+{
+  "model": "leaves.leaverequest",
+  "pk": 2,
+  "fields": {
+    "employee": 7,
+    "leave_type": 3,
+    "start_date": "2025-12-24",
+    "end_date": "2025-12-26",
+    "total_days": "3.00",
+    "reason": "ASaaA",
+    "status": "AP",
+    "approved_by": 1,
+    "approved_at": "2025-12-22T08:04:01.189Z",
+    "approval_notes": "",
+    "attachment": "",
+    "created_at": "2025-12-22T08:03:34.949Z",
+    "updated_at": "2025-12-22T08:04:01.189Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 8,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2025-12-28",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.556Z",
+    "updated_at": "2025-12-19T10:28:15.556Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 9,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-01-11",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.564Z",
+    "updated_at": "2025-12-19T10:28:15.564Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 10,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-01-25",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.574Z",
+    "updated_at": "2025-12-19T10:28:15.574Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 11,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-02-08",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.601Z",
+    "updated_at": "2025-12-19T10:28:15.601Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 12,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-02-22",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.612Z",
+    "updated_at": "2025-12-19T10:28:15.612Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 13,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-03-08",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.623Z",
+    "updated_at": "2025-12-19T10:28:15.623Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 14,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-03-22",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.636Z",
+    "updated_at": "2025-12-19T10:28:15.636Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 15,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-04-05",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.645Z",
+    "updated_at": "2025-12-19T10:28:15.645Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 16,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-04-19",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.655Z",
+    "updated_at": "2025-12-19T10:28:15.655Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 17,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-05-03",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.665Z",
+    "updated_at": "2025-12-19T10:28:15.665Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 18,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-05-17",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.673Z",
+    "updated_at": "2025-12-19T10:28:15.673Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 19,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-05-31",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.682Z",
+    "updated_at": "2025-12-19T10:28:15.682Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 20,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-06-14",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.694Z",
+    "updated_at": "2025-12-19T10:28:15.694Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 21,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-06-28",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.704Z",
+    "updated_at": "2025-12-19T10:28:15.704Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 22,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-07-12",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.714Z",
+    "updated_at": "2025-12-19T10:28:15.714Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 23,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-07-26",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.729Z",
+    "updated_at": "2025-12-19T10:28:15.729Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 24,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-08-09",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.738Z",
+    "updated_at": "2025-12-19T10:28:15.738Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 25,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-08-23",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.747Z",
+    "updated_at": "2025-12-19T10:28:15.747Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 26,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-09-06",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.757Z",
+    "updated_at": "2025-12-19T10:28:15.757Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 27,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-09-20",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.766Z",
+    "updated_at": "2025-12-19T10:28:15.766Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 28,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-10-04",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.776Z",
+    "updated_at": "2025-12-19T10:28:15.776Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 29,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-10-18",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.809Z",
+    "updated_at": "2025-12-19T10:28:15.809Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 30,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-11-01",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.821Z",
+    "updated_at": "2025-12-19T10:28:15.821Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 31,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-11-15",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.834Z",
+    "updated_at": "2025-12-19T10:28:15.834Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 32,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-11-29",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.848Z",
+    "updated_at": "2025-12-19T10:28:15.848Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 33,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-12-13",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.857Z",
+    "updated_at": "2025-12-19T10:28:15.857Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 34,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2026-12-27",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.867Z",
+    "updated_at": "2025-12-19T10:28:15.867Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 35,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-01-10",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.877Z",
+    "updated_at": "2025-12-19T10:28:15.877Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 36,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-01-24",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.885Z",
+    "updated_at": "2025-12-19T10:28:15.885Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 37,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-02-07",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.894Z",
+    "updated_at": "2025-12-19T10:28:15.894Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 38,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-02-21",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.901Z",
+    "updated_at": "2025-12-19T10:28:15.901Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 39,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-03-07",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.910Z",
+    "updated_at": "2025-12-19T10:28:15.910Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 40,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-03-21",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.918Z",
+    "updated_at": "2025-12-19T10:28:15.918Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 41,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-04-04",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.925Z",
+    "updated_at": "2025-12-19T10:28:15.925Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 42,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-04-18",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.934Z",
+    "updated_at": "2025-12-19T10:28:15.934Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 43,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-05-02",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.949Z",
+    "updated_at": "2025-12-19T10:28:15.949Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 44,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-05-16",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.957Z",
+    "updated_at": "2025-12-19T10:28:15.957Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 45,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-05-30",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.965Z",
+    "updated_at": "2025-12-19T10:28:15.965Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 46,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-06-13",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.973Z",
+    "updated_at": "2025-12-19T10:28:15.973Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 47,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-06-27",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.980Z",
+    "updated_at": "2025-12-19T10:28:15.980Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 48,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-07-11",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.987Z",
+    "updated_at": "2025-12-19T10:28:15.987Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 49,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-07-25",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:15.994Z",
+    "updated_at": "2025-12-19T10:28:15.994Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 50,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-08-08",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.001Z",
+    "updated_at": "2025-12-19T10:28:16.001Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 51,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-08-22",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.010Z",
+    "updated_at": "2025-12-19T10:28:16.010Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 52,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-09-05",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.020Z",
+    "updated_at": "2025-12-19T10:28:16.020Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 53,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-09-19",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.030Z",
+    "updated_at": "2025-12-19T10:28:16.030Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 54,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-10-03",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.042Z",
+    "updated_at": "2025-12-19T10:28:16.042Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 55,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-10-17",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.051Z",
+    "updated_at": "2025-12-19T10:28:16.051Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 56,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-10-31",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.058Z",
+    "updated_at": "2025-12-19T10:28:16.058Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 57,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-11-14",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.067Z",
+    "updated_at": "2025-12-19T10:28:16.067Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 58,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-11-28",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.080Z",
+    "updated_at": "2025-12-19T10:28:16.080Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 59,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-12-12",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.251Z",
+    "updated_at": "2025-12-19T10:28:16.251Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 60,
+  "fields": {
+    "name": "Alternate Sunday Off",
+    "date": "2027-12-26",
+    "description": "Regular alternate Sunday holiday",
+    "is_optional": false,
+    "created_at": "2025-12-19T10:28:16.263Z",
+    "updated_at": "2025-12-19T10:28:16.263Z"
+  }
+},
+{
+  "model": "leaves.holiday",
+  "pk": 61,
+  "fields": {
+    "name": "New Year",
+    "date": "2025-12-31",
+    "description": "",
+    "is_optional": false,
+    "created_at": "2025-12-22T08:01:06.216Z",
+    "updated_at": "2025-12-22T08:01:06.216Z"
+  }
+},
+{
+  "model": "biometric.biometricdevice",
+  "pk": 1,
+  "fields": {
+    "name": "Main Office Biometric Device",
+    "ip_address": "192.168.1.201",
+    "port": 4370,
+    "password": 0,
+    "timeout": 5,
+    "serial_number": "",
+    "firmware_version": "",
+    "platform": "",
+    "device_name": "",
+    "is_active": true,
+    "last_sync_time": null,
+    "last_connection_status": false,
+    "last_error": "",
+    "created_at": "2025-12-18T10:25:36.532Z",
+    "updated_at": "2025-12-18T10:25:36.532Z"
+  }
+}
+]

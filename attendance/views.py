@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum, Avg, Count, Q
 from datetime import datetime, timedelta
-from .models import AttendanceRecord, DailyAttendance, AttendanceSettings
+from .models import AttendanceRecord, DailyAttendance
 from .serializers import (
     AttendanceRecordSerializer, DailyAttendanceSerializer,
-    AttendanceSettingsSerializer, AttendanceSummarySerializer
+    AttendanceSummarySerializer
 )
 
 
@@ -143,16 +143,3 @@ class DailyAttendanceViewSet(viewsets.ModelViewSet):
             'message': 'Attendance sync task initiated',
             'task_id': task.id
         }, status=status.HTTP_202_ACCEPTED)
-
-
-class AttendanceSettingsViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for AttendanceSettings.
-    """
-    queryset = AttendanceSettings.objects.all()
-    serializer_class = AttendanceSettingsSerializer
-    
-    def get_queryset(self):
-        # Ensure only one settings instance exists
-        settings, created = AttendanceSettings.objects.get_or_create(pk=1)
-        return AttendanceSettings.objects.filter(pk=1)
