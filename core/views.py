@@ -10,7 +10,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from employees.models import Employee
 from attendance.models import AttendanceRecord, DailyAttendance
-from leaves.models import LeaveRequest, LeaveBalance, LeaveType
+from leaves.models import LeaveRequest, LeaveBalance, LeaveType, Holiday
 
 
 def login_view(request):
@@ -135,6 +135,33 @@ def user_dashboard(request):
         year=current_year
     ).select_related('leave_type')
     
+    # Calculate Expected Hours this month
+    from core.models import SystemSettings
+    from datetime import datetime
+    import calendar
+    
+    settings = SystemSettings.get_settings()
+    
+    # Calculate hours per working day using office timings
+    start_dt = datetime.combine(today, settings.office_start_time)
+    end_dt = datetime.combine(today, settings.office_end_time)
+    hours_per_day = (end_dt - start_dt).total_seconds() / 3600.0
+    
+    last_day = calendar.monthrange(current_month.year, current_month.month)[1]
+    last_date_of_month = current_month.replace(day=last_day)
+    
+    holidays_this_month = set(Holiday.objects.filter(
+        date__gte=current_month,
+        date__lte=last_date_of_month
+    ).values_list('date', flat=True))
+    
+    expected_hours = 0
+    for day in range(1, last_day + 1):
+        d = current_month.replace(day=day)
+        # Saturday is weekday 5 (0=Monday, 6=Sunday). We skip Saturday and any Holiday.
+        if d.weekday() != 5 and d not in holidays_this_month:
+            expected_hours += hours_per_day
+            
     # Recent leave requests
     recent_leaves = LeaveRequest.objects.filter(
         employee=employee
@@ -145,12 +172,16 @@ def user_dashboard(request):
         employee=employee
     ).order_by('-date')[:7]
     
+    remaining_hours = max(0, expected_hours - float(total_hours))
+    
     context = {
         'employee': employee,
         'today_attendance': today_attendance,
         'last_punch': last_punch,
         'present_days': present_days,
         'total_hours': round(total_hours, 2),
+        'expected_hours': int(expected_hours) if expected_hours.is_integer() else round(expected_hours, 2),
+        'remaining_hours': round(remaining_hours, 2),
         'late_days': late_days,
         'leave_balances': leave_balances,
         'recent_leaves': recent_leaves,
