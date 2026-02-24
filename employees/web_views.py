@@ -288,6 +288,7 @@ def employee_edit(request, pk):
         'action': 'Edit',
         'departments': departments,
         'designations': designations,
+        'next_employee_id': '',
     }
     
     return render(request, 'employees/employee_form.html', context)
