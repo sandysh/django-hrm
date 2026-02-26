@@ -137,20 +137,25 @@ def attendance_report(request):
     from employees.models import Employee
 
     today = timezone.now().date()
-
-    # Parse date range
+    
+    # Parse date range (default to full current month)
     start_date_param = request.GET.get('start_date')
     end_date_param = request.GET.get('end_date')
 
+    import calendar
+    first_of_month = today.replace(day=1)
+    last_day = calendar.monthrange(today.year, today.month)[1]
+    last_of_month = today.replace(day=last_day)
+    
     try:
-        start_date = datetime.strptime(start_date_param, '%Y-%m-%d').date() if start_date_param else today
+        start_date = datetime.strptime(start_date_param, '%Y-%m-%d').date() if start_date_param else first_of_month
     except ValueError:
-        start_date = today
-
+        start_date = first_of_month
+    
     try:
-        end_date = datetime.strptime(end_date_param, '%Y-%m-%d').date() if end_date_param else today
+        end_date = datetime.strptime(end_date_param, '%Y-%m-%d').date() if end_date_param else last_of_month
     except ValueError:
-        end_date = today
+        end_date = last_of_month
 
     # Clamp so start <= end
     if start_date > end_date:
