@@ -133,39 +133,122 @@ def attendance_report(request):
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to view this page')
         return redirect('dashboard')
-    
+
+    from employees.models import Employee
+
     today = timezone.now().date()
-    
-    # Get date from query params or use today
-    date_param = request.GET.get('date')
-    if date_param:
+
+    # Parse date range
+    start_date_param = request.GET.get('start_date')
+    end_date_param = request.GET.get('end_date')
+
+    try:
+        start_date = datetime.strptime(start_date_param, '%Y-%m-%d').date() if start_date_param else today
+    except ValueError:
+        start_date = today
+
+    try:
+        end_date = datetime.strptime(end_date_param, '%Y-%m-%d').date() if end_date_param else today
+    except ValueError:
+        end_date = today
+
+    # Clamp so start <= end
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
+
+    # Optional employee filter
+    employee_id_param = request.GET.get('employee_id')
+    selected_employee = None
+    if employee_id_param:
         try:
-            date = datetime.strptime(date_param, '%Y-%m-%d').date()
-        except ValueError:
-            date = today
-    else:
-        date = today
-    
-    # Get all attendance for the date
+            selected_employee = Employee.objects.get(pk=employee_id_param)
+        except Employee.DoesNotExist:
+            selected_employee = None
+
+    # All active employees for the dropdown
+    all_employees = Employee.objects.filter(
+        is_active=True, is_staff=False
+    ).order_by('employee_id')
+
+    # Build queryset
     attendance_records = DailyAttendance.objects.filter(
-        date=date
-    ).select_related('employee').order_by('employee__employee_id')
-    
-    # Calculate statistics
-    total_employees = attendance_records.count()
+        date__gte=start_date,
+        date__lte=end_date,
+    ).select_related('employee').order_by('employee__employee_id', 'date')
+
+    if selected_employee:
+        attendance_records = attendance_records.filter(employee=selected_employee).order_by('date')
+
+    # Statistics
+    total_records = attendance_records.count()
     present = attendance_records.filter(status__in=['PR', 'LT']).count()
     absent = attendance_records.filter(status='AB').count()
     on_leave = attendance_records.filter(status='LV').count()
     late = attendance_records.filter(is_late=True).count()
-    
+    total_hours = sum(r.total_hours or 0 for r in attendance_records)
+
+    # Expected hours (worked out of X) and per-day diff using same logic as user dashboard
+    expected_hours = 0.0
+    standard_hours = 0.0
+    try:
+        from core.models import SystemSettings
+        from leaves.models import Holiday
+        from datetime import datetime as dt
+
+        settings = SystemSettings.get_settings()
+        standard_hours = float(settings.standard_work_hours)
+
+        # Hours per working day from office timings
+        start_dt = dt.combine(start_date, settings.office_start_time)
+        end_dt = dt.combine(start_date, settings.office_end_time)
+        hours_per_day = (end_dt - start_dt).total_seconds() / 3600.0
+
+        # Holidays in the selected range
+        holidays = set(
+            Holiday.objects.filter(
+                date__gte=start_date,
+                date__lte=end_date,
+            ).values_list('date', flat=True)
+        )
+
+        current = start_date
+        while current <= end_date:
+            # Skip Saturday (weekday 5) and holidays, to mirror dashboard behaviour
+            if current.weekday() != 5 and current not in holidays:
+                expected_hours += hours_per_day
+            current += timedelta(days=1)
+
+        # If viewing all employees, scale expected hours by distinct employees in the report
+        if not selected_employee and expected_hours > 0:
+            employee_count = attendance_records.values('employee').distinct().count()
+            expected_hours *= employee_count
+
+        # Attach per-record diff vs standard hours (missed / extra)
+        if standard_hours > 0:
+            for rec in attendance_records:
+                hours = float(rec.total_hours or 0)
+                diff = standard_hours - hours
+                rec.missed_hours = round(diff, 2) if diff > 0 else 0
+                rec.extra_hours = round(-diff, 2) if diff < 0 else 0
+    except Exception:
+        expected_hours = 0.0
+        standard_hours = 0.0
+
     context = {
         'attendance_records': attendance_records,
-        'date': date,
-        'total_employees': total_employees,
+        'start_date': start_date,
+        'end_date': end_date,
+        'all_employees': all_employees,
+        'selected_employee': selected_employee,
+        'selected_employee_id': employee_id_param or '',
+        'total_records': total_records,
         'present': present,
         'absent': absent,
         'on_leave': on_leave,
         'late': late,
+        'total_hours': round(total_hours, 2),
+        'expected_hours': round(expected_hours, 2) if expected_hours else 0,
+        'standard_hours': round(standard_hours, 2) if standard_hours else 0,
     }
-    
+
     return render(request, 'attendance/report.html', context)
