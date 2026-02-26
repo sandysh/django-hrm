@@ -38,7 +38,7 @@
 </div>
 
 <!-- Statistics -->
-<div class="grid grid-4" style="margin-bottom: 1.5rem;">
+<div class="grid grid-5" style="margin-bottom: 1.5rem;">
     <div class="stat-card" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
         <h3>{{ present }}</h3>
         <p>Present</p>
@@ -61,6 +61,16 @@
         {% else %}
         <h3>{{ total_hours }}</h3>
         <p>Total Hours</p>
+        {% endif %}
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);">
+        {% if selected_employee and monthly_remaining_hours %}
+        <h3>{{ monthly_remaining_hours }}</h3>
+        <p>Remaining Hours (This Month)</p>
+        {% else %}
+        <h3>--</h3>
+        <p>Remaining Hours (This Month)</p>
         {% endif %}
     </div>
 </div>

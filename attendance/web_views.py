@@ -213,15 +213,10 @@ def attendance_report(request):
 
         current = start_date
         while current <= end_date:
-            # Skip Saturday (weekday 5) and holidays, to mirror dashboard behaviour
+            # Skip Saturday (weekday 5) and holidays, same as employee dashboard logic
             if current.weekday() != 5 and current not in holidays:
                 expected_hours += hours_per_day
             current += timedelta(days=1)
-
-        # If viewing all employees, scale expected hours by distinct employees in the report
-        if not selected_employee and expected_hours > 0:
-            employee_count = attendance_records.values('employee').distinct().count()
-            expected_hours *= employee_count
 
         # Attach per-record diff vs standard hours (missed / extra)
         if standard_hours > 0:
@@ -233,6 +228,58 @@ def attendance_report(request):
     except Exception:
         expected_hours = 0.0
         standard_hours = 0.0
+
+    # Monthly remaining hours for selected employee (same logic as user dashboard)
+    monthly_expected_hours = 0.0
+    monthly_remaining_hours = 0.0
+    if selected_employee:
+        try:
+            from core.models import SystemSettings
+            from leaves.models import Holiday
+            from datetime import datetime as dt
+            import calendar
+
+            # Current month range
+            today = timezone.now().date()
+            current_month = today.replace(day=1)
+
+            # Hours worked this month so far for this employee
+            month_attendance = DailyAttendance.objects.filter(
+                employee=selected_employee,
+                date__gte=current_month,
+                date__lte=today,
+            )
+            month_total_hours = sum(a.total_hours or 0 for a in month_attendance)
+
+            settings = SystemSettings.get_settings()
+
+            # Hours per working day using office timings
+            start_dt = dt.combine(today, settings.office_start_time)
+            end_dt = dt.combine(today, settings.office_end_time)
+            hours_per_day = (end_dt - start_dt).total_seconds() / 3600.0
+
+            last_day = calendar.monthrange(current_month.year, current_month.month)[1]
+            last_date_of_month = current_month.replace(day=last_day)
+
+            holidays_this_month = set(
+                Holiday.objects.filter(
+                    date__gte=current_month,
+                    date__lte=last_date_of_month,
+                ).values_list('date', flat=True)
+            )
+
+            expected = 0.0
+            for day in range(1, last_day + 1):
+                d = current_month.replace(day=day)
+                # Saturday is weekday 5 (0=Monday, 6=Sunday). We skip Saturday and any Holiday.
+                if d.weekday() != 5 and d not in holidays_this_month:
+                    expected += hours_per_day
+
+            monthly_expected_hours = expected
+            monthly_remaining_hours = max(0.0, expected - float(month_total_hours))
+        except Exception:
+            monthly_expected_hours = 0.0
+            monthly_remaining_hours = 0.0
 
     context = {
         'attendance_records': attendance_records,
@@ -249,6 +296,8 @@ def attendance_report(request):
         'total_hours': round(total_hours, 2),
         'expected_hours': round(expected_hours, 2) if expected_hours else 0,
         'standard_hours': round(standard_hours, 2) if standard_hours else 0,
+        'monthly_expected_hours': round(monthly_expected_hours, 2) if monthly_expected_hours else 0,
+        'monthly_remaining_hours': round(monthly_remaining_hours, 2) if monthly_remaining_hours else 0,
     }
 
     return render(request, 'attendance/report.html', context)
