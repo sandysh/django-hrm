@@ -6,6 +6,7 @@ urlpatterns = [
     path('my-leaves/', web_views.my_leaves, name='my_leaves'),
     path('requests/', web_views.leave_requests, name='leave_requests'),
     path('<int:pk>/', web_views.leave_detail, name='leave_detail'),
+    path('<int:pk>/edit/', web_views.leave_edit, name='leave_edit'),
     path('<int:pk>/approve/', web_views.leave_approve, name='leave_approve'),
     path('<int:pk>/reject/', web_views.leave_reject, name='leave_reject'),
     

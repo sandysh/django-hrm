@@ -133,6 +133,56 @@ def leave_detail(request, pk):
 
 
 @login_required
+def leave_edit(request, pk):
+    """Edit a pending leave request. Employees can edit their own; admin can edit any."""
+    leave_request = get_object_or_404(LeaveRequest, pk=pk)
+
+    # Permission: must be own leave or staff
+    if not request.user.is_staff and leave_request.employee.id != request.user.id:
+        messages.error(request, 'You do not have permission to edit this leave')
+        return redirect('dashboard')
+
+    # Only pending leaves can be edited
+    if leave_request.status != 'PE':
+        messages.error(request, 'Only pending leave requests can be edited')
+        if request.user.is_staff:
+            return redirect('leave_requests')
+        return redirect('my_leaves')
+
+    leave_types = LeaveType.objects.filter(is_active=True)
+
+    if request.method == 'POST':
+        try:
+            leave_type = LeaveType.objects.get(id=request.POST['leave_type'])
+            start_date = datetime.strptime(request.POST['start_date'], '%Y-%m-%d').date()
+            end_date = datetime.strptime(request.POST['end_date'], '%Y-%m-%d').date()
+
+            if end_date < start_date:
+                messages.error(request, 'End date must be after start date')
+                return redirect('leave_edit', pk=pk)
+
+            leave_request.leave_type = leave_type
+            leave_request.start_date = start_date
+            leave_request.end_date = end_date
+            leave_request.reason = request.POST.get('reason', '')
+            leave_request.save()
+
+            messages.success(request, 'Leave request updated successfully!')
+            if request.user.is_staff:
+                return redirect('leave_requests')
+            return redirect('my_leaves')
+        except Exception as e:
+            messages.error(request, f'Error updating leave request: {str(e)}')
+
+    context = {
+        'leave_request': leave_request,
+        'leave_types': leave_types,
+        'is_edit': True,
+    }
+    return render(request, 'leaves/leave_form.html', context)
+
+
+@login_required
 def leave_approve(request, pk):
     """Approve leave request (admin only)."""
     if not request.user.is_staff:

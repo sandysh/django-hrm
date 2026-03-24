@@ -40,13 +40,39 @@ class BiometricDeviceService:
     def connect(self) -> bool:
         """
         Connect to the biometric device.
+        Tries TCP first, then falls back to UDP (mirrors manual sync behaviour).
         """
+        # Try TCP first
         try:
-            self.conn = self.zk.connect()
-            logger.info(f"Successfully connected to device at {self.ip_address}")
+            zk = ZK(
+                self.ip_address,
+                port=self.port,
+                timeout=self.timeout,
+                password=self.password,
+                force_udp=False,
+                ommit_ping=True,
+            )
+            self.conn = zk.connect()
+            logger.info(f"Connected to device at {self.ip_address} via TCP")
+            return True
+        except Exception:
+            pass
+
+        # Fallback to UDP
+        try:
+            zk = ZK(
+                self.ip_address,
+                port=self.port,
+                timeout=self.timeout,
+                password=self.password,
+                force_udp=True,
+                ommit_ping=True,
+            )
+            self.conn = zk.connect()
+            logger.info(f"Connected to device at {self.ip_address} via UDP")
             return True
         except Exception as e:
-            logger.error(f"Failed to connect to device at {self.ip_address}: {str(e)}")
+            logger.error(f"Failed to connect to device at {self.ip_address} (TCP & UDP): {str(e)}")
             return False
     
     def disconnect(self):

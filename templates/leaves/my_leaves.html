@@ -20,6 +20,7 @@
                 <th>Status</th>
                 <th>Applied On</th>
                 <th>Approved By</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -48,10 +49,17 @@
                     <span style="color: var(--text-secondary);">-</span>
                     {% endif %}
                 </td>
+                <td>
+                    {% if leave.status == 'PE' %}
+                    <a href="{% url 'leave_edit' leave.id %}" class="btn btn-sm btn-primary">Edit</a>
+                    {% else %}
+                    <span style="color: var(--text-secondary); font-size: 0.875rem;">—</span>
+                    {% endif %}
+                </td>
             </tr>
             {% if leave.reason %}
             <tr style="background: var(--bg-light);">
-                <td colspan="7" style="padding-left: 2rem;">
+                <td colspan="8" style="padding-left: 2rem;">
                     <strong>Reason:</strong> {{ leave.reason }}
                     {% if leave.approval_notes %}
                     <br><strong>Notes:</strong> {{ leave.approval_notes }}

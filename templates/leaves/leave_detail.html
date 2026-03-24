@@ -5,10 +5,15 @@
 {% block content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
     <h1>Leave Request Details</h1>
-    <a href="{% if user.is_staff %}{% url 'leave_requests' %}{% else %}{% url 'my_leaves' %}{% endif %}"
-        class="btn btn-secondary">
-        Back
-    </a>
+    <div style="display: flex; gap: 0.5rem;">
+        {% if leave_request.status == 'PE' %}
+        <a href="{% url 'leave_edit' leave_request.id %}" class="btn btn-primary">Edit</a>
+        {% endif %}
+        <a href="{% if user.is_staff %}{% url 'leave_requests' %}{% else %}{% url 'my_leaves' %}{% endif %}"
+            class="btn btn-secondary">
+            Back
+        </a>
+    </div>
 </div>
 
 <div class="grid grid-2">

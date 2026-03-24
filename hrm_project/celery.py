@@ -19,9 +19,10 @@ app.autodiscover_tasks()
 
 # Celery Beat Schedule
 app.conf.beat_schedule = {
-    'sync-attendance-every-5-minutes': {
+    # Auto-sync today's attendance from the biometric device every 5 minutes
+    'sync-todays-attendance-every-5-minutes': {
         'task': 'biometric.tasks.sync_attendance_from_device',
-        'schedule': 300.0,  # 5 minutes in seconds
+        'schedule': crontab(minute='*/5'),
     },
 }
 

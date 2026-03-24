@@ -84,63 +84,83 @@ def sync_employee_to_device(self, employee_id: int):
 @shared_task(bind=True)
 def sync_attendance_from_device(self):
     """
-    Sync attendance records from biometric device to database.
-    This task runs periodically (every 5 minutes by default).
+    Sync TODAY's attendance records from biometric device to database.
+    Runs periodically every 5 minutes via Celery Beat.
+    Uses TCP-first then UDP-fallback connection (same as manual sync).
     """
     start_time = timezone.now()
+    today = start_time.date()
+
     sync_log = SyncLog.objects.create(
         sync_type='ATTENDANCE_PULL',
         status='FA',
-        started_at=start_time
+        started_at=start_time,
     )
-    
+
+    records_processed = 0
+    records_success = 0
+    records_failed = 0
+
     try:
-        records_processed = 0
-        records_success = 0
-        records_failed = 0
-        
         with BiometricDeviceService() as device_service:
-            # Get all attendance records from device
-            attendances = device_service.get_attendance_records()
-            records_processed = len(attendances)
-            
-            for att in attendances:
-                try:
-                    # Find employee by biometric UID
-                    employee = Employee.objects.get(biometric_user_id=att.user_id)
-                    
-                    # Create or update attendance record
-                    attendance_record, created = AttendanceRecord.objects.get_or_create(
-                        employee=employee,
-                        punch_time=att.timestamp,
-                        punch_type='IN',  # Default, can be enhanced
-                        defaults={
-                            'biometric_user_id': att.user_id,
-                            'punch_state': att.punch,
-                            'verify_type': att.status,
-                        }
-                    )
-                    
-                    if created:
-                        # Update or create daily attendance summary
-                        update_daily_attendance(employee, att.timestamp.date())
-                    
-                    records_success += 1
-                    
-                except Employee.DoesNotExist:
-                    logger.warning(f"Employee with biometric UID {att.user_id} not found")
+            if not device_service.conn:
+                error_msg = "Could not connect to biometric device (TCP & UDP failed)"
+                logger.error(error_msg)
+                sync_log.error_message = error_msg
+                sync_log.completed_at = timezone.now()
+                sync_log.save()
+                return {'success': False, 'error': error_msg}
+
+            all_attendances = device_service.get_attendance_records()
+
+        for att in all_attendances:
+            try:
+                att_time = timezone.make_aware(att.timestamp)
+                att_date = att_time.date()
+
+                # Only process today's records
+                if att_date != today:
+                    continue
+
+                records_processed += 1
+
+                # Robust employee lookup: try employee_id first, then biometric_user_id
+                user_id_str = str(att.user_id)
+                employee = Employee.objects.filter(employee_id=user_id_str).first()
+                if not employee and user_id_str.isdigit():
+                    employee = Employee.objects.filter(
+                        biometric_user_id=int(user_id_str)
+                    ).first()
+
+                if not employee:
+                    logger.warning(f"No employee found for biometric user_id={user_id_str}")
                     records_failed += 1
                     continue
-                    
-                except Exception as e:
-                    logger.error(f"Error processing attendance record: {str(e)}")
-                    records_failed += 1
-                    continue
-        
-        # Update sync log
+
+                _, created = AttendanceRecord.objects.get_or_create(
+                    employee=employee,
+                    punch_time=att_time,
+                    defaults={
+                        'punch_type': 'IN',
+                        'biometric_user_id': int(att.uid) if hasattr(att, 'uid') else 0,
+                        'punch_state': att.punch,
+                        'verify_type': att.status,
+                    },
+                )
+
+                if created:
+                    update_daily_attendance(employee, att_date)
+
+                records_success += 1
+
+            except Exception as e:
+                logger.error(f"Error processing attendance record: {str(e)}")
+                records_failed += 1
+                continue
+
         end_time = timezone.now()
         duration = (end_time - start_time).total_seconds()
-        
+
         sync_log.status = 'SU' if records_failed == 0 else 'PA'
         sync_log.records_processed = records_processed
         sync_log.records_success = records_success
@@ -148,32 +168,33 @@ def sync_attendance_from_device(self):
         sync_log.completed_at = end_time
         sync_log.duration_seconds = duration
         sync_log.save()
-        
+
         logger.info(
-            f"Attendance sync completed: {records_success}/{records_processed} successful, "
-            f"{records_failed} failed, duration: {duration}s"
+            f"Auto attendance sync (today={today}): {records_success}/{records_processed} saved, "
+            f"{records_failed} failed, {duration:.1f}s"
         )
-        
+
         return {
             'success': True,
+            'date': str(today),
             'records_processed': records_processed,
             'records_success': records_success,
             'records_failed': records_failed,
-            'duration': duration
+            'duration': duration,
         }
-        
+
     except Exception as e:
         error_msg = f"Error syncing attendance from device: {str(e)}"
         logger.error(error_msg)
-        
+
         end_time = timezone.now()
         duration = (end_time - start_time).total_seconds()
-        
+
         sync_log.error_message = error_msg
         sync_log.completed_at = end_time
         sync_log.duration_seconds = duration
         sync_log.save()
-        
+
         return {'success': False, 'error': error_msg}
 
 

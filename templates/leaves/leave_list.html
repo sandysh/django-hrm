@@ -65,6 +65,7 @@
                 <td>{{ leave.created_at|date:"M d, Y" }}</td>
                 <td>
                     {% if leave.status == 'PE' %}
+                    <a href="{% url 'leave_edit' leave.id %}" class="btn btn-sm btn-primary">Edit</a>
                     <form method="post" action="{% url 'leave_approve' leave.id %}" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-success"
