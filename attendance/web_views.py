@@ -138,14 +138,18 @@ def attendance_report(request):
 
     today = timezone.now().date()
     
-    # Parse date range (default to full current month)
+    # Parse date range (defaults will be adjusted on the client to be Nepali month-based)
     start_date_param = request.GET.get('start_date')
     end_date_param = request.GET.get('end_date')
+    is_default_start = not start_date_param
+    is_default_end = not end_date_param
 
-    import calendar
+    # Month boundaries (computed on client from Nepali/Bikram Sambat) used for
+    # "Remaining Hours" card calculations. Expected to be AD YYYY-MM-DD.
+    month_start_param = request.GET.get('month_start_date')
+    month_end_param = request.GET.get('month_end_date')
+
     first_of_month = today.replace(day=1)
-    last_day = calendar.monthrange(today.year, today.month)[1]
-    last_of_month = today.replace(day=last_day)
     
     try:
         start_date = datetime.strptime(start_date_param, '%Y-%m-%d').date() if start_date_param else first_of_month
@@ -153,9 +157,25 @@ def attendance_report(request):
         start_date = first_of_month
     
     try:
-        end_date = datetime.strptime(end_date_param, '%Y-%m-%d').date() if end_date_param else last_of_month
+        end_date = datetime.strptime(end_date_param, '%Y-%m-%d').date() if end_date_param else today
     except ValueError:
-        end_date = last_of_month
+        end_date = today
+
+    # Defaults: use the selected range itself.
+    try:
+        month_start_date = datetime.strptime(month_start_param, '%Y-%m-%d').date() if month_start_param else start_date
+    except ValueError:
+        month_start_date = start_date
+
+    try:
+        month_end_date = datetime.strptime(month_end_param, '%Y-%m-%d').date() if month_end_param else end_date
+    except ValueError:
+        month_end_date = end_date
+
+    if month_start_date > month_end_date:
+        month_start_date, month_end_date = month_end_date, month_start_date
+
+    worked_end_date = min(end_date, month_end_date)
 
     # Clamp so start <= end
     if start_date > end_date:
@@ -242,43 +262,39 @@ def attendance_report(request):
             from core.models import SystemSettings
             from leaves.models import Holiday
             from datetime import datetime as dt
-            import calendar
 
-            # Current month range
-            today = timezone.now().date()
-            current_month = today.replace(day=1)
-
-            # Hours worked this month so far for this employee
+            # Nepali (BS) month range (computed on client, AD values)
+            # - month_start_date: BS month day 1 (AD)
+            # - month_end_date: BS month end (AD)
+            # - worked_end_date: up to selected end_date (usually today)
             month_attendance = DailyAttendance.objects.filter(
                 employee=selected_employee,
-                date__gte=current_month,
-                date__lte=today,
+                date__gte=month_start_date,
+                date__lte=worked_end_date,
             )
             month_total_hours = sum(a.total_hours or 0 for a in month_attendance)
 
             settings = SystemSettings.get_settings()
 
             # Hours per working day using office timings
-            start_dt = dt.combine(today, settings.office_start_time)
-            end_dt = dt.combine(today, settings.office_end_time)
+            start_dt = dt.combine(month_start_date, settings.office_start_time)
+            end_dt = dt.combine(month_start_date, settings.office_end_time)
             hours_per_day = (end_dt - start_dt).total_seconds() / 3600.0
-
-            last_day = calendar.monthrange(current_month.year, current_month.month)[1]
-            last_date_of_month = current_month.replace(day=last_day)
 
             holidays_this_month = set(
                 Holiday.objects.filter(
-                    date__gte=current_month,
-                    date__lte=last_date_of_month,
+                    date__gte=month_start_date,
+                    date__lte=month_end_date,
                 ).values_list('date', flat=True)
             )
 
             expected = 0.0
-            for day in range(1, last_day + 1):
-                d = current_month.replace(day=day)
+            current = month_start_date
+            while current <= month_end_date:
                 # Saturday is weekday 5 (0=Monday, 6=Sunday). We skip Saturday and any Holiday.
-                if d.weekday() != 5 and d not in holidays_this_month:
+                if current.weekday() != 5 and current not in holidays_this_month:
                     expected += hours_per_day
+                current += timedelta(days=1)
 
             monthly_expected_hours = expected
             monthly_remaining_hours = max(0.0, expected - float(month_total_hours))
@@ -290,6 +306,8 @@ def attendance_report(request):
         'attendance_records': attendance_records,
         'start_date': start_date,
         'end_date': end_date,
+        'is_default_start': is_default_start,
+        'is_default_end': is_default_end,
         'all_employees': all_employees,
         'selected_employee': selected_employee,
         'selected_employee_id': employee_id_param or '',

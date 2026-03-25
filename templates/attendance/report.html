@@ -174,6 +174,52 @@
         var startHidden = document.getElementById('start_date');
         var endHidden = document.getElementById('end_date');
 
+        var needAdjustStart = {{ is_default_start|yesno:"true,false" }};
+        var needAdjustEnd = {{ is_default_end|yesno:"true,false" }};
+
+        function getNepaliDateCtor() {
+            if (typeof NepaliDate === 'undefined') return null;
+            return NepaliDate.default ? NepaliDate.default : NepaliDate;
+        }
+
+        function pad2(n) {
+            return ('0' + n).slice(-2);
+        }
+
+        function formatYmd(d) {
+            return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+        }
+
+        // If the user did not provide query params, adjust defaults to Nepali (BS) month start.
+        // Then submit so the server-side attendance query uses the corrected AD range.
+        if ((needAdjustStart || needAdjustEnd) && typeof NepaliDate !== 'undefined') {
+            var ND = getNepaliDateCtor();
+            if (ND && ND.fromAD) {
+                var todayAd = new Date();
+                var todayNd = ND.fromAD(todayAd);
+                var todayBs = todayNd.getBS(); // { year, month, date, day } (monthIndex 0-11)
+
+                if (needAdjustStart) {
+                    var bsMonthStartNd = new ND(todayBs.year, todayBs.month, 1);
+                    var adMonthStart = bsMonthStartNd.getAD(); // { year, month, date, day }
+                    var adStartDate = new Date(adMonthStart.year, adMonthStart.month, adMonthStart.date);
+                    startHidden.value = formatYmd(adStartDate);
+                }
+
+                if (needAdjustEnd) {
+                    var adToday = todayNd.getAD();
+                    var adTodayDate = new Date(adToday.year, adToday.month, adToday.date);
+                    endHidden.value = formatYmd(adTodayDate);
+                }
+
+                var form = document.querySelector('form[method="get"]');
+                if (form) {
+                    form.submit();
+                    return;
+                }
+            }
+        }
+
         var startPicker = window.initNepaliDateHiddenField('#start_date_display', '#start_date', {
             onSelect: function () {
                 var bs = startPicker.getDate();

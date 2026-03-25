@@ -34,11 +34,12 @@
   function bsObjectToAdYmd(bs) {
     var ND = NepaliDateCls();
     if (!ND || !bs) return '';
+    // nepali-date-converter uses monthIndex (0-11) like JS Date.
     var nd = new ND(bs.year, bs.month, bs.day);
-    var g = nd.toGregorian();
-    var y = g.getFullYear();
-    var m = String(g.getMonth() + 1).padStart(2, '0');
-    var d = String(g.getDate()).padStart(2, '0');
+    var jsDate = nd.toJsDate();
+    var y = jsDate.getFullYear();
+    var m = String(jsDate.getMonth() + 1).padStart(2, '0');
+    var d = String(jsDate.getDate()).padStart(2, '0');
     return y + '-' + m + '-' + d;
   }
 
