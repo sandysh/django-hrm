@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Holiday Calendar - HRM System{% endblock %}
 
 {% block extra_css %}
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <style>
-    /* Highlight Saturday columns */
     .fc-day-sat {
         background-color: #fee2e2 !important;
-        /* Light red background for Saturday */
     }
 
     #calendar {
@@ -33,7 +31,11 @@
 <div class="card">
     <div id='calendar'></div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script src="{% static 'js/fullcalendar-nepali.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
@@ -47,12 +49,17 @@
             events: '{% url "holiday_api" %}',
             editable: false,
             selectable: true,
-            firstDay: 0, // Sunday first
+            firstDay: 0,
+
+            dayCellDidMount: function (info) {
+                if (typeof appendNepaliBsToFullCalendarDay === 'function') {
+                    appendNepaliBsToFullCalendarDay(info);
+                }
+            },
 
             select: function (info) {
                 var title = prompt('Enter Holiday Name for ' + info.startStr + ':');
                 if (title) {
-                    // Create holiday
                     fetch('{% url "holiday_api" %}', {
                         method: 'POST',
                         headers: {

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -379,6 +380,8 @@
         {% block content %}{% endblock %}
     </div>
 
+    <script src="{% static 'js/nepali-date-converter.umd.js' %}"></script>
+    <script src="{% static 'js/nepali-display.js' %}"></script>
     <script>
         // Auto-hide alerts after 5 seconds
         setTimeout(() => {

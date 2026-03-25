@@ -50,8 +50,8 @@
                     <small style="color: var(--text-secondary);">{{ leave.employee.employee_id }}</small>
                 </td>
                 <td>{{ leave.leave_type.name }}</td>
-                <td>{{ leave.start_date }}</td>
-                <td>{{ leave.end_date }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.start_date|date:'Y-m-d' }}">{{ leave.start_date|date:"M d, Y" }}</span></td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.end_date|date:'Y-m-d' }}">{{ leave.end_date|date:"M d, Y" }}</span></td>
                 <td><strong>{{ leave.total_days }}</strong></td>
                 <td>
                     {% if leave.status == 'PE' %}
@@ -62,7 +62,7 @@
                     <span class="badge badge-danger">✗ Rejected</span>
                     {% endif %}
                 </td>
-                <td>{{ leave.created_at|date:"M d, Y" }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.created_at|date:'c' }}">{{ leave.created_at|date:"M d, Y" }}</span></td>
                 <td>
                     {% if leave.status == 'PE' %}
                     <a href="{% url 'leave_edit' leave.id %}" class="btn btn-sm btn-primary">Edit</a>

@@ -35,11 +35,11 @@
             </tr>
             <tr>
                 <th>Start Date</th>
-                <td>{{ leave_request.start_date|date:"l, F d, Y" }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave_request.start_date|date:'Y-m-d' }}">{{ leave_request.start_date|date:"l, F d, Y" }}</span></td>
             </tr>
             <tr>
                 <th>End Date</th>
-                <td>{{ leave_request.end_date|date:"l, F d, Y" }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave_request.end_date|date:'Y-m-d' }}">{{ leave_request.end_date|date:"l, F d, Y" }}</span></td>
             </tr>
             <tr>
                 <th>Total Days</th>
@@ -68,17 +68,19 @@
         <table class="table">
             <tr>
                 <th style="width: 40%;">Applied On</th>
-                <td>{{ leave_request.created_at|date:"M d, Y H:i" }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave_request.created_at|date:'c' }}">{{ leave_request.created_at|date:"M d, Y H:i" }}</span></td>
             </tr>
             {% if leave_request.approved_by %}
             <tr>
                 <th>Reviewed By</th>
                 <td>{{ leave_request.approved_by.get_full_name }}</td>
             </tr>
+            {% if leave_request.approved_at %}
             <tr>
                 <th>Reviewed On</th>
-                <td>{{ leave_request.approved_at|date:"M d, Y H:i" }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave_request.approved_at|date:'c' }}">{{ leave_request.approved_at|date:"M d, Y H:i" }}</span></td>
             </tr>
+            {% endif %}
             {% endif %}
         </table>
 

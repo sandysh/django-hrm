@@ -31,6 +31,9 @@ db.sqlite3-journal
 /staticfiles/
 /media/
 
+# Node (vendor script copies nepali-date-converter into static/js)
+node_modules/
+
 # Environment
 .env
 .venv

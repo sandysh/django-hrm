@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}My Calendar - HRM System{% endblock %}
 
 {% block extra_css %}
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <style>
     .fc-day-sat {
         background-color: #f3f4f6;
-        /* Subtle gray for Saturday */
     }
 
     #calendar {
@@ -58,7 +57,11 @@
 <div class="card">
     <div id='calendar'></div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script src="{% static 'js/fullcalendar-nepali.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
@@ -74,12 +77,17 @@
             selectable: false,
             firstDay: 0,
 
+            dayCellDidMount: function (info) {
+                if (typeof appendNepaliBsToFullCalendarDay === 'function') {
+                    appendNepaliBsToFullCalendarDay(info);
+                }
+            },
+
             eventClick: function (info) {
                 // Prevent default behavior
             },
 
             eventDidMount: function (info) {
-                // Add tooltip-like behavior if needed using title attribute
                 info.el.title = info.event.title;
             }
         });

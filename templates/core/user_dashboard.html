@@ -112,7 +112,7 @@
         <tbody>
             {% for attendance in recent_attendance %}
             <tr>
-                <td>{{ attendance.date }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ attendance.date|date:'Y-m-d' }}">{{ attendance.date|date:"M d, Y" }}</span></td>
                 <td>{{ attendance.check_in_time|default:"--:--" }}</td>
                 <td>{{ attendance.check_out_time|default:"--:--" }}</td>
                 <td>{{ attendance.total_hours|default:"0.0" }}</td>
@@ -160,8 +160,8 @@
             {% for leave in recent_leaves %}
             <tr>
                 <td>{{ leave.leave_type.name }}</td>
-                <td>{{ leave.start_date }}</td>
-                <td>{{ leave.end_date }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.start_date|date:'Y-m-d' }}">{{ leave.start_date|date:"M d, Y" }}</span></td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.end_date|date:'Y-m-d' }}">{{ leave.end_date|date:"M d, Y" }}</span></td>
                 <td>{{ leave.total_days }}</td>
                 <td>
                     {% if leave.status == 'PE' %}

@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Attendance Report - HRM System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/nepali-date-picker.css' %}">
+{% endblock %}
 
 {% block content %}
 <h1>Attendance Report</h1>
@@ -21,15 +26,15 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-            <label for="start_date" class="form-label">From</label>
-            <input type="date" id="start_date" name="start_date" class="form-control"
-                value="{{ start_date|date:'Y-m-d' }}">
+            <label for="start_date_display" class="form-label">From</label>
+            <input type="text" id="start_date_display" class="form-control" readonly autocomplete="off">
+            <input type="hidden" name="start_date" id="start_date" value="{{ start_date|date:'Y-m-d' }}">
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-            <label for="end_date" class="form-label">To</label>
-            <input type="date" id="end_date" name="end_date" class="form-control"
-                value="{{ end_date|date:'Y-m-d' }}">
+            <label for="end_date_display" class="form-label">To</label>
+            <input type="text" id="end_date_display" class="form-control" readonly autocomplete="off">
+            <input type="hidden" name="end_date" id="end_date" value="{{ end_date|date:'Y-m-d' }}">
         </div>
 
         <div style="display: flex; gap: 0.5rem;">
@@ -83,9 +88,9 @@
         {% if selected_employee %}
             Attendance for <strong>{{ selected_employee.get_full_name }}</strong>
             ({{ selected_employee.employee_id }})
-            &mdash; {{ start_date|date:"M d, Y" }} to {{ end_date|date:"M d, Y" }}
+            &mdash; <span class="js-nepali-date" data-nepali-ad="{{ start_date|date:'Y-m-d' }}">{{ start_date|date:"M d, Y" }}</span> to <span class="js-nepali-date" data-nepali-ad="{{ end_date|date:'Y-m-d' }}">{{ end_date|date:"M d, Y" }}</span>
         {% else %}
-            All Employees &mdash; {{ start_date|date:"M d, Y" }} to {{ end_date|date:"M d, Y" }}
+            All Employees &mdash; <span class="js-nepali-date" data-nepali-ad="{{ start_date|date:'Y-m-d' }}">{{ start_date|date:"M d, Y" }}</span> to <span class="js-nepali-date" data-nepali-ad="{{ end_date|date:'Y-m-d' }}">{{ end_date|date:"M d, Y" }}</span>
         {% endif %}
     </div>
 
@@ -115,7 +120,7 @@
                 <td>{{ record.employee.get_full_name }}</td>
                 <td>{{ record.employee.department|default:"N/A" }}</td>
                 {% endif %}
-                <td><strong>{{ record.date|date:"D, M d, Y" }}</strong></td>
+                <td><strong><span class="js-nepali-date" data-nepali-ad="{{ record.date|date:'Y-m-d' }}">{{ record.date|date:"D, M d, Y" }}</span></strong></td>
                 <td>
                     {{ record.check_in_time|default:"--:--" }}
                     {% if record.is_late %}
@@ -159,4 +164,35 @@
     </p>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/nepali-date-picker.umd.js' %}"></script>
+<script src="{% static 'js/nepali-datepicker-init.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var startHidden = document.getElementById('start_date');
+        var endHidden = document.getElementById('end_date');
+
+        var startPicker = window.initNepaliDateHiddenField('#start_date_display', '#start_date', {
+            onSelect: function () {
+                var bs = startPicker.getDate();
+                endPicker.setOptions({ minDate: bs });
+                if (endHidden.value && endHidden.value < startHidden.value) {
+                    endPicker.setDate(bs);
+                    endHidden.value = startHidden.value;
+                }
+            }
+        });
+
+        var endPicker = window.initNepaliDateHiddenField('#end_date_display', '#end_date', {});
+
+        if (startHidden.value) {
+            var minBs = window.adYmdToBsObject(startHidden.value);
+            if (minBs) {
+                endPicker.setOptions({ minDate: minBs });
+            }
+        }
+    });
+</script>
 {% endblock %}

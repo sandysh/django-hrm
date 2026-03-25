@@ -83,7 +83,7 @@
             </tr>
             <tr>
                 <th>Join Date</th>
-                <td>{{ employee.date_joined|date:"M d, Y" }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ employee.date_joined|date:'Y-m-d' }}">{{ employee.date_joined|date:"M d, Y" }}</span></td>
             </tr>
         </table>
     </div>
@@ -108,7 +108,7 @@
             </tr>
             <tr>
                 <th>Last Sync</th>
-                <td>{{ employee.last_biometric_sync|date:"M d, Y H:i"|default:"Never" }}</td>
+                <td>{% if employee.last_biometric_sync %}<span class="js-nepali-date" data-nepali-ad="{{ employee.last_biometric_sync|date:'c' }}">{{ employee.last_biometric_sync|date:"M d, Y H:i" }}</span>{% else %}Never{% endif %}</td>
             </tr>
         </table>
     </div>
@@ -129,11 +129,11 @@
             </tr>
             <tr>
                 <th>Account Created</th>
-                <td>{{ employee.date_joined|date:"M d, Y H:i" }}</td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ employee.date_joined|date:'c' }}">{{ employee.date_joined|date:"M d, Y H:i" }}</span></td>
             </tr>
             <tr>
                 <th>Last Login</th>
-                <td>{{ employee.last_login|date:"M d, Y H:i"|default:"Never" }}</td>
+                <td>{% if employee.last_login %}<span class="js-nepali-date" data-nepali-ad="{{ employee.last_login|date:'c' }}">{{ employee.last_login|date:"M d, Y H:i" }}</span>{% else %}Never{% endif %}</td>
             </tr>
         </table>
     </div>

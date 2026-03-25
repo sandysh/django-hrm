@@ -1,0 +1,21 @@
+{
+  "name": "hrm",
+  "version": "1.0.0",
+  "description": "This folder contains all documentation and scripts related to fixing the late punch-in calculation issue.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vendor:nepali": "cp node_modules/nepali-date-converter/dist/nepali-date-converter.umd.js static/js/nepali-date-converter.umd.js && cp node_modules/@rato-guras-technology/nepali-date-picker/dist/index.umd.js static/js/nepali-date-picker.umd.js && cp node_modules/@rato-guras-technology/nepali-date-picker/dist/styles.css static/css/nepali-date-picker.css",
+    "postinstall": "npm run vendor:nepali"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@rato-guras-technology/nepali-date-picker": "^1.1.0",
+    "nepali-date-converter": "^3.4.0"
+  }
+}

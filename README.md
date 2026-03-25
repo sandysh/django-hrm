@@ -88,3 +88,8 @@ Or see `FINAL_DATABASE_FIX.md` for detailed instructions.
 ---
 
 **To fix your database, run:** `fix_database_late_status.sql`
+
+To run the periodic sync, make sure both the worker and beat are running:
+
+celery -A hrm_project worker -l info
+celery -A hrm_project beat -l info
