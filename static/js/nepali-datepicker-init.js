@@ -36,7 +36,15 @@
     if (!ND || !bs) return '';
     // nepali-date-converter uses monthIndex (0-11) like JS Date.
     var nd = new ND(bs.year, bs.month, bs.day);
-    var jsDate = nd.toJsDate();
+    // The NepaliDate instance from this picker library exposes `toGregorian()`
+    // (not `toJsDate()`).
+    var jsDate = null;
+    if (typeof nd.toGregorian === 'function') {
+      jsDate = nd.toGregorian();
+    } else if (typeof nd.toJsDate === 'function') {
+      jsDate = nd.toJsDate();
+    }
+    if (!jsDate) return '';
     var y = jsDate.getFullYear();
     var m = String(jsDate.getMonth() + 1).padStart(2, '0');
     var d = String(jsDate.getDate()).padStart(2, '0');

@@ -136,11 +136,21 @@
         var startHidden = document.getElementById('start_date');
         var endHidden = document.getElementById('end_date');
 
+        var endPicker = window.initNepaliDateHiddenField('#end_date_display', '#end_date', {
+            disablePastDates: disablePast
+        });
+
         var startPicker = window.initNepaliDateHiddenField('#start_date_display', '#start_date', {
             disablePastDates: disablePast,
-            onSelect: function () {
-                var bs = startPicker.getDate();
+            onSelect: function (bs) {
+                // The picker library may invoke `onDateSelect` during initialization.
+                // Ensure we don't reference `endPicker` before it exists by initializing
+                // `endPicker` first and using the `bs` callback argument.
+                if (!endPicker) return;
+
                 endPicker.setOptions({ minDate: bs });
+
+                // Keep end date in sync (end >= start) if the user changes start.
                 if (endHidden.value && endHidden.value < startHidden.value) {
                     endPicker.setDate(bs);
                     endHidden.value = startHidden.value;
@@ -148,15 +158,33 @@
             }
         });
 
-        var endPicker = window.initNepaliDateHiddenField('#end_date_display', '#end_date', {
-            disablePastDates: disablePast
-        });
-
         if (startHidden.value) {
             var minBs = window.adYmdToBsObject(startHidden.value);
             if (minBs) {
                 endPicker.setOptions({ minDate: minBs });
             }
+        }
+
+        // Some browsers / layouts can prevent the picker from binding its own click handler
+        // for one of the fields. Explicitly trigger `show()` to ensure both pickers open.
+        var startDisplay = document.getElementById('start_date_display');
+        if (startDisplay && startPicker && typeof startPicker.show === 'function') {
+            startDisplay.addEventListener('click', function () {
+                startPicker.show();
+            });
+            startDisplay.addEventListener('focus', function () {
+                startPicker.show();
+            });
+        }
+
+        var endDisplay = document.getElementById('end_date_display');
+        if (endDisplay && endPicker && typeof endPicker.show === 'function') {
+            endDisplay.addEventListener('click', function () {
+                endPicker.show();
+            });
+            endDisplay.addEventListener('focus', function () {
+                endPicker.show();
+            });
         }
     });
 </script>
