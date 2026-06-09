@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load attendance_tags %}
 {% block title %}Attendance Report - HRM System{% endblock %}
 
 {% block extra_css %}
@@ -128,7 +128,7 @@
                     {% endif %}
                 </td>
                 <td>{{ record.check_out_time|default:"--:--" }}</td>
-                <td>{{ record.total_hours|default:"0.0" }}</td>
+                <td>{{ record.total_hours|hours_minutes }}</td>
                 <td>
                     {% if record.missed_hours %}
                         {{ record.missed_hours }}
