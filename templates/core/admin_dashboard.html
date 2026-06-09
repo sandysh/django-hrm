@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block title %}Admin Dashboard - HRM System{% endblock %}
-
+{% load attendance_tags %}
 {% block content %}
+
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
     <h1>Admin Dashboard</h1>
     <div style="display: flex; gap: 0.5rem;">
@@ -120,7 +121,9 @@
                     {% endif %}
                 </td>
                 <td>{{ attendance.check_out_time|default:"--:--" }}</td>
-                <td>{{ attendance.total_hours|default:"0.0" }}</td>
+                <td>
+                    {{ attendance.total_hours|hours_minutes }}
+                </td>
                 <td>
                     {% if attendance.status == 'PR' %}
                     <span class="badge badge-success">Present</span>

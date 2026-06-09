@@ -90,3 +90,25 @@ def get_office_start_time():
         return settings.office_start_time
     except:
         return "09:00:00"
+    
+
+
+@register.filter
+def hours_minutes(value):
+    if value in (None, "", 0):
+        return "0.0"
+
+    try:
+        total_minutes = int(float(value) * 60)
+
+        hours = total_minutes // 60
+        minutes = total_minutes % 60
+
+        if hours and minutes:
+            return f"{hours}h {minutes}m"
+        elif hours:
+            return f"{hours}h"
+        else:
+            return f"{minutes}m"
+    except:
+        return "0.0"
