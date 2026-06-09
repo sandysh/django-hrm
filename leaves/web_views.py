@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 import json
 from leaves.models import LeaveRequest, LeaveType, Holiday
+from reports.service import AuditLogService
 
 
 @login_required
@@ -65,6 +66,7 @@ def leave_apply(request):
             )
             
             messages.success(request, 'Leave request submitted successfully!')
+            AuditLogService(request.user).create()
             return redirect('my_leaves')
         except Exception as e:
             messages.error(request, f'Error submitting leave request: {str(e)}')
@@ -168,6 +170,7 @@ def leave_edit(request, pk):
             leave_request.save()
 
             messages.success(request, 'Leave request updated successfully!')
+            AuditLogService(request.user).update()
             if request.user.is_staff:
                 return redirect('leave_requests')
             return redirect('my_leaves')
@@ -202,6 +205,7 @@ def leave_approve(request, pk):
     leave_request.save()
     
     messages.success(request, 'Leave request approved successfully!')
+    AuditLogService(request.user).update()
     return redirect('leave_requests')
 
 
@@ -225,6 +229,7 @@ def leave_reject(request, pk):
     leave_request.save()
     
     messages.success(request, 'Leave request rejected!')
+    AuditLogService(request.user).update()
     return redirect('leave_requests')
 
 

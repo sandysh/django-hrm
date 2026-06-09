@@ -8,8 +8,9 @@ class AuditLogService:
         self.user = user
 
     def log(self, action: logType):
+        user_obj = self.user if hasattr(self.user, 'is_authenticated') and self.user.is_authenticated else None
         return AuditLog.objects.create(
-            user=str(self.user),
+            user=user_obj,
             action=action,
             timestamp=timezone.now()
         )

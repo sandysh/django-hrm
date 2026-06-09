@@ -9,6 +9,7 @@ from .models import Employee, Department, Designation
 from biometric.tasks import sync_employee_to_device
 from zk import ZK, const
 from django.conf import settings
+from reports.service import AuditLogService
 
 
 
@@ -225,6 +226,7 @@ def employee_create(request):
             else:
                 messages.warning(request, f'Employee created locally, but device sync failed: {msg}')
             
+            AuditLogService(request.user).create()
             return redirect('employee_list')
         except Exception as e:
             messages.error(request, f'Error creating employee: {str(e)}')
@@ -279,6 +281,7 @@ def employee_edit(request, pk):
             else:
                 messages.warning(request, f'Employee updated locally, but device sync failed: {msg}')
             
+            AuditLogService(request.user).update()
             return redirect('employee_list')
         except Exception as e:
             messages.error(request, f'Error updating employee: {str(e)}')
@@ -335,6 +338,7 @@ def employee_delete(request, pk):
         else:
             messages.warning(request, f'Employee {employee_id} deleted from Database, but failed to delete from Device: {msg}')
             
+        AuditLogService(request.user).delete()    
         return redirect('employee_list')
     
     return render(request, 'employees/employee_confirm_delete.html', {'employee': employee})

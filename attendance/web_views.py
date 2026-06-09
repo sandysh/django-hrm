@@ -7,8 +7,10 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
 from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 from attendance.models import AttendanceRecord, DailyAttendance
 from biometric.tasks import update_daily_attendance
+from reports.service import AuditLogService
 
 
 @login_required
@@ -323,4 +325,5 @@ def attendance_report(request):
         'monthly_remaining_hours': round(monthly_remaining_hours, 2) if monthly_remaining_hours else 0,
     }
 
+    AuditLogService(request.user).report_generated()
     return render(request, 'attendance/report.html', context)

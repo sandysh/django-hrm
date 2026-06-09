@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from employees.models import Employee
 from attendance.models import AttendanceRecord, DailyAttendance
 from leaves.models import LeaveRequest, LeaveBalance, LeaveType, Holiday
+from reports.service import AuditLogService
 
 
 def login_view(request):
@@ -25,6 +26,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            AuditLogService(user).login()
             return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password')
@@ -34,6 +36,7 @@ def login_view(request):
 
 def logout_view(request):
     """Logout user."""
+    AuditLogService(request.user).logout()
     logout(request)
     messages.success(request, 'You have been logged out successfully')
     return redirect('login')
