@@ -1,5 +1,5 @@
 from django.contrib import admin
-from auditlogs.models import AuditLog
+from reports.models import AuditLog
 
 # Register your models here.
 admin.site.register(AuditLog)

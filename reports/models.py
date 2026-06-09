@@ -1,5 +1,5 @@
 from django.db import models
-
+from employees.models import Employee
 class logType(models.TextChoices):
     LOGIN = 'LOGIN', 'Login'
     LOGOUT = 'LOGOUT', 'Logout'
@@ -11,7 +11,8 @@ class logType(models.TextChoices):
     
 # Create your models here.
 class AuditLog(models.Model):
-    user = models.CharField(max_length=255)
+    user= models.ForeignKey(Employee, on_delete=models.CASCADE , null=True, blank=True)
+
     action = models.CharField(max_length=50, choices=logType.choices)
     timestamp = models.DateTimeField(auto_now_add=True)
 

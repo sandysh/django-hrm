@@ -1,5 +1,5 @@
 from django.utils import timezone
-from .models import AuditLog, logType
+from reports.models import AuditLog, logType
 
 
 class AuditLogService:
