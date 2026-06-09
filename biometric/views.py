@@ -10,6 +10,17 @@ from .tasks import (
     sync_employee_to_device, sync_attendance_from_device,
     sync_all_employees_to_device, fetch_device_info
 )
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
+from django.shortcuts import redirect, get_object_or_404
+from django.utils import timezone
+import time
+
+from employees.models import Employee, Department
+from attendance.models import AttendanceRecord
+from .models import BiometricDevice, SyncLog
+from .services import BiometricDeviceService
 
 
 class BiometricDeviceViewSet(viewsets.ModelViewSet):
@@ -182,3 +193,314 @@ class SyncLogViewSet(viewsets.ReadOnlyModelViewSet):
         )
         
         return Response(stats)
+
+
+class DumpBiometricDataView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    Dumps ALL data from biometric device to local DB.
+    Step 1: Sync users  → creates/updates Employee records
+    Step 2: Sync attendance → creates AttendanceRecord records
+    Logs everything to SyncLog.
+    """
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get(self, request, pk=None):
+        # Get device — use pk from URL or fall back to first active device
+        if pk:
+            device = get_object_or_404(BiometricDevice, pk=pk, is_active=True)
+        else:
+            device = BiometricDevice.objects.filter(is_active=True).first()
+            if not device:
+                messages.error(request, "No active biometric device configured.")
+                return redirect('dashboard')
+
+        now = timezone.now()
+        started_at = time.time()
+
+        # ── Step 1: Sync Departments ─────────────────────────────────────────
+        dept_log = SyncLog.objects.create(
+            device=device,
+            sync_type='DEPARTMENT_PULL',
+            status='PA',  # mark partial until done
+        )
+
+        depts_created = 0
+        depts_found = 0
+        depts_failed = 0
+        group_id_map = {}  # Map group_id → department
+
+        try:
+            with BiometricDeviceService(
+                ip_address=device.ip_address,
+                port=device.port,
+                password=device.password,
+                timeout=device.timeout,
+            ) as service:
+                
+                users = service.get_users()
+                print(f"[DUMP] {len(users)} users on device")
+                
+                # Collect unique group_ids
+                group_ids = set()
+                for user in users:
+                    if hasattr(user, 'group_id') and user.group_id:
+                        group_ids.add(str(user.group_id).strip())
+                
+                print(f"[DUMP] Found {len(group_ids)} unique departments/groups: {group_ids}")
+                
+                # Create or get departments for each group_id
+                for group_id in group_ids:
+                    try:
+                        if not group_id or group_id == '0':
+                            continue
+                        
+                        dept, created = Department.objects.get_or_create(
+                            code=group_id,
+                            defaults={
+                                'name': f'Dept_{group_id}',
+                                'description': f'Auto-synced from biometric device group {group_id}',
+                                'is_active': True,
+                            }
+                        )
+                        
+                        group_id_map[group_id] = dept
+                        
+                        if created:
+                            depts_created += 1
+                            print(f"[DUMP] Created department: {dept.name} (code={group_id})")
+                        else:
+                            depts_found += 1
+                            print(f"[DUMP] Found existing department: {dept.name} (code={group_id})")
+                    
+                    except Exception as e:
+                        depts_failed += 1
+                        print(f"[DUMP] Failed to create/get department code={group_id}: {e}")
+            
+            dept_log.status = 'FA' if depts_failed == len(group_ids) else ('SU' if depts_failed == 0 else 'PA')
+            dept_log.records_processed = len(group_ids)
+            dept_log.records_success = depts_created + depts_found
+            dept_log.records_failed = depts_failed
+            dept_log.completed_at = timezone.now()
+            dept_log.duration_seconds = round(time.time() - started_at, 2)
+            dept_log.details = {
+                'created': depts_created,
+                'found': depts_found,
+                'failed': depts_failed,
+            }
+            dept_log.save()
+            print(f"[DUMP] Department sync complete — {depts_created} created, {depts_found} found")
+        
+        except Exception as e:
+            dept_log.status = 'FA'
+            dept_log.error_message = str(e)
+            dept_log.completed_at = timezone.now()
+            dept_log.save()
+            messages.error(request, f"Department sync failed: {e}")
+            return redirect('dashboard')
+
+        # ── Step 2: Sync Users ───────────────────────────────────────────────
+        user_log = SyncLog.objects.create(
+            device=device,
+            sync_type='USER_PULL',
+            status='PA',  # mark partial until done
+        )
+
+        users_created = 0
+        users_updated = 0
+        users_failed = 0
+
+        try:
+            with BiometricDeviceService(
+                ip_address=device.ip_address,
+                port=device.port,
+                password=device.password,
+                timeout=device.timeout,
+            ) as service:
+
+                users = service.get_users()
+                print(f"[DUMP] {len(users)} users on device")
+
+                for user in users:
+                    try:
+                        if not user.uid:
+                            continue
+
+                        name_parts = (user.name or '').split(' ', 1)
+                        first_name = name_parts[0]
+                        last_name = name_parts[1] if len(name_parts) > 1 else ''
+
+                        # Get department for this user based on group_id
+                        user_department = None
+                        if hasattr(user, 'group_id') and user.group_id:
+                            user_department = group_id_map.get(str(user.group_id).strip())
+
+                        employee, created = Employee.objects.get_or_create(
+                            biometric_user_id=int(user.uid),
+                            defaults={
+                                'username': f"bio_{user.uid}",
+                                'employee_id': str(user.user_id) if user.user_id else f"BIO{int(user.uid):03d}",
+                                'first_name': first_name,
+                                'last_name': last_name,
+                                'biometric_synced': True,
+                                'biometric_sync_date': now,
+                                'department': user_department,
+                            }
+                        )
+
+                        if created:
+                            users_created += 1
+                            print(f"[DUMP] Created: uid={user.uid} name={user.name} dept={user_department}")
+                        else:
+                            # Update name/sync status if missing
+                            updated_fields = []
+                            if not employee.first_name and first_name:
+                                employee.first_name = first_name
+                                employee.last_name = last_name
+                                updated_fields += ['first_name', 'last_name']
+                            if not employee.biometric_synced:
+                                employee.biometric_synced = True
+                                employee.biometric_sync_date = now
+                                updated_fields += ['biometric_synced', 'biometric_sync_date']
+                            if not employee.department and user_department:
+                                employee.department = user_department
+                                updated_fields += ['department']
+                            if updated_fields:
+                                employee.save(update_fields=updated_fields)
+                                users_updated += 1
+
+                    except Exception as e:
+                        users_failed += 1
+                        print(f"[DUMP] Failed to create user uid={getattr(user, 'uid', '?')}: {e}")
+
+            user_log.status = 'FA' if users_failed == len(users) else ('SU' if users_failed == 0 else 'PA')
+            user_log.records_processed = len(users)
+            user_log.records_success = users_created + users_updated
+            user_log.records_failed = users_failed
+            user_log.completed_at = timezone.now()
+            user_log.duration_seconds = round(time.time() - started_at, 2)
+            user_log.details = {
+                'created': users_created,
+                'updated': users_updated,
+                'failed': users_failed,
+            }
+            user_log.save()
+
+        except Exception as e:
+            user_log.status = 'FA'
+            user_log.error_message = str(e)
+            user_log.completed_at = timezone.now()
+            user_log.save()
+            messages.error(request, f"User sync failed: {e}")
+            return redirect('dashboard')
+
+        # ── Step 3: Sync Attendance ──────────────────────────────────────────
+        att_log = SyncLog.objects.create(
+            device=device,
+            sync_type='ATTENDANCE_PULL',
+            status='PA',
+        )
+
+        att_started = time.time()
+        attendance_created = 0
+        attendance_skipped = 0
+        attendance_failed = 0
+        unmatched = set()
+
+        try:
+            # Build lookup from what we just synced
+            employee_lookup = {
+                emp.biometric_user_id: emp
+                for emp in Employee.objects.filter(biometric_user_id__isnull=False)
+            }
+            print(f"[DUMP] Lookup ready — {len(employee_lookup)} employees")
+
+            with BiometricDeviceService(
+                ip_address=device.ip_address,
+                port=device.port,
+                password=device.password,
+                timeout=device.timeout,
+            ) as service:
+
+                attendances = service.get_attendance_records()
+                print(f"[DUMP] {len(attendances)} attendance logs on device")
+
+                for att in attendances:
+                    try:
+                        uid = int(att.uid) if hasattr(att, 'uid') and att.uid else None
+                        if uid is None:
+                            attendance_failed += 1
+                            continue
+
+                        employee = employee_lookup.get(uid)
+                        if not employee:
+                            unmatched.add(str(uid))
+                            attendance_skipped += 1
+                            continue
+
+                        att_time = timezone.make_aware(att.timestamp)
+
+                        _, created = AttendanceRecord.objects.get_or_create(
+                            employee=employee,
+                            punch_time=att_time,
+                            defaults={
+                                'punch_type': 'IN',
+                                'biometric_user_id': uid,
+                                'punch_state': att.punch,
+                                'verify_type': att.status,
+                            }
+                        )
+
+                        if created:
+                            attendance_created += 1
+                        else:
+                            attendance_skipped += 1
+
+                    except Exception as e:
+                        attendance_failed += 1
+                        print(f"[DUMP] Attendance error uid={getattr(att, 'uid', '?')}: {e}")
+
+            att_log.status = 'FA' if attendance_failed == len(attendances) else ('SU' if attendance_failed == 0 else 'PA')
+            att_log.records_processed = len(attendances)
+            att_log.records_success = attendance_created
+            att_log.records_failed = attendance_failed
+            att_log.completed_at = timezone.now()
+            att_log.duration_seconds = round(time.time() - att_started, 2)
+            att_log.details = {
+                'created': attendance_created,
+                'skipped_duplicates': attendance_skipped,
+                'failed': attendance_failed,
+                'unmatched_uids': sorted(unmatched),
+            }
+            att_log.save()
+
+            # Update device last sync time
+            device.last_sync_time = timezone.now()
+            device.last_connection_status = True
+            device.last_error = ''
+            device.save(update_fields=['last_sync_time', 'last_connection_status', 'last_error'])
+
+        except Exception as e:
+            att_log.status = 'FA'
+            att_log.error_message = str(e)
+            att_log.completed_at = timezone.now()
+            att_log.save()
+            device.last_connection_status = False
+            device.last_error = str(e)
+            device.save(update_fields=['last_connection_status', 'last_error'])
+            messages.error(request, f"Attendance sync failed: {e}")
+            return redirect('dashboard')
+
+        messages.success(
+            request,
+            f"Dump complete — "
+            f"{depts_created} new departments | "
+            f"{users_created} new employees, {users_updated} updated | "
+            f"{attendance_created} new attendance records"
+            + (f" | Unmatched uids: {', '.join(sorted(unmatched))}" if unmatched else "")
+        )
+        return redirect('dashboard')
+    
+    
+    
