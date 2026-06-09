@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Audit Logs - HRM System{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Audit Logs</h1>
+</div>
+
+<!-- Filters -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <form method="get" style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
+        <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+            <label for="search" class="form-label">Search Employee</label>
+            <input type="text" id="search" name="search" class="form-control" placeholder="Employee ID, Name..."
+                value="{{ search_query|default:'' }}">
+        </div>
+
+        <div class="form-group" style="min-width: 200px; margin-bottom: 0;">
+            <label for="action" class="form-label">Action</label>
+            <select id="action" name="action" class="form-control">
+                <option value="">All Actions</option>
+                {% for value, label in log_types %}
+                <option value="{{ value }}" {% if action_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{% url 'audit_log_list' %}" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+
+<!-- Logs List -->
+<div class="card">
+    <div class="card-header">
+        Total {{ paginator.count }} Log{{ paginator.count|pluralize }} Found
+    </div>
+
+    {% if logs %}
+    <div style="overflow-x: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.timestamp|date:"M d, Y h:i A" }}</td>
+                    <td>
+                        {% if log.user %}
+                        <strong>{{ log.user.employee_id }}</strong> - {{ log.user.get_full_name }}
+                        {% else %}
+                        <span class="text-secondary">System / Anonymous</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if log.action == 'LOGIN' or log.action == 'LOGOUT' %}
+                        <span class="badge badge-info">{{ log.get_action_display }}</span>
+                        {% elif log.action == 'CREATE' %}
+                        <span class="badge badge-success">{{ log.get_action_display }}</span>
+                        {% elif log.action == 'UPDATE' %}
+                        <span class="badge badge-warning">{{ log.get_action_display }}</span>
+                        {% elif log.action == 'DELETE' %}
+                        <span class="badge badge-danger">{{ log.get_action_display }}</span>
+                        {% else %}
+                        <span class="badge badge-secondary">{{ log.get_action_display }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div style="display: flex; justify-content: center; margin-top: 1.5rem; gap: 0.5rem;">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter %}&action={{ action_filter }}{% endif %}"
+            class="btn btn-sm btn-secondary">&laquo; First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter %}&action={{ action_filter }}{% endif %}"
+            class="btn btn-sm btn-secondary">Previous</a>
+        {% endif %}
+
+        <span class="btn btn-sm"
+            style="background: var(--bg-light); border: 1px solid var(--border); color: var(--text-primary);">
+            Page {{ page_obj.number }} of {{ paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter %}&action={{ action_filter }}{% endif %}"
+            class="btn btn-sm btn-secondary">Next</a>
+        <a href="?page={{ paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter %}&action={{ action_filter }}{% endif %}"
+            class="btn btn-sm btn-secondary">Last &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <p style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+        No audit logs found.
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

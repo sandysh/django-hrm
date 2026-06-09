@@ -539,6 +539,7 @@
                     <li><a href="{% url 'designation_list' %}" class="nav-link">Designations</a></li>
                     <li><a href="{% url 'attendance_report' %}" class="nav-link">Attendance</a></li>
                     <li><a href="{% url 'leave_requests' %}" class="nav-link">Leaves</a></li>
+                    <li><a href="{% url 'audit_log_list' %}" class="nav-link {% if request.resolver_match.url_name == 'audit_log_list' %}active{% endif %}">Audit Logs</a></li>
                     {% if user.is_superuser %}
                     <li><a href="{% url 'settings' %}" class="nav-link">⚙️ Settings</a></li>
                     {% endif %}
