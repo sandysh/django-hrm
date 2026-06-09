@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'attendance',
     'leaves',
     'biometric',
+    'auditlogs'
 ]
 
 MIDDLEWARE = [
