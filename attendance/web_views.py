@@ -324,6 +324,4 @@ def attendance_report(request):
         'monthly_expected_hours': round(monthly_expected_hours, 2) if monthly_expected_hours else 0,
         'monthly_remaining_hours': round(monthly_remaining_hours, 2) if monthly_remaining_hours else 0,
     }
-
-    AuditLogService(request.user).report_generated()
     return render(request, 'attendance/report.html', context)
