@@ -235,7 +235,8 @@ def update_daily_attendance(employee, date):
         check_in_dt = datetime.combine(date, daily_att.check_in_time)
         check_out_dt = datetime.combine(date, daily_att.check_out_time)
         duration = check_out_dt - check_in_dt
-        daily_att.total_hours = round(duration.total_seconds() / 3600, 2)
+        from decimal import Decimal
+        daily_att.total_hours = Decimal(str(round(duration.total_seconds() / 3600, 2)))
     
     # Get system settings (consolidated settings)
     try:
