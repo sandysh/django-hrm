@@ -8,7 +8,8 @@
 {% block email_content %}
 <div class="subject-line">Absence Without Notice — Clarification Required</div>
 <div class="greeting">Dear {{ employee_name }},</div>
-<p class="para">We note that you were absent from work on <strong>{{ absent_dates }}</strong> without prior notification or approved leave. This is a formal request for clarification.</p>
+<p class="para">We note that you were absent from work on <strong>{{ absent_dates }}</strong> without prior notification
+  or approved leave. This is a formal request for clarification.</p>
 
 <div class="detail-box">
   <div class="detail-title">Absence Record</div>
@@ -17,6 +18,7 @@
 </div>
 
 <div class="callout callout-red">
-  <strong>Action Required:</strong> Please write a written explanation and supporting documentation (if applicable) to HR by <strong>{{ today }}</strong>. Failure to respond may result in the days being marked as LWP (Leave Without Pay).
+  <strong>Action Required:</strong> Please write a written explanation and supporting documentation (if applicable) to
+  HR by <strong>{{ today }}</strong>. Failure to respond may result in the days being marked as LWP (Leave Without Pay).
 </div>
 {% endblock %}

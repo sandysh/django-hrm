@@ -6,18 +6,17 @@
 {% block badge_text %}⚠ Missing Punch-In{% endblock %}
 
 {% block email_content %}
-<div class="subject-line">Missing Punch-In Record — {{ attendance_date }}</div>
+<div class="subject-line">Missing Punch-In Record — {{ today }}</div>
 <div class="greeting">Dear {{ employee_name }},</div>
-<p class="para">Our attendance system has flagged that your <strong>punch-in record is missing</strong> for <strong>{{ attendance_date }}</strong>. This may be due to a forgotten check-in, a device issue, or being off-site.</p>
+<p class="para"> <strong>punch-in record is missing</strong> </strong>. This may be due to a forgotten check-in, a device issue, or being off-site.</p>
 
 <div class="detail-box">
   <div class="detail-title">Attendance Record</div>
   <div class="detail-row"><span class="dk">Employee ID</span><span class="dv">{{ employee_id }}</span></div>
   <div class="detail-row"><span class="dk">Department</span><span class="dv">{{ department }}</span></div>
-  <div class="detail-row"><span class="dk">Date</span><span class="dv">{{ attendance_date }}</span></div>
-  <div class="detail-row"><span class="dk">Shift / Work Hours</span><span class="dv">{{ shift_timing }}</span></div>
+  <div class="detail-row"><span class="dk">Date</span><span class="dv">{{ today }}</span></div>
   <div class="detail-row"><span class="dk">Punch-In Status</span><span class="dv">Not Recorded</span></div>
-  <div class="detail-row"><span class="dk">Punch-Out Time</span><span class="dv">{{ punch_out_time|default:"—" }}</span></div>
+  <div class="detail-row"><span class="dk">Punch-Out Time</span><span class="dv">-</span></div>
 </div>
 
 <div class="status-banner sb-yellow">⚠ No punch-in detected for this date. Action required.</div>
