@@ -1,5 +1,6 @@
 from django.db import models
 from employees.models import Employee
+
 class logType(models.TextChoices):
     LOGIN = 'LOGIN', 'Login'
     LOGOUT = 'LOGOUT', 'Logout'
@@ -18,3 +19,9 @@ class AuditLog(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.action} at {self.timestamp}"
+    
+class payroll(models.Model):
+    employee=models.ForeignKey(Employee , on_delete=models.CASCADE)
+    total_payable=models.DecimalField(decimal_places=2 , max_digits=2)
+    fine_deduction=models.IntegerField()
+    
