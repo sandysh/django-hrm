@@ -1,6 +1,8 @@
 """
 Web views for leave management.
 """
+from leaves.models import LeaveBalance
+from hrm_project.task import send_email
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -203,6 +205,31 @@ def leave_approve(request, pk):
     leave_request.approved_at = timezone.now()
     leave_request.approval_notes = request.POST.get('notes', '')
     leave_request.save()
+    current_year = datetime.now().year
+    balance, _ = LeaveBalance.objects.get_or_create(
+            employee=leave_request.employee,
+            leave_type=leave_request.leave_type,
+            year=current_year,
+            defaults={"allocated": 0, "used": 0, "balance": 0}
+        )
+
+    leave_days = (leave_request.end_date - leave_request.start_date).days
+
+    balance.used += leave_days
+    balance.update_balance()
+
+    context = {
+            "employee_name": leave_request.employee.username,
+            "employee_id": leave_request.employee.employee_id,
+            "leave_type": leave_request.leave_type.name,
+            "from_date": leave_request.start_date.strftime("%Y-%m-%d"),
+            "to_date": leave_request.end_date.strftime("%Y-%m-%d"),
+            "total_days": leave_days,
+            "approver_name": request.user.username,
+            "approval_date": timezone.now().strftime("%Y-%m-%d")
+        }
+    print(context)
+    send_email.delay(request.user, 'emails/leave_approved.html', context)   
     
     messages.success(request, 'Leave request approved successfully!')
     AuditLogService(request.user).update()
