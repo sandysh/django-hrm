@@ -5,7 +5,7 @@ Django settings for hrm_project project.
 import os
 from pathlib import Path
 from decouple import config
-
+from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -147,10 +147,13 @@ REST_FRAMEWORK = {
 
 
 #Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' 
 EMAIL_HOST = config('EMAIL_HOST_NAME')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
 
 # Celery Configuration
 CELERY_BROKER_URL = config('LOCAL_CELERY_BROKER_URL', default=config('CELERY_BROKER_URL', default='redis://redis:6379/0'))
@@ -159,6 +162,13 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULE = {
+    "punch": {
+        "task": "hrm_project.task.send_reminder",
+        "schedule": crontab(hour=17,minute=41), 
+    },
+}
+print("working server .............")
 
 # Biometric Device Settings
 BIOMETRIC_DEVICE_IP = config('BIOMETRIC_DEVICE_IP', default='192.168.1.201')

@@ -6,44 +6,45 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Employee, Department, Designation
 
 
-@admin.register(Employee)
-class EmployeeAdmin(UserAdmin):
-    """
-    Admin interface for Employee model.
-    """
-    list_display = ['employee_id', 'username', 'get_full_name', 'email', 'department', 
-                   'designation', 'employment_type', 'status', 'biometric_synced']
-    list_filter = ['status', 'employment_type', 'department', 'biometric_synced', 'gender']
-    search_fields = ['employee_id', 'username', 'first_name', 'last_name', 'email']
-    readonly_fields = ['created_at', 'updated_at', 'biometric_sync_date']
+# @admin.register(Employee)
+# class EmployeeAdmin(UserAdmin):
+#     """
+#     Admin interface for Employee model.
+#     """
+#     list_display = ['employee_id', 'username', 'get_full_name', 'email', 'department', 
+#                    'designation', 'employment_type', 'status', 'biometric_synced']
+#     list_filter = ['status', 'employment_type', 'department', 'biometric_synced', 'gender']
+#     search_fields = ['employee_id', 'username', 'first_name', 'last_name', 'email']
+#     readonly_fields = ['created_at', 'updated_at', 'biometric_sync_date']
     
-    fieldsets = UserAdmin.fieldsets + (
-        ('Personal Information', {
-            'fields': ('employee_id', 'phone_number', 'date_of_birth', 'gender', 
-                      'address', 'profile_picture')
-        }),
-        ('Employment Information', {
-            'fields': ('department', 'designation', 'employment_type', 
-                      'date_joined_company', 'status')
-        }),
-        ('Biometric Information', {
-            'fields': ('biometric_user_id', 'biometric_synced', 'biometric_sync_date')
-        }),
-        ('Leave Balance', {
-            'fields': ('annual_leave_balance', 'sick_leave_balance', 'casual_leave_balance')
-        }),
-        ('Metadata', {
-            'fields': ('created_at', 'updated_at')
-        }),
-    )
+#     fieldsets = UserAdmin.fieldsets + (
+#         ('Personal Information', {
+#             'fields': ('employee_id', 'phone_number', 'date_of_birth', 'gender', 
+#                       'address', 'profile_picture')
+#         }),
+#         ('Employment Information', {
+#             'fields': ('department', 'designation', 'employment_type', 
+#                       'date_joined_company', 'status')
+#         }),
+#         ('Biometric Information', {
+#             'fields': ('biometric_user_id', 'biometric_synced', 'biometric_sync_date')
+#         }),
+#         ('Leave Balance', {
+#             'fields': ('annual_leave_balance', 'sick_leave_balance', 'casual_leave_balance')
+#         }),
+#         ('Metadata', {
+#             'fields': ('created_at', 'updated_at')
+#         }),
+#     )
     
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Additional Information', {
-            'fields': ('employee_id', 'first_name', 'last_name', 'email', 
-                      'phone_number', 'department', 'designation')
-        }),
-    )
+#     add_fieldsets = UserAdmin.add_fieldsets + (
+#         ('Additional Information', {
+#             'fields': ('employee_id', 'first_name', 'last_name', 'email', 
+#                       'phone_number', 'department', 'designation')
+#         }),
+#     )
 
+admin.site.register(Employee)
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
