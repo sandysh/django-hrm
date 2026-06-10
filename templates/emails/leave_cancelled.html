@@ -1,0 +1,27 @@
+{% extends "emails/base_email.html" %}
+
+{% block subject %}Leave Cancellation Confirmed{% endblock %}
+{% block accent_color %}#6B7280{% endblock %}
+{% block badge_class %}badge-gray{% endblock %}
+{% block badge_text %}Cancelled{% endblock %}
+
+{% block email_content %}
+<div class="subject-line">Leave Cancellation Confirmed</div>
+<div class="greeting">Dear {{ employee_name }},</div>
+<p class="para">Your leave has been successfully <strong>cancelled</strong>. Your leave balance has been credited back accordingly.</p>
+
+<div class="detail-box">
+  <div class="detail-title">Cancelled Leave Details</div>
+  <div class="detail-row"><span class="dk">Leave Type</span><span class="dv">{{ leave_type }}</span></div>
+  <div class="detail-row"><span class="dk">Original Dates</span><span class="dv">{{ from_date }} – {{ to_date }}</span></div>
+  <div class="detail-row"><span class="dk">Days Reinstated</span><span class="dv">{{ days_reinstated }} day(s)</span></div>
+  <div class="detail-row"><span class="dk">Updated Balance</span><span class="dv">{{ new_balance }} day(s)</span></div>
+</div>
+
+<div class="callout callout-blue">
+  <strong>Cancellation Reason:</strong> {{ cancel_reason }}
+</div>
+{% endblock %}
+
+{% block sig_role %}HR Department{% endblock %}
+{% block sig_contact %}{% endblock %}

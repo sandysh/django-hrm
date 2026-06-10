@@ -1,0 +1,24 @@
+{% extends "emails/base_email.html" %}
+
+{% block subject %}Salary Revision Notification — Effective {{ effective_date }}{% endblock %}
+{% block accent_color %}#10B981{% endblock %}
+{% block badge_class %}badge-green{% endblock %}
+{% block badge_text %}Revised{% endblock %}
+
+{% block email_content %}
+<div class="subject-line">Salary Revision Notification — Effective {{ effective_date }}</div>
+<div class="greeting">Dear {{ employee_name }},</div>
+<p class="para">We are pleased to inform you that following your performance review, your compensation has been revised effective <strong>{{ effective_date }}</strong>.</p>
+
+<div class="detail-box">
+  <div class="detail-title">Revised Package</div>
+  <div class="detail-row"><span class="dk">Previous CTC</span><span class="dv">{{ currency }} {{ previous_ctc }} p.a.</span></div>
+  <div class="detail-row"><span class="dk">Revised CTC</span><span class="dv">{{ currency }} {{ new_ctc }} p.a.</span></div>
+  <div class="detail-row"><span class="dk">Increment %</span><span class="dv">{{ increment_percent }}%</span></div>
+  <div class="detail-row"><span class="dk">Effective From</span><span class="dv">{{ effective_date }}</span></div>
+</div>
+
+<div class="status-banner sb-green">🎉 Congratulations on this achievement!</div>
+
+<p class="para">A revised appointment letter will be shared with you separately. Please sign and return the acknowledgement copy.</p>
+{% endblock %}

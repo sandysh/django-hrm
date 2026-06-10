@@ -145,6 +145,13 @@ REST_FRAMEWORK = {
     ],
 }
 
+
+#Email configuration
+EMAIL_HOST = config('EMAIL_HOST_NAME')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+
 # Celery Configuration
 CELERY_BROKER_URL = config('LOCAL_CELERY_BROKER_URL', default=config('CELERY_BROKER_URL', default='redis://redis:6379/0'))
 CELERY_RESULT_BACKEND = config('LOCAL_CELERY_RESULT_BACKEND', default=config('CELERY_RESULT_BACKEND', default='redis://redis:6379/0'))

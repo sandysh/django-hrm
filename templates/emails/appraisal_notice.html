@@ -1,0 +1,28 @@
+{% extends "emails/base_email.html" %}
+
+{% block subject %}Performance Appraisal — {{ appraisal_cycle }}{% endblock %}
+{% block accent_color %}#3B82F6{% endblock %}
+{% block badge_class %}badge-blue{% endblock %}
+{% block badge_text %}Appraisal{% endblock %}
+
+{% block email_content %}
+<div class="subject-line">Performance Appraisal — {{ appraisal_cycle }}</div>
+<div class="greeting">Dear {{ employee_name }},</div>
+<p class="para">We are initiating the <strong>{{ appraisal_cycle }}</strong> performance appraisal cycle. You are requested to complete your self-assessment on the portal within the specified timeline.</p>
+
+<div class="detail-box">
+  <div class="detail-title">Appraisal Timeline</div>
+  <div class="detail-row"><span class="dk">Self-Assessment Start</span><span class="dv">{{ self_start_date }}</span></div>
+  <div class="detail-row"><span class="dk">Self-Assessment Deadline</span><span class="dv">{{ self_end_date }}</span></div>
+  <div class="detail-row"><span class="dk">Manager Review</span><span class="dv">{{ manager_review_dates }}</span></div>
+  <div class="detail-row"><span class="dk">Results Announcement</span><span class="dv">{{ results_date }}</span></div>
+</div>
+
+<div class="callout callout-blue">
+  Please log in to the portal and complete your self-assessment honestly and thoroughly. This will form the basis for your review discussion.
+</div>
+
+<a class="cta-btn cta-primary" href="{{ portal_url }}">Start Self-Assessment →</a>
+{% endblock %}
+
+{% block sig_role %}HR Department{% endblock %}

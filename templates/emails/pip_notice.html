@@ -1,0 +1,30 @@
+{% extends "emails/base_email.html" %}
+
+{% block subject %}Performance Improvement Plan — Confidential{% endblock %}
+{% block accent_color %}#EF4444{% endblock %}
+{% block badge_class %}badge-red{% endblock %}
+{% block badge_text %}Action Required{% endblock %}
+
+{% block email_content %}
+<div class="subject-line">Performance Improvement Plan — Confidential</div>
+<div class="greeting">Dear {{ employee_name }},</div>
+<p class="para">This letter is to inform you that based on your performance review for <strong>{{ review_period }}</strong>, a formal <strong>Performance Improvement Plan (PIP)</strong> has been initiated.</p>
+
+<div class="detail-box">
+  <div class="detail-title">PIP Details</div>
+  <div class="detail-row"><span class="dk">PIP Start Date</span><span class="dv">{{ pip_start_date }}</span></div>
+  <div class="detail-row"><span class="dk">PIP Duration</span><span class="dv">{{ pip_duration }}</span></div>
+  <div class="detail-row"><span class="dk">Review Date</span><span class="dv">{{ pip_review_date }}</span></div>
+  <div class="detail-row"><span class="dk">Assigned HR Partner</span><span class="dv">{{ hr_partner_name }}</span></div>
+</div>
+
+<div class="callout callout-red">
+  <strong>Areas Requiring Improvement:</strong><br/>{{ improvement_areas }}
+</div>
+
+<div class="callout callout-yellow">
+  <strong>Expected Outcomes:</strong><br/>{{ expected_outcomes }}
+</div>
+
+<p class="para">A detailed PIP document with measurable goals and milestones is attached. Please review, sign, and return it to HR within <strong>{{ response_days }}</strong> working days. We are committed to supporting your growth throughout this process.</p>
+{% endblock %}

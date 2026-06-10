@@ -1,0 +1,28 @@
+{% extends "emails/base_email.html" %}
+
+{% block subject %}Your Leave Request Has Been Approved{% endblock %}
+{% block accent_color %}#10B981{% endblock %}
+{% block badge_class %}badge-green{% endblock %}
+{% block badge_text %}✓ Approved{% endblock %}
+
+{% block email_content %}
+<div class="subject-line">Your Leave Request Has Been Approved</div>
+<div class="greeting">Dear {{ employee_name }},</div>
+<p class="para">We are pleased to inform you that your leave request has been reviewed and <strong>approved</strong> by your reporting manager.</p>
+
+<div class="detail-box">
+  <div class="detail-title">Leave Details</div>
+  <div class="detail-row"><span class="dk">Employee ID</span><span class="dv">{{ employee_id }}</span></div>
+  <div class="detail-row"><span class="dk">Leave Type</span><span class="dv">{{ leave_type }}</span></div>
+  <div class="detail-row"><span class="dk">From Date</span><span class="dv">{{ from_date }}</span></div>
+  <div class="detail-row"><span class="dk">To Date</span><span class="dv">{{ to_date }}</span></div>
+  <div class="detail-row"><span class="dk">Total Days</span><span class="dv">{{ total_days }} working day(s)</span></div>
+  <div class="detail-row"><span class="dk">Remaining Balance</span><span class="dv">{{ leave_balance }} day(s)</span></div>
+  <div class="detail-row"><span class="dk">Approved By</span><span class="dv">{{ approver_name }}</span></div>
+  <div class="detail-row"><span class="dk">Approved On</span><span class="dv">{{ approval_date }}</span></div>
+</div>
+
+<div class="status-banner sb-green">✔ Status: Approved — Your leave is confirmed in the system.</div>
+
+<p class="para">Please ensure your work is properly handed over before your leave begins. For any queries, reach out to your HR representative.</p>
+{% endblock %}

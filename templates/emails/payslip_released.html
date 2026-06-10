@@ -1,0 +1,30 @@
+{% extends "emails/base_email.html" %}
+
+{% block subject %}Your Payslip for {{ month_year }} is Available{% endblock %}
+{% block accent_color %}#3B82F6{% endblock %}
+{% block badge_class %}badge-blue{% endblock %}
+{% block badge_text %}Payroll{% endblock %}
+{% block dept_label %}Payroll Department{% endblock %}
+
+{% block email_content %}
+<div class="subject-line">Your Payslip for {{ month_year }} is Available</div>
+<div class="greeting">Dear {{ employee_name }},</div>
+<p class="para">Your salary has been processed and your payslip for <strong>{{ month_year }}</strong> is now available on the employee portal.</p>
+
+<div class="detail-box">
+  <div class="detail-title">Salary Summary</div>
+  <div class="detail-row"><span class="dk">Employee ID</span><span class="dv">{{ employee_id }}</span></div>
+  <div class="detail-row"><span class="dk">Pay Period</span><span class="dv">{{ pay_period }}</span></div>
+  <div class="detail-row"><span class="dk">Gross Salary</span><span class="dv">{{ currency }} {{ gross_salary }}</span></div>
+  <div class="detail-row"><span class="dk">Total Deductions</span><span class="dv">{{ currency }} {{ deductions }}</span></div>
+  <div class="detail-row"><span class="dk">Net Pay</span><span class="dv">{{ currency }} {{ net_pay }}</span></div>
+  <div class="detail-row"><span class="dk">Payment Date</span><span class="dv">{{ payment_date }}</span></div>
+  <div class="detail-row"><span class="dk">Bank Account</span><span class="dv">****{{ last4_digits }}</span></div>
+</div>
+
+<a class="cta-btn cta-primary" href="{{ portal_url }}">View &amp; Download Payslip →</a>
+{% endblock %}
+
+{% block sig_role %}Payroll Team{% endblock %}
+{% block sig_contact %}{{ hr_email }}{% endblock %}
+{% block footer_contact %}{{ hr_email }}{% endblock %}
