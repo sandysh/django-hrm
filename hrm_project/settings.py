@@ -163,12 +163,15 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BEAT_SCHEDULE = {
-    "punch": {
+    "punch_in_reminder": {
         "task": "hrm_project.task.send_reminder",
-        "schedule": crontab(hour=17,minute=41), 
+        "schedule": crontab(hour=10,minute=10), 
+    },
+    "punch_out_reminder": {
+        "task": "hrm_project.task.send_punch_out_reminder",
+        "schedule": crontab(hour=18,minute=30), 
     },
 }
-print("working server .............")
 
 # Biometric Device Settings
 BIOMETRIC_DEVICE_IP = config('BIOMETRIC_DEVICE_IP', default='192.168.1.201')

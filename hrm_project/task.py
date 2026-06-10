@@ -56,8 +56,10 @@ def send_email(reciver_email, template, context_data):
     
 @shared_task
 def send_reminder():
+    """send reminder for employee who have not punched in or are late """
     from employees.models import Employee
     from attendance.models import DailyAttendance
+
     not_punched_users=DailyAttendance.objects.filter(
         date=timezone.now().date(),
         check_in_time__gte=time(10, 10)
@@ -80,6 +82,35 @@ def send_reminder():
             "emails/punch_in_missing.html",
             context,
         )
+        
+        
+           
+@shared_task
+def send_punch_out_reminder():
+    """send reminder for employee who have not punched out """
+    from employees.models import Employee
+    from attendance.models import DailyAttendance
+    not_punched_users=DailyAttendance.objects.filter(
+        date=timezone.now().date(),
+        check_out_time__isnull=True
+    )
+    for employee_record in not_punched_users:
+        context = {
+            "today": timezone.now().date().strftime("%Y-%m-%d"),
+            "employee_name": employee_record.employee.username,
+            "employee_id": employee_record.employee.employee_id,
+            "department": employee_record.employee.department.name if employee_record.employee and employee_record.employee.department else "Game Devlopment",
+            "regularization_deadline": (
+                timezone.now().date() + timedelta(days=2)
+            ).strftime("%Y-%m-%d"),
+        }
+
+        send_email.delay(
+            employee_record.employee.email,
+            "emails/punch_out_missing.html",
+            context,
+        )
+        
     
 
     
