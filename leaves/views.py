@@ -9,6 +9,7 @@ from .serializers import (
     LeaveTypeSerializer, LeaveRequestSerializer,
     HolidaySerializer, LeaveBalanceSerializer
 )
+from hrm_project.task import send_email
 
 
 class LeaveTypeViewSet(viewsets.ModelViewSet):
@@ -52,39 +53,49 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def approve(self, request, pk=None):
-        """
-        Approve a leave request.
-        """
         leave_request = self.get_object()
-        
+
         if leave_request.status != 'PE':
             return Response(
                 {'error': 'Only pending requests can be approved'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         leave_request.status = 'AP'
         leave_request.approved_by = request.user
         leave_request.approved_at = timezone.now()
         leave_request.approval_notes = request.data.get('notes', '')
         leave_request.save()
-        
-        # Update leave balance
+
         current_year = datetime.now().year
-        try:
-            balance = LeaveBalance.objects.get(
-                employee=leave_request.employee,
-                leave_type=leave_request.leave_type,
-                year=current_year
-            )
-            balance.used += leave_request.total_days
-            balance.update_balance()
-        except LeaveBalance.DoesNotExist:
-            pass
-        
-        serializer = self.get_serializer(leave_request)
-        return Response(serializer.data)
-    
+
+        balance, _ = LeaveBalance.objects.get_or_create(
+            employee=leave_request.employee,
+            leave_type=leave_request.leave_type,
+            year=current_year,
+            defaults={"allocated": 0, "used": 0, "balance": 0}
+        )
+
+        leave_days = (leave_request.end_date - leave_request.start_date).days
+
+        balance.used += leave_days
+        balance.update_balance()
+
+        context = {
+            "employee_name": leave_request.employee.username,
+            "employee_id": leave_request.employee.employee_id,
+            "leave_type": leave_request.leave_type.name,
+            "from_date": leave_request.start_date.strftime("%Y-%m-%d"),
+            "to_date": leave_request.end_date.strftime("%Y-%m-%d"),
+            "total_days": leave_days,
+            "leave_balance": balance.balance,
+            "approver_name": request.user.username,
+            "approval_date": timezone.now().strftime("%Y-%m-%d")
+        }
+        print(context)
+
+        send_email(request.user, 'emails/leave_approved.html', context)   
+              
     @action(detail=True, methods=['post'])
     def reject(self, request, pk=None):
         """

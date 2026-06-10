@@ -1,4 +1,5 @@
-from django.views.generic import ListView
+from django.views import View 
+from django.views.generic import ListView , TemplateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from .models import AuditLog, logType
 from django.db.models import Q
@@ -38,3 +39,14 @@ class AuditLogListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context['action_filter'] = self.request.GET.get('action', '')
         context['log_types'] = logType.choices
         return context
+    
+    
+class ReportView(LoginRequiredMixin, TemplateView):
+    template_name='reports/salary_report.html'
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    
+class MailView(TemplateView):
+    template_name="emails/punch_in_missing.html"
