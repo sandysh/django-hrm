@@ -210,7 +210,7 @@ def leave_approve(request, pk):
             employee=leave_request.employee,
             leave_type=leave_request.leave_type,
             year=current_year,
-            defaults={"allocated": 0, "used": 0, "balance": 0}
+            defaults={"allocated": leave_request.leave_type.default_days, "used": 0, "balance": leave_request.leave_type.default_days}
         )
 
     leave_days = (leave_request.end_date - leave_request.start_date).days
@@ -229,8 +229,7 @@ def leave_approve(request, pk):
             "approval_date": timezone.now().strftime("%Y-%m-%d")
         }
     print(context)
-    send_email.delay(request.user, 'emails/leave_approved.html', context)   
-    
+    send_email.delay(request.user.email, 'emails/leave_approved.html', context)   
     messages.success(request, 'Leave request approved successfully!')
     AuditLogService(request.user).update()
     return redirect('leave_requests')
@@ -254,7 +253,6 @@ def leave_reject(request, pk):
     leave_request.approved_at = timezone.now()
     leave_request.approval_notes = request.POST.get('notes', '')
     leave_request.save()
-    
     messages.success(request, 'Leave request rejected!')
     AuditLogService(request.user).update()
     return redirect('leave_requests')

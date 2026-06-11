@@ -1,8 +1,16 @@
 from django.views import View 
 from django.views.generic import ListView , TemplateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+
+from reports.service import ReportService
 from .models import AuditLog, logType
 from django.db.models import Q
+from employees.models import Employee
+
+
+#logger config
+import logging
+logger=logging.getLogger(__name__)
 
 class AuditLogListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = AuditLog
@@ -39,14 +47,29 @@ class AuditLogListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context['action_filter'] = self.request.GET.get('action', '')
         context['log_types'] = logType.choices
         return context
-    
-    
+
 class ReportView(LoginRequiredMixin, TemplateView):
     template_name='reports/salary_report.html'
         
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+
+        employee = Employee.objects.get(employee_id="EMP114")   
+        
+        service = ReportService(
+            employee=employee,
+        )
+
+        context["profile"] = service.profile()
+        context["attendance_summary"] = service.attendance_summary()
+        context["violation_summary"] = service.voilation_summary()
+        context["leave_balance"] = service.leave_balance_summary()
+        context["approved_leaves"] = service.approved_leaves()
+        context["attendance_logs"] = service.attendanec_records()
+        context["salary"] = service.salary_calculation()
+
         return context
     
 class MailView(TemplateView):
-    template_name="emails/punch_in_missing.html"
+    template_name="emails/salary_revision.htmsdsdl"

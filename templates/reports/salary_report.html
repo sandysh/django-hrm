@@ -1,425 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<title>AagaMan mainali — Baishakh Report</title>
-<style>
-/* ─── PAGE ─────────────────────────────────── */
-@page {
-  size: A4 landscape;
-  margin: 12mm 14mm 12mm 14mm;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: Calibri, Arial, sans-serif;
-  font-size: 9pt;
-  color: #000;
-  background: #fff;
-  line-height: 1.25;
-}
-
-/* ─── HEADER ────────────────────────────────── */
-.hdr {
-  background: #2e5f8a;
-  color: #fff;
-  padding: 8px 12px 7px 12px;
-  margin-bottom: 8px;
-}
-.hdr-name {
-  font-size: 16pt;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  margin-bottom: 3px;
-}
-.hdr-sub {
-  font-size: 9pt;
-  font-style: italic;
-  color: #dce8f4;
-}
-
-/* ─── SECTION WRAPPER ───────────────────────── */
-.section { margin-bottom: 7px; }
-
-/* ─── SECTION HEADER ROW ────────────────────── */
-.sec-hdr {
-  background: #2e5f8a;
-  color: #fff;
-  font-size: 9pt;
-  font-weight: 700;
-  padding: 3px 6px;
-  letter-spacing: 0.3px;
-}
-
-/* ─── BASE TABLE ────────────────────────────── */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 9pt;
-}
-
-/* ─── SIMPLE KEY-VALUE TABLES (sections 1-4) ── */
-.kv-table td {
-  padding: 2.5px 6px;
-  border-bottom: 1px solid #d0d8e4;
-  vertical-align: middle;
-}
-.kv-table tr:last-child td { border-bottom: none; }
-
-.kv-table td.k {
-  font-weight: 700;
-  width: 36%;
-  color: #000;
-}
-.kv-table td.v {
-  color: #000;
-}
-
-/* alternating row tints for kv */
-.kv-table tr:nth-child(odd)  td { background: #f0f4f9; }
-.kv-table tr:nth-child(even) td { background: #dde6f0; }
-
-/* ─── LEAVE TABLE (section 5) ───────────────── */
-.lv-table th {
-  background: #2e5f8a;
-  color: #fff;
-  font-weight: 700;
-  font-size: 9pt;
-  padding: 3px 6px;
-  text-align: center;
-  border: 1px solid #1e4a72;
-}
-.lv-table td {
-  padding: 3px 6px;
-  border: 1px solid #b8c8d8;
-  vertical-align: top;
-  text-align: center;
-}
-.lv-table td.reason { text-align: left; }
-.lv-table tr:nth-child(odd)  td { background: #f0f4f9; }
-.lv-table tr:nth-child(even) td { background: #dde6f0; }
-
-/* ─── ATTENDANCE TABLE (section 6) ──────────── */
-.att-table th {
-  background: #2e5f8a;
-  color: #fff;
-  font-weight: 700;
-  font-size: 9pt;
-  padding: 3px 6px;
-  text-align: center;
-  border: 1px solid #1e4a72;
-}
-.att-table td {
-  padding: 2px 5px;
-  border: 1px solid #c8d4e0;
-  vertical-align: middle;
-  text-align: center;
-}
-.att-table td.notes { text-align: left; }
-
-/* normal row */
-.att-table tr.normal td  { background: #ffffff; }
-/* highlighted (late/issue) row — yellow */
-.att-table tr.flagged td { background: #fef5c0; color: #000; }
-/* on-leave row — light blue */
-.att-table tr.onleave td { background: #dce8f8; }
-
-/* ─── SALARY TABLE (section 7) ──────────────── */
-.sal-table {
-  border: 1px solid #b0bcc8;
-}
-.sal-table th {
-  padding: 3px 8px;
-  font-weight: 700;
-  font-size: 9pt;
-  border: 1px solid #b0bcc8;
-  text-align: left;
-}
-.sal-table th.earn-hdr { background: #dde6f0; color: #000; }
-.sal-table th.ded-hdr  { background: #dde6f0; color: #cc0000; }
-
-.sal-table td {
-  padding: 2.5px 8px;
-  border: 1px solid #c8d0d8;
-  vertical-align: middle;
-}
-.sal-table td.slabel { font-weight: 400; color: #000; width: 22%; }
-.sal-table td.sval   { text-align: right; width: 28%; color: #000; }
-.sal-table td.dlabel { font-weight: 400; color: #000; width: 22%; }
-.sal-table td.dval   { text-align: right; width: 28%; }
-
-/* normal sal rows */
-.sal-table tr.sr-normal td { background: #ffffff; }
-/* total row */
-.sal-table tr.sr-total td  { background: #dde6f0; font-weight: 700; }
-.sal-table tr.sr-total td.sval  { color: #1a7a1a; }
-.sal-table tr.sr-total td.dval  { color: #cc0000; }
-
-/* SALARY PAYABLE row — dark navy */
-.sal-table tr.sr-payable td {
-  background: #2e5f8a;
-  color: #fff;
-  font-weight: 700;
-  font-size: 10pt;
-  text-align: right;
-  border: 1px solid #1e4a72;
-}
-.sal-table tr.sr-payable td:first-child { text-align: left; }
-
-/* Tax row — green */
-.sal-table tr.sr-tax td {
-  background: #217a21;
-  color: #fff;
-  font-weight: 400;
-  text-align: right;
-  border: 1px solid #155a15;
-}
-.sal-table tr.sr-tax td:first-child { text-align: left; }
-
-/* NET SALARY row — gold/dark yellow */
-.sal-table tr.sr-net td {
-  background: #b8930a;
-  color: #fff;
-  font-weight: 700;
-  font-size: 10pt;
-  text-align: right;
-  border: 1px solid #957508;
-}
-.sal-table tr.sr-net td:first-child { text-align: left; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Report - {{ profile.full_name }}</title>
+    <style>
+        @page { size: A4 landscape; margin: 12mm 14mm 12mm 14mm; }
+        * { box-sizing: border-box; margin: 0; padding: 0; print-color-adjust: exact !important; }
+        html, body { width: 100%; height: 100%; print-color-adjust: exact !important; }
+        body { font-family: Calibri, Arial, sans-serif; font-size: 9pt; color: #000; background: #fff; line-height: 1.25; padding: 20px; print-color-adjust: exact !important; }
+        .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 0; }
+        .header { background-color: #1e4d7b; color: #fff; padding: 12px 16px; margin-bottom: 0; border-radius: 4px 4px 0 0; print-color-adjust: exact !important; }
+        .header h1 { font-size: 16pt; font-weight: bold; margin: 0 0 4px 0; color: #fff; }
+        .header p { font-size: 8pt; margin: 0; color: #fff; font-style: italic; }
+        .section-header { background-color: #2e5a8f; color: #fff; padding: 8px 12px; font-weight: bold; font-size: 9pt; margin-top: 12px; print-color-adjust: exact !important; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 4px; background-color: #fff; print-color-adjust: exact !important; }
+        th { background-color: #e8f0f7; color: #000; padding: 6px 8px; text-align: left; font-weight: bold; font-size: 9pt; border: 1px solid #999; print-color-adjust: exact !important; }
+        td { padding: 5px 8px; text-align: left; font-size: 9pt; border: 1px solid #999; color: #000; print-color-adjust: exact !important; }
+        tr:nth-child(odd) td { background-color: #f5f9fd; print-color-adjust: exact !important; }
+        tr:nth-child(even) td { background-color: #fff; print-color-adjust: exact !important; }
+        .highlight-yellow td, .highlight-yellow { background-color: #ffff99 !important; print-color-adjust: exact !important; }
+        .highlight-green { background-color: #c6efce !important; print-color-adjust: exact !important; }
+        .highlight-gold { background-color: #ffd966 !important; print-color-adjust: exact !important; }
+        @media print {
+            body { margin: 0; padding: 12mm 14mm; print-color-adjust: exact !important; }
+            .container { max-width: 100%; margin: 0; padding: 0; }
+            table, th, td, tr:nth-child(odd) td, tr:nth-child(even) td,
+            .highlight-yellow, .highlight-green, .highlight-gold { print-color-adjust: exact !important; }
+        }
+    </style>
 </head>
 <body>
+<div class="container">
 
-<!-- ══ HEADER ══ -->
-<div class="hdr">
-  <div class="hdr-name">AagaMan mainali</div>
-  <div class="hdr-sub">Employee ID: EMP114 &nbsp;|&nbsp; Department: Backend Development &nbsp;|&nbsp; Status: Minor Penalty</div>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>{{ profile.full_name }}</h1>
+        <p>
+            Employee ID: {{ profile.employee_id }} |
+            Department: {{ profile.department }} |
+            Status: {% if violation_summary.late_arrivals > 0 %}Minor Penalty{% else %}Good Standing{% endif %}
+        </p>
+    </div>
+
+    <!-- SECTION 1: PROFILE & SHIFT -->
+    <div class="section-header">1. PROFILE &amp; SHIFT</div>
+    <table>
+        <tr><th style="width:35%;">Employee ID</th><td>{{ profile.employee_id }}</td></tr>
+        <tr><th>Full Name</th><td>{{ profile.full_name }}</td></tr>
+        <tr><th>Department</th><td>{{ profile.department }}</td></tr>
+        <tr><th>Email</th><td>{{ profile.email }}</td></tr>
+        <tr><th>Scheduled Shift</th><td>{{ profile.scheduled_shift }}</td></tr>
+        <tr><th>Effective Working Days</th><td>{{ profile.effective_working_days }}</td></tr>
+        <tr><th>New Joiner?</th><td>{{ profile.new_joiner|yesno:"Yes,No" }}</td></tr>
+    </table>
+
+    <!-- SECTION 2: ATTENDANCE SUMMARY -->
+    <div class="section-header">2. ATTENDANCE SUMMARY</div>
+    <table>
+        <tr><th style="width:35%;">Days Present (punched in)</th><td>{{ attendance_summary.days_present }}</td></tr>
+        <tr><th>Total Hours Worked</th><td>{{ attendance_summary.total_hours_worked }}</td></tr>
+        <tr><th>Average Hours / Day</th><td>{{ attendance_summary.average_hours_per_day }}</td></tr>
+        <tr><th>Approved Leave Days Taken</th><td>{{ attendance_summary.approved_leave_days_taken }}</td></tr>
+        <tr><th>Unpaid / Absent Days</th><td>{{ attendance_summary.unpaid_absent_days|default:"0" }}</td></tr>
+        <tr><th>Attendance % (vs. working days)</th><td>{{ attendance_summary.attendance_percentage }}%</td></tr>
+    </table>
+
+    <!-- SECTION 3: VIOLATIONS SUMMARY -->
+    <div class="section-header">3. VIOLATIONS SUMMARY</div>
+    <table>
+        <tr>
+            <th style="width:35%;">Late Arrivals (effective)</th>
+            <td {% if violation_summary.late_arrivals > 0 %}class="highlight-yellow"{% endif %}>{{ violation_summary.late_arrivals }}</td>
+        </tr>
+        <tr><th>Early Departures</th><td>{{ violation_summary.early_departures }}</td></tr>
+        <tr>
+            <th>Missing Check-outs</th>
+            <td {% if violation_summary.missing_checkouts > 0 %}class="highlight-yellow"{% endif %}>{{ violation_summary.missing_checkouts }}</td>
+        </tr>
+        <tr><th>3-Late Trigger Days (100% pay deduct)</th><td>{{ violation_summary.three_late_arrivals }}</td></tr>
+        <tr><th>Short-Hours Days (worked &lt;7h)</th><td>{{ violation_summary.short_hours_days }}</td></tr>
+    </table>
+
+    <!-- SECTION 4: LEAVE BALANCE -->
+    <div class="section-header">4. LEAVE BALANCE (Annual)</div>
+    <table>
+        <tr style="background-color:#1e4d7b !important;">
+            <th style="background-color:#1e4d7b !important;color:#fff;">Leave Type</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Allocated</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Used (This Month)</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Used (Annual)</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Remaining</th>
+        </tr>
+        {% for leave_name, bal in leave_balance.items %}
+
+        <tr>
+            <td>{{ leave_name }}</td>
+            <td>{{ bal.allocated }}</td>
+            <td>{{ bal.usedthismonth }}</td>
+            <td>{{ bal.used }}</td>
+            <td>{{ bal.remain }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No leave balance data available.</td></tr>
+        {% endfor %}
+    </table>
+
+    <!-- SECTION 5: APPROVED LEAVES -->
+    <div class="section-header">5. APPROVED LEAVES</div>
+    <table>
+        <tr style="background-color:#1e4d7b !important;">
+            <th style="background-color:#1e4d7b !important;color:#fff;">Day</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Leave Type</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Days</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Reason</th>
+        </tr>
+        {% for leave in approved_leaves.logs %}
+        <tr>
+            <td>{{ leave.day }}</td>
+            <td>{{ leave.leave_type }}</td>
+            <td>{{ leave.days }}</td>
+            <td>{{ leave.reason }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No approved leaves this month.</td></tr>
+        {% endfor %}
+    </table>
+
+    <!-- SECTION 6: DAILY ATTENDANCE LOG -->
+    <div class="section-header">6. DAILY ATTENDANCE LOG</div>
+    <table>
+        <tr style="background-color:#1e4d7b !important;">
+            <th style="background-color:#1e4d7b !important;color:#fff;">Day</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Weekday</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Check In</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Check Out</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Hours</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Status</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">Notes</th>
+        </tr>
+        {% for log in attendance_logs %}
+        <tr {% if log.notes %}class="highlight-yellow"{% endif %}>
+            <td>{{ log.day }}</td>
+            <td>{{ log.weekday }}</td>
+            <td>{{ log.check_in|default:"—" }}</td>
+            <td>{{ log.check_out|default:"—" }}</td>
+            <td>{{ log.hours }}</td>
+            <td>{{ log.status }}</td>
+            <td>{{ log.notes }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No attendance records found.</td></tr>
+        {% endfor %}
+    </table>
+
+    <!-- SECTION 7: SALARY CALCULATION -->
+    <div class="section-header">7. SALARY CALCULATION</div>
+    <table>
+        <tr style="background-color:#1e4d7b !important;">
+            <th style="background-color:#1e4d7b !important;color:#fff;width:50%;">EARNINGS</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;"></th>
+            <th style="background-color:#1e4d7b !important;color:#fff;">DEDUCTIONS</th>
+            <th style="background-color:#1e4d7b !important;color:#fff;"></th>
+        </tr>
+        <tr>
+            <td>Earned Salary ({{ attendance_summary.days_present }} days)</td>
+            <td>NPR {{ salary.earnings.earned_salary }}</td>
+            <td>Late Penalty ({{ violation_summary.late_arrivals }} × 30%)</td>
+            <td>NPR {{ salary.deductions.late_penalty }}</td>
+        </tr>
+        <tr>
+            <td>Reward / Bonus</td>
+            <td>NPR {{ salary.earnings.bonus }}</td>
+            <td>3-Late Trigger ({{ violation_summary.three_late_arrivals }} × 100%)</td>
+            <td>NPR 0.00</td>
+        </tr>
+        <tr style="background-color:#1e4d7b !important;">
+            <td style="color:#fff;font-weight:bold;">Total Earnings</td>
+            <td style="color:#fff;font-weight:bold;">NPR {{ salary.earnings.total_earnings }}</td>
+            <td style="color:#fff;font-weight:bold;">Total Deductions</td>
+            <td style="color:#fff;font-weight:bold;">NPR {{ salary.deductions.total_deductions }}</td>
+        </tr>
+    </table>
+
+    <!-- SALARY SUMMARY -->
+    <table>
+        <tr style="background-color:#1e4d7b !important;">
+            <td colspan="4" style="background-color:#1e4d7b !important;color:#fff;font-weight:bold;text-align:center;">SALARY PAYABLE</td>
+            <td style="background-color:#1e4d7b !important;color:#fff;font-weight:bold;text-align:right;">NPR {{ salary.net_salary }}</td>
+        </tr>
+        <tr class="highlight-gold">
+            <td colspan="4" style="font-weight:bold;">NET SALARY PAYABLE</td>
+            <td style="font-weight:bold;text-align:right;">NPR {{ salary.net_salary }}</td>
+        </tr>
+    </table>
+
 </div>
-
-<!-- ══ 1. PROFILE & SHIFT ══ -->
-<div class="section">
-  <div class="sec-hdr">1. PROFILE &amp; SHIFT</div>
-  <table class="kv-table">
-    <tr><td class="k">Employee ID</td><td class="v">EMP114</td></tr>
-    <tr><td class="k">Full Name</td><td class="v">AagaMan mainali</td></tr>
-    <tr><td class="k">Department</td><td class="v">Backend Development</td></tr>
-    <tr><td class="k">Email</td><td class="v">Aagamanmainali35@gmail.com</td></tr>
-    <tr><td class="k">Scheduled Shift</td><td class="v">10:00 AM – 6:30 PM</td></tr>
-    <tr><td class="k">Effective Working Days (Baishakh)</td><td class="v">24</td></tr>
-    <tr><td class="k">New Joiner?</td><td class="v">no</td></tr>
-  </table>
-</div>
-
-<!-- ══ 2. ATTENDANCE SUMMARY ══ -->
-<div class="section">
-  <div class="sec-hdr">2. ATTENDANCE SUMMARY</div>
-  <table class="kv-table">
-    <tr><td class="k">Days Present (punched in)</td><td class="v">20</td></tr>
-    <tr><td class="k">Total Hours Worked</td><td class="v">128.17</td></tr>
-    <tr><td class="k">Average Hours / Day</td><td class="v">6.41</td></tr>
-    <tr><td class="k">Approved Leave Days Taken</td><td class="v">2</td></tr>
-    <tr><td class="k">Pure Leave Days (no attendance overlap)</td><td class="v">0</td></tr>
-    <tr><td class="k">Total Paid Days (Present + Pure Leave)</td><td class="v">20</td></tr>
-    <tr><td class="k">Unpaid / Absent Days</td><td class="v">4</td></tr>
-    <tr><td class="k">Attendance % (vs. working days)</td><td class="v">83.3%</td></tr>
-  </table>
-</div>
-
-<!-- ══ 3. VIOLATIONS SUMMARY ══ -->
-<div class="section">
-  <div class="sec-hdr">3. VIOLATIONS SUMMARY</div>
-  <table class="kv-table">
-    <tr><td class="k">Late Arrivals (effective)</td><td class="v">2</td></tr>
-    <tr style="background:#fef5c0;"><td class="k" style="background:#fef5c0;">Early Departures</td><td class="v" style="background:#fef5c0;">0</td></tr>
-    <tr><td class="k">Missing Check-outs</td><td class="v">4</td></tr>
-    <tr style="background:#fef5c0;"><td class="k" style="background:#fef5c0;">3-Late Trigger Days (100% pay deduct)</td><td class="v" style="background:#fef5c0;">0</td></tr>
-    <tr><td class="k">Short-Hours Days (worked &lt;1.5h short)</td><td class="v">5</td></tr>
-    <tr style="background:#fef5c0;"><td class="k" style="background:#fef5c0;">Monthly Pass Used</td><td class="v" style="background:#fef5c0;">45 min (of 180 min)</td></tr>
-    <tr><td class="k">Monthly Pass Remaining</td><td class="v">135 min</td></tr>
-  </table>
-</div>
-
-<!-- ══ 4. LEAVE BALANCE ══ -->
-<div class="section">
-  <div class="sec-hdr">4. LEAVE BALANCE (Annual)</div>
-  <table class="kv-table">
-    <tr><td class="k">Paid Leaves Used (Baishakh)</td><td class="v">2</td></tr>
-    <tr><td class="k">Paid Leaves Deducted (policy penalty)</td><td class="v">0.7</td></tr>
-    <tr><td class="k">Total Paid Leave Consumed (Baishakh)</td><td class="v">2.7</td></tr>
-    <tr><td class="k">Annual Paid Leave Allowance</td><td class="v">13</td></tr>
-    <tr><td class="k">Paid Leave Remaining (estimated)</td><td class="v">10.3</td></tr>
-    <tr><td class="k">Annual Sick Leave Allowance</td><td class="v">7</td></tr>
-  </table>
-</div>
-
-<!-- ══ 5. APPROVED LEAVES ══ -->
-<div class="section">
-  <div class="sec-hdr">5. APPROVED LEAVES — BAISHAKH 2083</div>
-  <table class="lv-table">
-    <thead>
-      <tr>
-        <th style="width:6%;">Day</th>
-        <th style="width:10%;">Leave Type</th>
-        <th style="width:5%;">Days</th>
-        <th style="width:38%;">Reason</th>
-        <th style="width:30%;">Pass Used</th>
-        <th style="width:11%;">Min</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>22</td>
-        <td>Paid Leave</td>
-        <td>1</td>
-        <td class="reason">I need to attend a family function scheduled for this evening at 7 PM. Thank you for understanding</td>
-        <td class="reason">15 min Granted from the pass in the month Note: 3hour - 15 min = 2 hour 45 Min Pass Remaining this month</td>
-        <td>15 min</td>
-      </tr>
-      <tr>
-        <td>29</td>
-        <td>Paid Leave</td>
-        <td>1</td>
-        <td class="reason">I need to visit my father friend to attend to some personal work and will be taking a leave one hour early in 5:30 pm in the evening.</td>
-        <td class="reason">30 min leave deducted</td>
-        <td>30 min</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- ══ 6. DAILY ATTENDANCE LOG ══ -->
-<div class="section">
-  <div class="sec-hdr">6. DAILY ATTENDANCE LOG</div>
-  <table class="att-table">
-    <thead>
-      <tr>
-        <th style="width:5%;">Day</th>
-        <th style="width:11%;">Weekday</th>
-        <th style="width:10%;">Check In</th>
-        <th style="width:10%;">Check Out</th>
-        <th style="width:7%;">Hours</th>
-        <th style="width:9%;">Status</th>
-        <th>Notes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="normal">
-        <td>8</td><td>Tuesday</td><td>—</td><td>6:30 PM</td><td>0</td><td>Present</td><td class="notes">Short&gt;1.5h → PL</td>
-      </tr>
-      <tr class="normal">
-        <td>9</td><td>Wednesday</td><td>9:56 AM</td><td>6:36 PM</td><td>8.67</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="normal">
-        <td>10</td><td>Thursday</td><td>9:54 AM</td><td>6:34 PM</td><td>8.67</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="flagged">
-        <td>11</td><td>Friday</td><td>10:06 AM</td><td>—</td><td>0</td><td>Present</td><td class="notes">No check-out; Short&gt;1.5h → PL; Friday (2h early OK)</td>
-      </tr>
-      <tr class="flagged">
-        <td>13</td><td>Sunday</td><td>10:01 AM</td><td>—</td><td>0</td><td>Present</td><td class="notes">No check-out; Short&gt;1.5h → PL</td>
-      </tr>
-      <tr class="normal">
-        <td>14</td><td>Monday</td><td>10:04 AM</td><td>6:33 PM</td><td>8.48</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="normal">
-        <td>15</td><td>Tuesday</td><td>9:54 AM</td><td>6:32 PM</td><td>8.63</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="flagged">
-        <td>16</td><td>Wednesday</td><td>9:57 AM</td><td>—</td><td>0</td><td>Present</td><td class="notes">No check-out; Short&gt;1.5h → PL</td>
-      </tr>
-      <tr class="normal">
-        <td>17</td><td>Thursday</td><td>9:57 AM</td><td>6:32 PM</td><td>0</td><td>Half Day</td><td class="notes"></td>
-      </tr>
-      <tr class="normal">
-        <td>18</td><td>Friday</td><td>9:51 AM</td><td>5:48 PM</td><td>7.95</td><td>Present</td><td class="notes">Friday (2h early OK)</td>
-      </tr>
-      <tr class="normal">
-        <td>21</td><td>Monday</td><td>9:55 AM</td><td>6:44 PM</td><td>8.81</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="onleave">
-        <td>22</td><td>Tuesday</td><td>10:06 AM</td><td>6:07 PM</td><td>8.02</td><td>On Leave</td><td class="notes">On Leave: Paid Leave</td>
-      </tr>
-      <tr class="normal">
-        <td>23</td><td>Wednesday</td><td>10:03 AM</td><td>7:12 PM</td><td>9.15</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="normal">
-        <td>24</td><td>Thursday</td><td>9:52 AM</td><td>6:40 PM</td><td>8.81</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="flagged">
-        <td>25</td><td>Friday</td><td>10:11 AM</td><td>6:35 PM</td><td>8.41</td><td>Present</td><td class="notes">LATE by 11 min; Friday (2h early OK)</td>
-      </tr>
-      <tr class="normal">
-        <td>27</td><td>Sunday</td><td>9:53 AM</td><td>6:35 PM</td><td>8.71</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="normal">
-        <td>28</td><td>Monday</td><td>10:09 AM</td><td>6:34 PM</td><td>8.42</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="onleave">
-        <td>29</td><td>Tuesday</td><td>9:58 AM</td><td>—</td><td>0</td><td>On Leave</td><td class="notes">On Leave: Paid Leave; No check-out; Short&gt;1.5h → PL</td>
-      </tr>
-      <tr class="normal">
-        <td>30</td><td>Wednesday</td><td>10:00 AM</td><td>6:32 PM</td><td>8.54</td><td>Present</td><td class="notes"></td>
-      </tr>
-      <tr class="flagged">
-        <td>31</td><td>Thursday</td><td>10:12 AM</td><td>6:31 PM</td><td>8.31</td><td>Present</td><td class="notes">LATE by 12 min</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- ══ 7. SALARY CALCULATION ══ -->
-<div class="section">
-  <div class="sec-hdr">7. SALARY CALCULATION — BAISHAKH 2083</div>
-  <table class="sal-table">
-    <thead>
-      <tr>
-        <th class="earn-hdr" colspan="2">EARNINGS</th>
-        <th class="ded-hdr"  colspan="2">DEDUCTIONS</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="sr-normal">
-        <td class="slabel">Earned Salary  (20.0 days × NPR 833.33/day)</td>
-        <td class="sval">NPR 16,666.66</td>
-        <td class="dlabel">Late Penalty  (2 × 30%)</td>
-        <td class="dval" style="color:#cc0000;">NPR (499.99)</td>
-      </tr>
-      <tr class="sr-normal">
-        <td class="slabel">Reward / Bonus  (No Reward)</td>
-        <td class="sval">NPR 0.00</td>
-        <td class="dlabel">3-Late Trigger  (0 × 100%)</td>
-        <td class="dval">NPR 0.00</td>
-      </tr>
-      <tr class="sr-normal">
-        <td class="slabel">overtime ( 0 hours)</td>
-        <td class="sval"></td>
-        <td class="dlabel">Early-Out Penalty  (0 × 30%)</td>
-        <td class="dval">NPR 0.00</td>
-      </tr>
-      <tr class="sr-total">
-        <td class="slabel">Total Earnings</td>
-        <td class="sval" style="color:#1a7a1a;font-weight:700;">NPR 16,666.67</td>
-        <td class="dlabel">Total Deductions</td>
-        <td class="dval" style="color:#cc0000;font-weight:700;">NPR (499.99)</td>
-      </tr>
-      <tr class="sr-payable">
-        <td colspan="3">SALARY PAYABLE</td>
-        <td style="text-align:right;background:#2e5f8a;color:#fff;font-weight:700;font-size:10pt;border:1px solid #1e4a72;">NPR 16,166.68</td>
-      </tr>
-      <tr class="sr-tax">
-        <td colspan="2">Tax</td>
-        <td style="text-align:right;background:#217a21;color:#fff;border:1px solid #155a15;">NRS</td>
-        <td style="text-align:right;background:#217a21;color:#fff;border:1px solid #155a15;">166.66</td>
-      </tr>
-      <tr class="sr-net">
-        <td colspan="2">NET SALARY PAYABLE</td>
-        <td style="text-align:right;background:#b8930a;color:#fff;font-weight:700;font-size:10pt;border:1px solid #957508;">NPR</td>
-        <td style="text-align:right;background:#b8930a;color:#fff;font-weight:700;font-size:10pt;border:1px solid #957508;">16000.02</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
 </body>
 </html>

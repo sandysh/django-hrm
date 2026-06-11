@@ -73,13 +73,13 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
             employee=leave_request.employee,
             leave_type=leave_request.leave_type,
             year=current_year,
-            defaults={"allocated": 0, "used": 0, "balance": 0}
+            defaults={"allocated": leave_request.leave_type.default_days, "used": 0, "balance": leave_request.leave_type.default_days}
         )
 
         leave_days = (leave_request.end_date - leave_request.start_date).days
 
         balance.used += leave_days
-        balance.update_balance()
+        balance.save()
 
         context = {
             "employee_name": leave_request.employee.username,
@@ -141,7 +141,7 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
                     year=current_year
                 )
                 balance.used -= leave_request.total_days
-                balance.update_balance()
+                balance.save()
             except LeaveBalance.DoesNotExist:
                 pass
         

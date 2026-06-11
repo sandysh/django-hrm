@@ -212,6 +212,9 @@ def employee_create(request):
                 employment_type=request.POST.get('employment_type', 'FT'),
                 status='AC',
                 is_staff=request.POST.get('is_staff') == 'on',
+                start_time=request.POST.get('start_time') if request.POST.get('start_time') else None,
+                end_time=request.POST.get('end_time') if request.POST.get('end_time') else None,
+                basic_salary=request.POST.get('basic_salary', 0),
             )
             
             # Trigger biometric sync directly (Synchronous)
@@ -264,6 +267,9 @@ def employee_edit(request, pk):
             employee.employment_type = request.POST.get('employment_type', 'FT')
             employee.status = request.POST.get('status', 'AC')
             employee.is_staff = request.POST.get('is_staff') == 'on'
+            employee.start_time = request.POST.get('start_time') if request.POST.get('start_time') else None
+            employee.end_time = request.POST.get('end_time') if request.POST.get('end_time') else None
+            employee.basic_salary = request.POST.get('basic_salary', employee.basic_salary)
             
             if request.POST.get('password'):
                 employee.set_password(request.POST['password'])

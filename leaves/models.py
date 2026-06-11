@@ -126,3 +126,5 @@ class LeaveBalance(models.Model):
         """Update balance based on allocated and used."""
         self.balance = self.allocated - self.used
         self.save()
+        
+        

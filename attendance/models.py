@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from employees.models import Employee
 
@@ -97,4 +99,27 @@ class DailyAttendance(models.Model):
     
     def __str__(self):
         return f"{self.employee.employee_id} - {self.date} ({self.status})"
+    
+    
+    # def save(self, *args, **kwargs):
+    #     self.is_late = False
+    #     self.is_early_departure = False
+        
+    #     if self.check_in_time and self.employee.start_time:
+    #         if self.check_in_time > self.employee.start_time:
+    #             self.is_late = True
 
+    #     if self.check_out_time and self.employee.end_time:
+    #         if self.check_out_time < self.employee.end_time:
+    #             self.is_early_departure = True
+                
+    #     if self.check_in_time and self.check_out_time:
+    #         today = datetime.today().date()
+
+    #         check_in_dt = datetime.combine(today, self.check_in_time)
+    #         check_out_dt = datetime.combine(today, self.check_out_time)
+
+    #         diff = check_out_dt - check_in_dt
+    #         self.total_hours = round(diff.total_seconds() / 3600, 2)
+
+    #     super().save(*args, **kwargs)

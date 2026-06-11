@@ -7,6 +7,13 @@ from django.conf import settings
 import logging
 from celery import shared_task
 from django.utils import timezone
+from employees.models import Employee
+from attendance.models import DailyAttendance
+import nepali_datetime
+import datetime
+from django.db.models import Q , Count , Sum 
+from hrm_project.utility import get_dates
+from reports.service import ReportService
 
 logger = logging.getLogger(__name__)
 
@@ -57,9 +64,6 @@ def send_email(reciver_email, template, context_data):
 @shared_task
 def send_reminder():
     """send reminder for employee who have not punched in or are late """
-    from employees.models import Employee
-    from attendance.models import DailyAttendance
-
     not_punched_users=DailyAttendance.objects.filter(
         date=timezone.now().date(),
         check_in_time__gte=time(10, 10)
@@ -88,8 +92,6 @@ def send_reminder():
 @shared_task
 def send_punch_out_reminder():
     """send reminder for employee who have not punched out """
-    from employees.models import Employee
-    from attendance.models import DailyAttendance
     not_punched_users=DailyAttendance.objects.filter(
         date=timezone.now().date(),
         check_out_time__isnull=True
@@ -111,6 +113,58 @@ def send_punch_out_reminder():
             context,
         )
         
-    
+@shared_task
+def send_payroll_notice():
+    """ Send payroll generation email to employees at end of each nepali month. """
+    # today_ad = datetime.date.today()
+    # today_bs = nepali_datetime.date.from_datetime_date(today_ad)
 
+    # if today_bs.month == 12:
+    #     next_month = nepali_datetime.date(today_bs.year + 1, 1, 1)
+    # else:
+    #     next_month = nepali_datetime.date(today_bs.year, today_bs.month + 1, 1)
+
+    # last_day = next_month - datetime.timedelta(days=1)
+    
+    # if today_bs==last_day:
+    
+    dates=get_dates()
+    if dates['today_bs']==dates['end_bs']:
+       emps=Employee.objects.all()
+       context={}
+       for emp in emps:
+        service = ReportService(
+            employee=emp,
+        )
+        
+        context["profile"] = service.profile()
+        context["attendance_summary"] = service.attendance_summary()
+        context["violation_summary"] = service.voilation_summary()
+        context["leave_balance"] = service.leave_balance_summary()
+        context["approved_leaves"] = service.approved_leaves()
+        context["attendance_logs"] = service.attendanec_records()
+        context["salary"] = service.salary_calculation()
+        
+        
+def create_latesummary_roll(start_date,end_date):
+    user=Employee.objects.all().first()
+    qs=DailyAttendance.objects.filter(
+        employee=user,
+        date__range=(start_date,end_date)
+    )
+    data=qs.aggregate(
+        late_arrival=Count("id",filter=Q(is_late=True)),
+        early_departures=Count("id", filter=Q(is_early_departure=True)),
+        short_hours_days=Count("id", filter=Q(total_hours__lt=1.5)),
+    )
+    
+    missing_checkouts = qs.filter(check_out_time__isnull=True).count()
+    three_late_arrivals=qs.filter(is_late=True).count()//3
+    
+    data[missing_checkouts]=missing_checkouts
+    # TODO : Ask how monthly pas is calculated 
+    return data
+
+    
+    
     
