@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #utility_tools
+    'django_extensions',
     
     # Third party apps
     'rest_framework',
@@ -170,6 +172,21 @@ CELERY_BEAT_SCHEDULE = {
     "punch_out_reminder": {
         "task": "hrm_project.task.send_punch_out_reminder",
         "schedule": crontab(hour=18,minute=30), 
+    },
+}
+
+print('loggin added')
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
 }
 

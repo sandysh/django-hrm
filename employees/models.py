@@ -83,7 +83,11 @@ class Employee(AbstractUser):
         ],
         default='FT'
     )
+    
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='AC')
+    start_time = models.TimeField(null=True,blank=True)
+    end_time = models.TimeField(null=True,blank=True)
+    basic_salary=models.DecimalField(max_digits=10, decimal_places=2)
     
     # Biometric Information
     biometric_user_id = models.IntegerField(unique=True, null=True, blank=True, db_index=True,
