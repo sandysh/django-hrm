@@ -26,12 +26,13 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
+      - static_volume:/app/public/staticfiles
+      - media_volume:/app/public/media
     ports:
       - "8000:8000"
     environment:
       - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=hrm_project.settings.local
       - DATABASE_URL=postgresql://hrm_user:hrm_password_2024@db:5432/hrm_db
       - BIOMETRIC_DEVICE_IP=192.168.1.201
       - BIOMETRIC_DEVICE_PORT=4370
@@ -52,6 +53,7 @@ services:
       - .:/app
     environment:
       - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=hrm_project.settings.local
       - DATABASE_URL=postgresql://hrm_user:hrm_password_2024@db:5432/hrm_db
       - BIOMETRIC_DEVICE_IP=192.168.1.201
       - BIOMETRIC_DEVICE_PORT=4370
@@ -71,6 +73,7 @@ services:
       - .:/app
     environment:
       - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=hrm_project.settings.local
       - DATABASE_URL=postgresql://hrm_user:hrm_password_2024@db:5432/hrm_db
       - BIOMETRIC_DEVICE_IP=192.168.1.201
       - BIOMETRIC_DEVICE_PORT=4370

@@ -5,8 +5,13 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
+import sys
+
+# Add apps/ to the Python path
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'apps'))
+
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hrm_project.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hrm_project.settings.local')
 
 app = Celery('hrm_project')
 

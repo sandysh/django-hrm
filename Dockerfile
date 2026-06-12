@@ -25,7 +25,7 @@ RUN pip install --upgrade pip && \
 COPY . /app/
 
 # Create necessary directories
-RUN mkdir -p /app/staticfiles /app/media
+RUN mkdir -p /app/public/staticfiles /app/public/media
 
 # Expose port
 EXPOSE 8000
