@@ -42,6 +42,24 @@
                 background-color: #f9fafb;
                 color: #4f46e5;
             }
+
+            @keyframes blinkSoft {
+
+                0%,
+                100% {
+                    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+                    transform: scale(1);
+                }
+
+                50% {
+                    box-shadow: 0 0 15px 5px rgba(245, 158, 11, 0.4);
+                    transform: scale(1.02);
+                }
+            }
+
+            .blink-hard {
+                animation: blinkSoft 0.4s infinite ease-in-out;
+            }
         </style>
 
         <div class="custom-dropdown">
@@ -84,10 +102,34 @@
         <p>Absent Today</p>
     </div>
 
-    <div class="stat-card" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+    <a href="{% url 'leave_requests' %}" class="stat-card {% if pending_leaves > 0 %}blink-hard{% endif %}"
+        style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); text-decoration: none; display: block; cursor: pointer;">
         <h3>{{ pending_leaves }}</h3>
         <p>Pending Leaves</p>
-    </div>
+    </a>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-3" style="margin-bottom: 2rem;">
+    <a href="{% url 'employee_create' %}" class="card"
+        style="text-decoration: none; text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
+        <h3>Add Employee</h3>
+        <p style="color: var(--text-secondary);">Create new employee account</p>
+    </a>
+
+    <a href="{% url 'attendance_report' %}" class="card"
+        style="text-decoration: none; text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+        <h3>View Reports</h3>
+        <p style="color: var(--text-secondary);">Attendance and leave reports</p>
+    </a>
+
+    <a href="/admin/" class="card" style="text-decoration: none; text-align: center; padding: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⚙️</div>
+        <h3>Settings</h3>
+        <p style="color: var(--text-secondary);">System configuration</p>
+    </a>
 </div>
 
 <!-- Today's Attendance -->
@@ -145,7 +187,7 @@
 </div>
 
 <!-- Pending Leave Requests -->
-<div class="card">
+<!-- <div class="card">
     <div class="card-header">
         Pending Leave Requests
         <a href="{% url 'leave_requests' %}" class="btn btn-sm btn-primary" style="float: right;">View All</a>
@@ -168,8 +210,10 @@
             <tr>
                 <td>{{ leave.employee.get_full_name }}</td>
                 <td>{{ leave.leave_type.name }}</td>
-                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.start_date|date:'Y-m-d' }}">{{ leave.start_date|date:"M d, Y" }}</span></td>
-                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.end_date|date:'Y-m-d' }}">{{ leave.end_date|date:"M d, Y" }}</span></td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.start_date|date:'Y-m-d' }}">{{
+                        leave.start_date|date:"M d, Y" }}</span></td>
+                <td><span class="js-nepali-date" data-nepali-ad="{{ leave.end_date|date:'Y-m-d' }}">{{
+                        leave.end_date|date:"M d, Y" }}</span></td>
                 <td>{{ leave.total_days }}</td>
                 <td>
                     <a href="{% url 'leave_detail' leave.id %}" class="btn btn-sm btn-primary">Review</a>
@@ -181,28 +225,6 @@
     {% else %}
     <p style="text-align: center; padding: 2rem; color: var(--text-secondary);">No pending leave requests</p>
     {% endif %}
-</div>
+</div> -->
 
-<!-- Quick Actions -->
-<div class="grid grid-3">
-    <a href="{% url 'employee_create' %}" class="card"
-        style="text-decoration: none; text-align: center; padding: 2rem;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
-        <h3>Add Employee</h3>
-        <p style="color: var(--text-secondary);">Create new employee account</p>
-    </a>
-
-    <a href="{% url 'attendance_report' %}" class="card"
-        style="text-decoration: none; text-align: center; padding: 2rem;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-        <h3>View Reports</h3>
-        <p style="color: var(--text-secondary);">Attendance and leave reports</p>
-    </a>
-
-    <a href="/admin/" class="card" style="text-decoration: none; text-align: center; padding: 2rem;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">⚙️</div>
-        <h3>Settings</h3>
-        <p style="color: var(--text-secondary);">System configuration</p>
-    </a>
-</div>
 {% endblock %}

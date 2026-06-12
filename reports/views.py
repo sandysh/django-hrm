@@ -72,4 +72,4 @@ class ReportView(LoginRequiredMixin, TemplateView):
         return context
     
 class MailView(TemplateView):
-    template_name="emails/salary_revision.htmsdsdl"
+    template_name="emails/payslip_released.html"

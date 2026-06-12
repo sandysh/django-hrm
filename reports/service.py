@@ -92,7 +92,7 @@ class ReportService:
             "new_joiner": self.is_new_joiner(),
         }
 
-    def attendance_summary(self): #TODO : FIX ATTENDANCE AFTER creating the employee schedule time
+    def attendance_summary(self): # NOTW : Woking
 
         qs = DailyAttendance.objects.filter(
             employee=self.employee,
@@ -106,10 +106,9 @@ class ReportService:
             leave_days=Count('id', filter=Q(status='LV'))
         )
         
-        # Fallback to LeaveRequest if DailyAttendance doesn't track LV properly
+        # because LV is not marked manually by system when on leave so fall back to manual tracking 
         leave_days = stats['leave_days'] or 0
         if leave_days == 0:
-            # We approximate by querying LeaveRequests that start in this month
             leave_days = LeaveRequest.objects.filter(
                 employee=self.employee, 
                 status="AP",
@@ -184,7 +183,7 @@ class ReportService:
 
             allocated = balance.allocated if balance else lt.default_days
             
-            # Calculate annual used dynamically to prevent sync issues
+            # Calculate annual used 
             used_annual = LeaveRequest.objects.filter(
                 employee=employee,
                 leave_type=lt,
@@ -265,15 +264,18 @@ class ReportService:
         return sorted(result, key=lambda x: x["day"])
 
     def salary_calculation(self):
-        daily_rate = 833.33
-
-        worked_days = 20
-        total_late = 2
-        total_absent = 0
+        # Convert Decimal basic_salary to float
+        worked_days = self.attendance_summary()['days_present']
+        violation_summary = self.voilation_summary()
+        total_late = violation_summary['late_arrivals']
+        three_late_arrivals = violation_summary['three_late_arrivals']
+        total_absent = self.attendance_summary()['unpaid_absent_days']
+        daily_rate = float(self.employee.basic_salary) / 24
 
         earned_salary = worked_days * daily_rate
 
         late_penalty = total_late * (0.30 * daily_rate)
+        three_late_penalty = three_late_arrivals * daily_rate
 
         if total_late == 0 and total_absent == 0:
             bonus = 0.10 * earned_salary
@@ -281,7 +283,7 @@ class ReportService:
             bonus = 0.0
 
         total_earnings = earned_salary + bonus
-        total_deductions = late_penalty
+        total_deductions = late_penalty + three_late_penalty
 
         net_salary = total_earnings - total_deductions
 
@@ -293,6 +295,7 @@ class ReportService:
             },
             "deductions": {
                 "late_penalty": round(late_penalty, 2),
+                "three_late_penalty": round(three_late_penalty, 2),
                 "total_deductions": round(total_deductions, 2),
             },
             "net_salary": round(net_salary, 2)

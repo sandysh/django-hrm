@@ -82,7 +82,9 @@ def send_reminder():
         }
 
         send_email.delay(
-            employee_record.employee.email,
+            # : NOTE :  uncomment in prod
+            # employee_record.employee.email, 
+            "sthprakash34@gmail.com",
             "emails/punch_in_missing.html",
             context,
         )

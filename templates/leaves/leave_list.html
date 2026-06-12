@@ -66,17 +66,19 @@
                 <td>
                     {% if leave.status == 'PE' %}
                     <a href="{% url 'leave_edit' leave.id %}" class="btn btn-sm btn-primary">Edit</a>
-                    <form method="post" action="{% url 'leave_approve' leave.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'leave_approve' leave.id %}" style="display: inline;" id="approve-form-{{ leave.id }}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-success"
-                            onclick="return confirm('Approve this leave request?')">
+                        <input type="hidden" name="notes" id="approve-notes-{{ leave.id }}" value="">
+                        <button type="button" class="btn btn-sm btn-success"
+                            onclick="let note = prompt('Add an approval note (optional):'); if (note !== null) { document.getElementById('approve-notes-{{ leave.id }}').value = note; document.getElementById('approve-form-{{ leave.id }}').submit(); }">
                             Approve
                         </button>
                     </form>
-                    <form method="post" action="{% url 'leave_reject' leave.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'leave_reject' leave.id %}" style="display: inline;" id="reject-form-{{ leave.id }}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-danger"
-                            onclick="return confirm('Reject this leave request?')">
+                        <input type="hidden" name="notes" id="reject-notes-{{ leave.id }}" value="">
+                        <button type="button" class="btn btn-sm btn-danger"
+                            onclick="let note = prompt('Add a rejection reason (optional):'); if (note !== null) { document.getElementById('reject-notes-{{ leave.id }}').value = note; document.getElementById('reject-form-{{ leave.id }}').submit(); }">
                             Reject
                         </button>
                     </form>

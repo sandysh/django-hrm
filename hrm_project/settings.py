@@ -167,8 +167,9 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_BEAT_SCHEDULE = {
     "punch_in_reminder": {
         "task": "hrm_project.task.send_reminder",
-        "schedule": crontab(hour=10,minute=10), 
+        "schedule": crontab(hour=11,minute=12), 
     },
+    #  NOTE : remove this line if further notice
     "punch_out_reminder": {
         "task": "hrm_project.task.send_punch_out_reminder",
         "schedule": crontab(hour=18,minute=30), 
