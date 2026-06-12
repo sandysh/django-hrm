@@ -37,4 +37,4 @@ def settings(request):
         'leave_types': leave_types,
     }
     
-    return render(request, 'core/settings.html', context)
+    return render(request, 'systemsettings/settings.html', context)
