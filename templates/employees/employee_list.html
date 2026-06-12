@@ -91,13 +91,15 @@
                 <td style="white-space: nowrap;">
                     <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
                         <a href="{% url 'employee_detail' employee.id %}" class="btn btn-sm btn-primary"
-                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="View Details">👁️</a>
+                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="View Details">View</a>
                         <a href="{% url 'employee_edit' employee.id %}" class="btn btn-sm btn-secondary"
-                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Edit">✏️</a>
+                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Edit">Edit</a>
                         <a href="{% url 'employee_sync' employee.id %}" class="btn btn-sm btn-success"
-                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Sync to Device">🔄</a>
+                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Sync to Device">Sync</a>
                         <a href="{% url 'employee_delete' employee.id %}" class="btn btn-sm btn-danger"
-                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Delete">🗑️</a>
+                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Delete">Delete</a>
+                        <a href="{% url 'employee_report_data' employee.id %}" class="btn btn-sm"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background-color: #3b82f6; color: white;" title="Generate Report Data">Report</a>
                     </div>
                 </td>
             </tr>

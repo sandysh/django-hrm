@@ -1,0 +1,471 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allowance Settings – HRM System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #4F46E5; --primary-dark: #4338CA; --secondary: #10B981;
+            --danger: #EF4444; --warning: #F59E0B; --info: #3B82F6;
+            --bg-light: #F9FAFB; --bg-white: #FFFFFF;
+            --text-primary: #1F2937; --text-secondary: #6B7280;
+            --border: #E5E7EB; --shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: var(--bg-light); color: var(--text-primary); line-height: 1.6; }
+
+        /* NAVBAR */
+        .navbar { background: var(--bg-white); border-bottom: 1px solid var(--border); padding: 1rem 0; box-shadow: var(--shadow); position: relative; }
+        .navbar-container { max-width: 100%; padding: 0 50px; display: flex; align-items: center; }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .navbar-collapse { display: flex; width: 100%; align-items: center; flex: 1; }
+        .navbar-nav { display: flex; gap: 2rem; list-style: none; align-items: center; }
+        .navbar-center-menu { margin: 0 auto; }
+        .nav-link { color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 1.05rem; transition: color 0.2s; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .nav-item-dropdown { position: relative; }
+        .nav-item-dropdown-toggle { display: flex; align-items: center; gap: 0.25rem; background: transparent; border: none; color: var(--text-secondary); font-weight: 500; cursor: pointer; padding: 0; font-family: inherit; font-size: 1.05rem; transition: color 0.2s; }
+        .nav-item-dropdown-toggle:hover { color: var(--primary); }
+        .nav-item-dropdown-toggle .caret { font-size: 0.8em; transition: transform 0.2s; }
+        .nav-item-dropdown.open .caret { transform: rotate(180deg); }
+        .nav-item-dropdown-menu { display: none; position: absolute; left: 0; top: 100%; background: var(--bg-white); border: 1px solid var(--border); border-radius: 0.5rem; box-shadow: var(--shadow-lg); padding: 0.5rem; min-width: 200px; z-index: 1000; margin-top: 0.5rem; }
+        .nav-item-dropdown.open .nav-item-dropdown-menu { display: block; }
+        .nav-dropdown-item { display: block; padding: 0.625rem 1rem; border-radius: 0.375rem; color: var(--text-primary); text-decoration: none; white-space: nowrap; font-weight: 500; font-size: 1.05rem; transition: all 0.2s; }
+        .nav-dropdown-item:hover { background: var(--bg-light); color: var(--primary); }
+        .user-info { display: flex; align-items: center; gap: 0.75rem; }
+        .user-dropdown { position: relative; }
+        .user-dropdown-toggle { display: flex; align-items: center; gap: 0.75rem; background: transparent; border: none; color: inherit; cursor: pointer; padding: 0; font: inherit; }
+        .user-dropdown-caret { color: var(--text-secondary); font-size: 0.9rem; }
+        .user-dropdown-menu { display: none; position: absolute; right: 0; top: calc(100% + 0.5rem); background: var(--bg-white); border: 1px solid var(--border); border-radius: 0.5rem; box-shadow: var(--shadow-lg); padding: 0.25rem; min-width: 160px; z-index: 1000; }
+        .user-dropdown.open .user-dropdown-menu { display: block; }
+        .user-dropdown-item { display: block; padding: 0.625rem 1rem; border-radius: 0.375rem; color: var(--text-primary); text-decoration: none; white-space: nowrap; }
+        .user-dropdown-item:hover { background: var(--bg-light); color: var(--primary); }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+        /* LAYOUT */
+        .container { max-width: 100%; margin: 2rem 0; padding: 0 100px; }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+        .page-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .page-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem; }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .breadcrumb a { color: var(--primary); text-decoration: none; }
+        .breadcrumb-sep { color: var(--border); }
+
+        /* CARD */
+        .card { background: var(--bg-white); border-radius: 0.5rem; box-shadow: var(--shadow); margin-bottom: 1.5rem; overflow: hidden; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .card-header-title { font-size: 1.1rem; font-weight: 600; }
+        .card-header-sub { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
+        .card-body { padding: 1.5rem; }
+
+        /* BUTTONS */
+        .btn { padding: 0.625rem 1.25rem; border-radius: 0.375rem; font-weight: 500; font-family: inherit; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { background: var(--text-secondary); color: white; }
+        .btn-secondary:hover { background: #4B5563; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #DC2626; }
+        .btn-outline { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-outline:hover { background: var(--bg-light); }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8rem; }
+        .btn-icon { padding: 0.375rem 0.5rem; background: white; border: 1px solid var(--border); border-radius: 0.375rem; cursor: pointer; color: var(--text-secondary); font-size: 0.85rem; transition: all 0.2s; display: inline-flex; align-items: center; }
+        .btn-icon:hover { background: var(--bg-light); color: var(--primary); }
+        .btn-icon.danger:hover { background: #FEE2E2; color: var(--danger); border-color: #FCA5A5; }
+
+        /* TABLE */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        thead th { background: var(--bg-light); padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        tbody td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: var(--bg-light); }
+
+        /* BADGES */
+        .badge { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 600; }
+        .badge-green { background: #D1FAE5; color: #065F46; }
+        .badge-blue { background: #DBEAFE; color: #1E40AF; }
+        .badge-amber { background: #FEF3C7; color: #92400E; }
+        .badge-red { background: #FEE2E2; color: #991B1B; }
+        .badge-gray { background: #F3F4F6; color: #4B5563; }
+        .badge-purple { background: #EDE9FE; color: #5B21B6; }
+
+        /* TOGGLE */
+        .toggle { position: relative; display: inline-block; width: 38px; height: 22px; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #D1D5DB; border-radius: 22px; transition: .2s; }
+        .toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .2s; }
+        .toggle input:checked + .toggle-slider { background: var(--primary); }
+        .toggle input:checked + .toggle-slider:before { transform: translateX(16px); }
+
+        /* FORM */
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+        .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.375rem; }
+        .form-label { font-size: 0.875rem; font-weight: 500; color: var(--text-primary); }
+        .form-label span { color: var(--danger); margin-left: 2px; }
+        .form-control { padding: 0.6rem 0.875rem; border: 1px solid var(--border); border-radius: 0.375rem; font-size: 0.95rem; font-family: inherit; background: white; color: var(--text-primary); transition: all 0.2s; }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+        select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2rem; }
+        .form-hint { font-size: 0.8rem; color: var(--text-secondary); }
+        .form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--border); margin-top: 1.5rem; }
+
+        /* MODAL */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: white; border-radius: 0.75rem; width: 560px; max-width: 95vw; box-shadow: var(--shadow-lg); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .modal-title { font-size: 1.1rem; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-secondary); line-height: 1; }
+        .modal-close:hover { color: var(--text-primary); }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+        /* ALERT */
+        .alert { padding: 0.875rem 1rem; border-radius: 0.375rem; margin-bottom: 1rem; font-size: 0.9rem; }
+        .alert-success { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
+        .alert-info { background: #DBEAFE; color: #1E40AF; border: 1px solid #93C5FD; }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-secondary); }
+        .empty-state-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+        .empty-state-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+
+        /* STATS ROW */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-mini { background: white; border-radius: 0.5rem; padding: 1rem 1.25rem; box-shadow: var(--shadow); border-left: 4px solid var(--primary); }
+        .stat-mini-value { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
+        .stat-mini-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px; }
+
+        /* ACTIONS ROW */
+        .actions-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap; }
+        .search-box { position: relative; }
+        .search-box input { padding: 0.5rem 0.875rem 0.5rem 2.25rem; border: 1px solid var(--border); border-radius: 0.375rem; font-size: 0.9rem; font-family: inherit; width: 240px; }
+        .search-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+        .search-icon { position: absolute; left: 0.625rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 0.9rem; }
+
+        .employee-name strong { display: block; font-weight: 600; }
+        .employee-name span { font-size: 0.8rem; color: var(--text-secondary); }
+        .action-btns { display: flex; gap: 0.4rem; }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; }
+            .navbar-container { padding: 0 1rem; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="#" class="navbar-brand">🏢 HRM System</a>
+        <div class="navbar-collapse">
+            <ul class="navbar-nav navbar-center-menu">
+                <li><a href="#" class="nav-link">Dashboard</a></li>
+                <li class="nav-item-dropdown">
+                    <button type="button" class="nav-item-dropdown-toggle">Organization <span class="caret">▾</span></button>
+                    <div class="nav-item-dropdown-menu">
+                        <a href="#" class="nav-dropdown-item">Employees</a>
+                        <a href="#" class="nav-dropdown-item">Departments</a>
+                        <a href="#" class="nav-dropdown-item">Designations</a>
+                    </div>
+                </li>
+                <li class="nav-item-dropdown">
+                    <button type="button" class="nav-item-dropdown-toggle">Time &amp; Leave <span class="caret">▾</span></button>
+                    <div class="nav-item-dropdown-menu">
+                        <a href="#" class="nav-dropdown-item">Calendar</a>
+                        <a href="#" class="nav-dropdown-item">Attendance Report</a>
+                        <a href="#" class="nav-dropdown-item">Leave Requests</a>
+                    </div>
+                </li>
+                <li class="nav-item-dropdown">
+                    <button type="button" class="nav-item-dropdown-toggle active" style="color:var(--primary);">Administration <span class="caret">▾</span></button>
+                    <div class="nav-item-dropdown-menu">
+                        <a href="#" class="nav-dropdown-item">Audit Logs</a>
+                        <a href="#" class="nav-dropdown-item" style="color:var(--primary); font-weight:600;">⚙️ Settings</a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="user-info user-dropdown">
+                    <button type="button" class="user-dropdown-toggle">
+                        <div class="user-avatar">AD</div>
+                        <span>Admin</span>
+                        <span class="user-dropdown-caret">▾</span>
+                    </button>
+                    <div class="user-dropdown-menu">
+                        <a href="#" class="user-dropdown-item">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="breadcrumb">
+        <a href="#">Dashboard</a><span class="breadcrumb-sep">›</span>
+        <a href="#">Settings</a><span class="breadcrumb-sep">›</span>
+        <span>Allowance Settings</span>
+    </div>
+
+    <div class="page-header">
+        <div>
+            <div class="page-title">Allowance Settings</div>
+            <div class="page-subtitle">Manage allowance types and their configurations for payroll processing.</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModal()">+ Add Allowance</button>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-mini">
+            <div class="stat-mini-value">7</div>
+            <div class="stat-mini-label">Total Allowances</div>
+        </div>
+        <div class="stat-mini" style="border-left-color: var(--secondary);">
+            <div class="stat-mini-value" style="color:var(--secondary);">5</div>
+            <div class="stat-mini-label">Active</div>
+        </div>
+        <div class="stat-mini" style="border-left-color: var(--warning);">
+            <div class="stat-mini-value" style="color:var(--warning);">3</div>
+            <div class="stat-mini-label">Taxable</div>
+        </div>
+        <div class="stat-mini" style="border-left-color: var(--info);">
+            <div class="stat-mini-value" style="color:var(--info);">4</div>
+            <div class="stat-mini-label">% Based</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-header-title">Allowance Types</div>
+                <div class="card-header-sub">Configure allowances included in employee salary packages.</div>
+            </div>
+            <div class="actions-row" style="margin:0;">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search allowances…">
+                </div>
+                <select class="form-control" style="width:auto; padding:0.5rem 2rem 0.5rem 0.75rem;">
+                    <option>All Types</option>
+                    <option>% Based</option>
+                    <option>Fixed</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Allowance Name</th>
+                        <th>Type</th>
+                        <th>Value</th>
+                        <th>Taxable</th>
+                        <th>Applicable To</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color:var(--text-secondary);">1</td>
+                        <td><div class="employee-name"><strong>House Rent Allowance</strong><span>HRA — applied monthly</span></div></td>
+                        <td><span class="badge badge-blue">% of Basic</span></td>
+                        <td>50%</td>
+                        <td><span class="badge badge-amber">Taxable</span></td>
+                        <td>All Employees</td>
+                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                        <td><div class="action-btns">
+                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
+                            <button class="btn-icon danger" title="Delete">🗑️</button>
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">2</td>
+                        <td><div class="employee-name"><strong>Dearness Allowance</strong><span>DA — applied monthly</span></div></td>
+                        <td><span class="badge badge-blue">% of Basic</span></td>
+                        <td>12%</td>
+                        <td><span class="badge badge-amber">Taxable</span></td>
+                        <td>All Employees</td>
+                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                        <td><div class="action-btns">
+                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
+                            <button class="btn-icon danger" title="Delete">🗑️</button>
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">3</td>
+                        <td><div class="employee-name"><strong>Transport Allowance</strong><span>TA — applied monthly</span></div></td>
+                        <td><span class="badge badge-gray">Fixed Amount</span></td>
+                        <td>Rs. 2,000</td>
+                        <td><span class="badge badge-green">Non-taxable</span></td>
+                        <td>Selected Employees</td>
+                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                        <td><div class="action-btns">
+                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
+                            <button class="btn-icon danger" title="Delete">🗑️</button>
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">4</td>
+                        <td><div class="employee-name"><strong>Medical Allowance</strong><span>MA — applied monthly</span></div></td>
+                        <td><span class="badge badge-gray">Fixed Amount</span></td>
+                        <td>Rs. 1,500</td>
+                        <td><span class="badge badge-green">Non-taxable</span></td>
+                        <td>All Employees</td>
+                        <td><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></td>
+                        <td><div class="action-btns">
+                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
+                            <button class="btn-icon danger" title="Delete">🗑️</button>
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">5</td>
+                        <td><div class="employee-name"><strong>Festival Allowance</strong><span>Dashain — annual</span></div></td>
+                        <td><span class="badge badge-blue">% of Basic</span></td>
+                        <td>8.33%</td>
+                        <td><span class="badge badge-amber">Taxable</span></td>
+                        <td>All Employees</td>
+                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                        <td><div class="action-btns">
+                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
+                            <button class="btn-icon danger" title="Delete">🗑️</button>
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">6</td>
+                        <td><div class="employee-name"><strong>Mobile Allowance</strong><span>Monthly reimbursement</span></div></td>
+                        <td><span class="badge badge-gray">Fixed Amount</span></td>
+                        <td>Rs. 500</td>
+                        <td><span class="badge badge-green">Non-taxable</span></td>
+                        <td>Managers &amp; Above</td>
+                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                        <td><div class="action-btns">
+                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
+                            <button class="btn-icon danger" title="Delete">🗑️</button>
+                        </div></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-secondary);">7</td>
+                        <td><div class="employee-name"><strong>Fuel Allowance</strong><span>For vehicle users</span></div></td>
+                        <td><span class="badge badge-gray">Fixed Amount</span></td>
+                        <td>Rs. 3,000</td>
+                        <td><span class="badge badge-amber">Taxable</span></td>
+                        <td>Selected Employees</td>
+                        <td><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></td>
+                        <td><div class="action-btns">
+                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
+                            <button class="btn-icon danger" title="Delete">🗑️</button>
+                        </div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="allowanceModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Add Allowance</div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid" style="margin-bottom:1rem;">
+                <div class="form-group">
+                    <label class="form-label">Allowance Name <span>*</span></label>
+                    <input type="text" class="form-control" placeholder="e.g. House Rent Allowance">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Short Code</label>
+                    <input type="text" class="form-control" placeholder="e.g. HRA">
+                </div>
+            </div>
+            <div class="form-grid" style="margin-bottom:1rem;">
+                <div class="form-group">
+                    <label class="form-label">Allowance Type <span>*</span></label>
+                    <select class="form-control" id="allowanceType" onchange="toggleValueField()">
+                        <option value="">-- Select --</option>
+                        <option value="percent">Percentage of Basic</option>
+                        <option value="fixed">Fixed Amount</option>
+                        <option value="gross">Percentage of Gross</option>
+                    </select>
+                </div>
+                <div class="form-group" id="valueField">
+                    <label class="form-label">Value <span>*</span></label>
+                    <input type="text" class="form-control" placeholder="e.g. 50 or 2000">
+                    <span class="form-hint" id="valueHint">Enter % or fixed amount</span>
+                </div>
+            </div>
+            <div class="form-grid" style="margin-bottom:1rem;">
+                <div class="form-group">
+                    <label class="form-label">Taxable</label>
+                    <select class="form-control">
+                        <option>Taxable</option>
+                        <option>Non-taxable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Applicable To</label>
+                    <select class="form-control">
+                        <option>All Employees</option>
+                        <option>Selected Employees</option>
+                        <option>Managers &amp; Above</option>
+                        <option>By Department</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" rows="2" placeholder="Optional description…"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary">Save Allowance</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dropdowns
+    document.querySelectorAll('.nav-item-dropdown').forEach(function(d){
+        d.querySelector('.nav-item-dropdown-toggle').addEventListener('click', function(e){
+            e.stopPropagation();
+            document.querySelectorAll('.nav-item-dropdown').forEach(function(x){ if(x!==d) x.classList.remove('open'); });
+            d.classList.toggle('open');
+        });
+    });
+    document.querySelectorAll('.user-dropdown').forEach(function(d){
+        d.querySelector('.user-dropdown-toggle').addEventListener('click', function(e){
+            e.stopPropagation();
+            d.classList.toggle('open');
+        });
+    });
+    document.addEventListener('click', function(){ 
+        document.querySelectorAll('.nav-item-dropdown, .user-dropdown').forEach(function(d){ d.classList.remove('open'); });
+    });
+
+    // Modal
+    function openModal(){ document.getElementById('allowanceModal').classList.add('open'); }
+    function closeModal(){ document.getElementById('allowanceModal').classList.remove('open'); }
+    document.getElementById('allowanceModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+    function toggleValueField(){
+        var t = document.getElementById('allowanceType').value;
+        var hint = document.getElementById('valueHint');
+        if(t==='percent'||t==='gross') hint.textContent='Enter percentage (e.g. 50 for 50%)';
+        else if(t==='fixed') hint.textContent='Enter amount in Rs.';
+        else hint.textContent='Enter % or fixed amount';
+    }
+</script>
+</body>
+</html>

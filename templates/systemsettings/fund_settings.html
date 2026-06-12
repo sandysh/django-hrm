@@ -1,0 +1,360 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fund Settings – HRM System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #4F46E5; --primary-dark: #4338CA; --secondary: #10B981;
+            --danger: #EF4444; --warning: #F59E0B; --info: #3B82F6;
+            --bg-light: #F9FAFB; --bg-white: #FFFFFF;
+            --text-primary: #1F2937; --text-secondary: #6B7280;
+            --border: #E5E7EB; --shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: var(--bg-light); color: var(--text-primary); line-height: 1.6; }
+
+        .navbar { background: var(--bg-white); border-bottom: 1px solid var(--border); padding: 1rem 0; box-shadow: var(--shadow); position: relative; }
+        .navbar-container { max-width: 100%; padding: 0 50px; display: flex; align-items: center; }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .navbar-collapse { display: flex; width: 100%; align-items: center; flex: 1; }
+        .navbar-nav { display: flex; gap: 2rem; list-style: none; align-items: center; }
+        .navbar-center-menu { margin: 0 auto; }
+        .nav-link { color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 1.05rem; transition: color 0.2s; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        .nav-item-dropdown { position: relative; }
+        .nav-item-dropdown-toggle { display: flex; align-items: center; gap: 0.25rem; background: transparent; border: none; color: var(--text-secondary); font-weight: 500; cursor: pointer; padding: 0; font-family: inherit; font-size: 1.05rem; transition: color 0.2s; }
+        .nav-item-dropdown-toggle:hover { color: var(--primary); }
+        .nav-item-dropdown-toggle .caret { font-size: 0.8em; transition: transform 0.2s; }
+        .nav-item-dropdown.open .caret { transform: rotate(180deg); }
+        .nav-item-dropdown-menu { display: none; position: absolute; left: 0; top: 100%; background: var(--bg-white); border: 1px solid var(--border); border-radius: 0.5rem; box-shadow: var(--shadow-lg); padding: 0.5rem; min-width: 200px; z-index: 1000; margin-top: 0.5rem; }
+        .nav-item-dropdown.open .nav-item-dropdown-menu { display: block; }
+        .nav-dropdown-item { display: block; padding: 0.625rem 1rem; border-radius: 0.375rem; color: var(--text-primary); text-decoration: none; white-space: nowrap; font-weight: 500; font-size: 1.05rem; transition: all 0.2s; }
+        .nav-dropdown-item:hover { background: var(--bg-light); color: var(--primary); }
+        .user-info { display: flex; align-items: center; gap: 0.75rem; }
+        .user-dropdown { position: relative; }
+        .user-dropdown-toggle { display: flex; align-items: center; gap: 0.75rem; background: transparent; border: none; color: inherit; cursor: pointer; padding: 0; font: inherit; }
+        .user-dropdown-caret { color: var(--text-secondary); font-size: 0.9rem; }
+        .user-dropdown-menu { display: none; position: absolute; right: 0; top: calc(100% + 0.5rem); background: var(--bg-white); border: 1px solid var(--border); border-radius: 0.5rem; box-shadow: var(--shadow-lg); padding: 0.25rem; min-width: 160px; z-index: 1000; }
+        .user-dropdown.open .user-dropdown-menu { display: block; }
+        .user-dropdown-item { display: block; padding: 0.625rem 1rem; border-radius: 0.375rem; color: var(--text-primary); text-decoration: none; white-space: nowrap; }
+        .user-dropdown-item:hover { background: var(--bg-light); color: var(--primary); }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+        .container { max-width: 100%; margin: 2rem 0; padding: 0 100px; }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+        .page-title { font-size: 1.5rem; font-weight: 700; }
+        .page-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem; }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .breadcrumb a { color: var(--primary); text-decoration: none; }
+        .breadcrumb-sep { color: var(--border); }
+
+        .card { background: var(--bg-white); border-radius: 0.5rem; box-shadow: var(--shadow); margin-bottom: 1.5rem; overflow: hidden; }
+        .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .card-title { font-size: 1.05rem; font-weight: 600; }
+        .card-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
+        .card-body { padding: 1.5rem; }
+
+        .btn { padding: 0.625rem 1.25rem; border-radius: 0.375rem; font-weight: 500; font-family: inherit; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-outline { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-outline:hover { background: var(--bg-light); }
+        .btn-success { background: var(--secondary); color: white; }
+        .btn-success:hover { background: #059669; }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.375rem; margin-bottom: 1.25rem; }
+        .form-label { font-size: 0.875rem; font-weight: 500; }
+        .form-label span { color: var(--danger); }
+        .form-control { padding: 0.6rem 0.875rem; border: 1px solid var(--border); border-radius: 0.375rem; font-size: 0.95rem; font-family: inherit; background: white; color: var(--text-primary); }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+        .form-control:disabled { background: var(--bg-light); cursor: not-allowed; color: var(--text-secondary); }
+        select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2rem; }
+        .form-hint { font-size: 0.8rem; color: var(--text-secondary); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
+
+        .toggle { position: relative; display: inline-block; width: 38px; height: 22px; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #D1D5DB; border-radius: 22px; transition: .2s; }
+        .toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .2s; }
+        .toggle input:checked + .toggle-slider { background: var(--primary); }
+        .toggle input:checked + .toggle-slider:before { transform: translateX(16px); }
+
+        .section-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+        .section-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem; }
+
+        .fund-toggle-row { display: flex; justify-content: space-between; align-items: center; }
+        .fund-toggle-info strong { display: block; font-size: 0.95rem; font-weight: 600; }
+        .fund-toggle-info span { font-size: 0.82rem; color: var(--text-secondary); }
+
+        .disabled-section { opacity: 0.5; pointer-events: none; }
+        .disabled-section.enabled { opacity: 1; pointer-events: all; }
+
+        .contribution-visual { background: var(--bg-light); border-radius: 0.5rem; padding: 1.25rem; margin-top: 1.25rem; }
+        .contribution-visual-title { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem; }
+        .contrib-bar { display: flex; gap: 0; border-radius: 0.375rem; overflow: hidden; height: 32px; margin-bottom: 0.75rem; }
+        .contrib-seg { display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: white; }
+        .contrib-legend { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .contrib-legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-secondary); }
+        .contrib-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        .alert { padding: 0.875rem 1rem; border-radius: 0.375rem; margin-bottom: 1rem; font-size: 0.875rem; }
+        .alert-info { background: #DBEAFE; color: #1E40AF; border: 1px solid #93C5FD; }
+        .alert-success { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-mini { background: white; border-radius: 0.5rem; padding: 1rem 1.25rem; box-shadow: var(--shadow); border-left: 4px solid var(--primary); }
+        .stat-mini-value { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
+        .stat-mini-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px; }
+
+        .save-bar { background: white; border-top: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; }
+            .navbar-container { padding: 0 1rem; }
+            .form-grid, .form-grid-3, .stats-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="#" class="navbar-brand">🏢 HRM System</a>
+        <div class="navbar-collapse">
+            <ul class="navbar-nav navbar-center-menu">
+                <li><a href="#" class="nav-link">Dashboard</a></li>
+                <li class="nav-item-dropdown">
+                    <button type="button" class="nav-item-dropdown-toggle">Organization <span class="caret">▾</span></button>
+                    <div class="nav-item-dropdown-menu">
+                        <a href="#" class="nav-dropdown-item">Employees</a>
+                        <a href="#" class="nav-dropdown-item">Departments</a>
+                        <a href="#" class="nav-dropdown-item">Designations</a>
+                    </div>
+                </li>
+                <li class="nav-item-dropdown">
+                    <button type="button" class="nav-item-dropdown-toggle">Time &amp; Leave <span class="caret">▾</span></button>
+                    <div class="nav-item-dropdown-menu">
+                        <a href="#" class="nav-dropdown-item">Calendar</a>
+                        <a href="#" class="nav-dropdown-item">Attendance Report</a>
+                        <a href="#" class="nav-dropdown-item">Leave Requests</a>
+                    </div>
+                </li>
+                <li class="nav-item-dropdown">
+                    <button type="button" class="nav-item-dropdown-toggle" style="color:var(--primary);">Administration <span class="caret">▾</span></button>
+                    <div class="nav-item-dropdown-menu">
+                        <a href="#" class="nav-dropdown-item">Audit Logs</a>
+                        <a href="#" class="nav-dropdown-item" style="color:var(--primary); font-weight:600;">⚙️ Settings</a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="user-info user-dropdown">
+                    <button type="button" class="user-dropdown-toggle">
+                        <div class="user-avatar">AD</div>
+                        <span>Admin</span>
+                        <span class="user-dropdown-caret">▾</span>
+                    </button>
+                    <div class="user-dropdown-menu">
+                        <a href="#" class="user-dropdown-item">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="breadcrumb">
+        <a href="#">Dashboard</a><span class="breadcrumb-sep">›</span>
+        <a href="#">Settings</a><span class="breadcrumb-sep">›</span>
+        <span>Fund Settings</span>
+    </div>
+
+    <div class="page-header">
+        <div>
+            <div class="page-title">Fund Settings</div>
+            <div class="page-subtitle">Configure PF, CIT, and SSF contribution rates for payroll.</div>
+        </div>
+        <select class="form-control" style="width:auto; padding:0.5rem 2rem 0.5rem 0.75rem;">
+            <option>FY 2081/82</option>
+            <option>FY 2080/81</option>
+            <option>FY 2079/80</option>
+        </select>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-mini">
+            <div class="stat-mini-value">20%</div>
+            <div class="stat-mini-label">Total PF Rate</div>
+        </div>
+        <div class="stat-mini" style="border-left-color:#3B82F6;">
+            <div class="stat-mini-value" style="color:#3B82F6;">10%</div>
+            <div class="stat-mini-label">Employee Share</div>
+        </div>
+        <div class="stat-mini" style="border-left-color:var(--secondary);">
+            <div class="stat-mini-value" style="color:var(--secondary);">10%</div>
+            <div class="stat-mini-label">Employer Share</div>
+        </div>
+        <div class="stat-mini" style="border-left-color:var(--warning);">
+            <div class="stat-mini-value" style="color:var(--warning);">3</div>
+            <div class="stat-mini-label">Active Funds</div>
+        </div>
+    </div>
+
+    <!-- PF -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">🏦 Provident Fund (PF)</div>
+                <div class="card-subtitle">Monthly contribution deducted from and matched by employer.</div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked id="pfToggle" onchange="toggleSection('pfBody', this)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="card-body" id="pfBody">
+            <div class="section-label">Contribution Rates</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Employee Contribution (%) <span>*</span></label>
+                    <input type="number" class="form-control" value="10" min="0" max="100" step="0.5" id="pfEmp" oninput="updateBar()">
+                    <span class="form-hint">Deducted from employee's basic salary each month</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Employer Contribution (%) <span>*</span></label>
+                    <input type="number" class="form-control" value="10" min="0" max="100" step="0.5" id="pfEmr" oninput="updateBar()">
+                    <span class="form-hint">Contributed by the organization on top of salary</span>
+                </div>
+            </div>
+            <hr class="section-divider">
+            <div class="section-label">Calculation Basis</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Calculate PF On</label>
+                    <select class="form-control">
+                        <option selected>Basic Salary Only</option>
+                        <option>Basic + Dearness Allowance</option>
+                        <option>Gross Salary</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Effective From</label>
+                    <select class="form-control">
+                        <option selected>FY 2081/82 (Current)</option>
+                        <option>FY 2080/81</option>
+                    </select>
+                </div>
+            </div>
+            <div class="contribution-visual">
+                <div class="contribution-visual-title">Contribution Breakdown (per Rs. 100 of Basic)</div>
+                <div class="contrib-bar" id="pfBar">
+                    <div class="contrib-seg" id="empSeg" style="background:#4F46E5; width:34%;">Emp 10%</div>
+                    <div class="contrib-seg" id="emrSeg" style="background:#10B981; width:34%;">Emr 10%</div>
+                    <div class="contrib-seg" style="background:#E5E7EB; width:32%; color:#6B7280;">Employee net 80%</div>
+                </div>
+                <div class="contrib-legend">
+                    <div class="contrib-legend-item"><div class="contrib-dot" style="background:#4F46E5;"></div>Employee deduction</div>
+                    <div class="contrib-legend-item"><div class="contrib-dot" style="background:#10B981;"></div>Employer contribution</div>
+                    <div class="contrib-legend-item"><div class="contrib-dot" style="background:#E5E7EB;"></div>Take-home (net)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SSF -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">🛡️ Social Security Fund (SSF)</div>
+                <div class="card-subtitle">Mandatory social protection contribution per government regulation.</div>
+            </div>
+            <label class="toggle"><input type="checkbox" id="ssfToggle" onchange="toggleSection('ssfBody', this)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="card-body disabled-section" id="ssfBody">
+            <div class="alert alert-info">ℹ️ SSF replaces PF &amp; CIT when enabled. Rates are fixed by government regulation and cannot be changed.</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Employee Contribution (%)</label>
+                    <input type="number" class="form-control" value="11" disabled>
+                    <span class="form-hint">Fixed by government — not editable</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Employer Contribution (%)</label>
+                    <input type="number" class="form-control" value="20" disabled>
+                    <span class="form-hint">Fixed by government — not editable</span>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">SSF Registration No.</label>
+                    <input type="text" class="form-control" placeholder="e.g. SSF-00123456" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Effective From</label>
+                    <select class="form-control" disabled>
+                        <option>FY 2081/82</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="save-bar" style="background:white; border-radius:0.5rem; box-shadow:var(--shadow);">
+        <button class="btn btn-outline">Reset to Defaults</button>
+        <button class="btn btn-primary" onclick="saveSettings(this)">💾 Save Fund Settings</button>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.nav-item-dropdown').forEach(function(d){
+        d.querySelector('.nav-item-dropdown-toggle').addEventListener('click', function(e){
+            e.stopPropagation();
+            document.querySelectorAll('.nav-item-dropdown').forEach(function(x){ if(x!==d) x.classList.remove('open'); });
+            d.classList.toggle('open');
+        });
+    });
+    document.querySelectorAll('.user-dropdown').forEach(function(d){
+        d.querySelector('.user-dropdown-toggle').addEventListener('click', function(e){
+            e.stopPropagation(); d.classList.toggle('open');
+        });
+    });
+    document.addEventListener('click', function(){
+        document.querySelectorAll('.nav-item-dropdown, .user-dropdown').forEach(function(d){ d.classList.remove('open'); });
+    });
+
+    function toggleSection(id, checkbox) {
+        var body = document.getElementById(id);
+        if (checkbox.checked) {
+            body.classList.remove('disabled-section');
+            body.classList.add('enabled');
+        } else {
+            body.classList.remove('enabled');
+            body.classList.add('disabled-section');
+        }
+    }
+
+    function updateBar() {
+        var emp = parseFloat(document.getElementById('pfEmp').value) || 0;
+        var emr = parseFloat(document.getElementById('pfEmr').value) || 0;
+        var net = Math.max(0, 100 - emp - emr);
+        var total = emp + emr + net;
+        document.getElementById('empSeg').style.width = (emp/total*100).toFixed(1) + '%';
+        document.getElementById('empSeg').textContent = 'Emp ' + emp + '%';
+        document.getElementById('emrSeg').style.width = (emr/total*100).toFixed(1) + '%';
+        document.getElementById('emrSeg').textContent = 'Emr ' + emr + '%';
+    }
+
+    function saveSettings(btn) {
+        btn.textContent = '✓ Saved!';
+        btn.style.background = 'var(--secondary)';
+        setTimeout(function(){
+            btn.textContent = '💾 Save Fund Settings';
+            btn.style.background = '';
+        }, 2000);
+    }
+</script>
+</body>
+</html>

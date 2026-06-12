@@ -7,6 +7,11 @@ from .models import AuditLog, logType
 from django.db.models import Q
 from employees.models import Employee
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Payroll
+
 
 #logger config
 import logging
@@ -24,7 +29,6 @@ class AuditLogListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_queryset(self):
         queryset = AuditLog.objects.select_related('user').order_by('-timestamp')
         
-        # Filtering
         search = self.request.GET.get('search')
         action = self.request.GET.get('action')
         
@@ -70,6 +74,38 @@ class ReportView(LoginRequiredMixin, TemplateView):
         context["salary"] = service.salary_calculation()
 
         return context
+
+class EmployeeReportDataView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'reports/generate_report_form.html'
     
-class MailView(TemplateView):
-    template_name="emails/payslip_released.html"
+    def test_func(self):
+        return self.request.user.is_staff
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        emp_id = self.kwargs.get('emp_id')
+        employee = get_object_or_404(Employee, id=emp_id)
+        service = ReportService(employee=employee)
+        
+        context["employee"] = employee
+        context["profile"] = service.profile()
+        context["attendance_summary"] = service.attendance_summary()
+        context["violation_summary"] = service.voilation_summary()
+        context["leave_balance"] = service.leave_balance_summary()
+        context["approved_leaves"] = service.approved_leaves()
+        context["attendance_logs"] = service.attendanec_records()
+        context["salary"] = service.salary_calculation()
+        
+        existing_payroll = Payroll.objects.filter(employee=employee).first()
+        context["existing_payroll"] = existing_payroll
+        
+        return context
+
+    def post(self, request, *args, **kwargs):
+        emp_id = self.kwargs.get('emp_id')
+        employee = get_object_or_404(Employee, id=emp_id)
+        
+        total_payable = request.POST.get('total_payable', 0)
+        fine_deduction = request.POST.get('fine_deduction', 0)
+        messages.success(request, f'Report data for {employee.get_full_name()} approved and saved successfully.')
+        return redirect('employee_list')
