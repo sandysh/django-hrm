@@ -56,8 +56,125 @@ class SystemSettingsView(LoginRequiredMixin, SuperAdminRequiredMixin, TemplateVi
 class AllowanceSettingsView(LoginRequiredMixin, SuperAdminRequiredMixin, TemplateView):
     template_name = 'systemsettings/allowance_settings.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from core.service import AllowanceService
+        allowances = AllowanceService.get_all_allows()
+        context['allowances'] = allowances
+        total_amount = sum([a.amount for a in allowances])
+        context['total_allowance_amount'] = total_amount
+        context['avg_allowance_amount'] = round(total_amount / len(allowances), 2) if allowances else 0
+        return context
+
+    def post(self, request, *args, **kwargs):
+        from core.service import AllowanceService
+        try:
+            name = request.POST.get('name')
+            amount = int(request.POST.get('amount', 0))
+            AllowanceService.create_allow(name, amount)
+            messages.success(request, 'Allowance created successfully!')
+        except Exception as e:
+            messages.error(request, f'Failed to create allowance: {str(e)}')
+            
+        return redirect('allowance_settings')
+
+    def put(self, request, *args, **kwargs):
+        try:
+            from core.service import AllowanceService
+            data = json.loads(request.body)
+            allowance_id = data.get('allowance_id')
+            if not allowance_id:
+                return JsonResponse({'success': False, 'message': 'No allowance_id provided.'}, status=400)
+            
+            update_data = {}
+            if 'name' in data: update_data['name'] = data['name']
+            if 'amount' in data: update_data['amount'] = int(data['amount'])
+                
+            allow = AllowanceService.update_allow(int(allowance_id), **update_data)
+            if allow:
+                return JsonResponse({'success': True, 'message': 'Allowance updated successfully!'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Failed to update allowance.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            from core.service import AllowanceService
+            data = json.loads(request.body)
+            allowance_id = data.get('allowance_id')
+            if allowance_id:
+                success = AllowanceService.delete_allow(int(allowance_id))
+                if success:
+                    return JsonResponse({'success': True, 'message': 'Allowance deleted successfully!'})
+                else:
+                    return JsonResponse({'success': False, 'message': 'Failed to delete allowance.'}, status=400)
+            return JsonResponse({'success': False, 'message': 'No allowance_id provided.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
 class FundSettingsView(LoginRequiredMixin, SuperAdminRequiredMixin, TemplateView):
     template_name = 'systemsettings/fund_settings.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from core.service import FundService
+        funds = FundService.get_all_funds()
+        context['fund_types'] = funds
+        
+        context['total_emp_contribution'] = sum([f.emp_contribution for f in funds])
+        context['total_org_contribution'] = sum([f.org_contribution for f in funds])
+        context['enrolled_employees_count'] = sum([f.employee_count for f in funds])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        from core.service import FundService
+        try:
+            name = request.POST.get('name')
+            emp_contribution = int(request.POST.get('emp_contribution', 0))
+            org_contribution = int(request.POST.get('org_contribution', 0))
+            FundService.create_fund(name, emp_contribution, org_contribution)
+            messages.success(request, 'Fund type created successfully!')
+        except Exception as e:
+            messages.error(request, f'Failed to create fund type: {str(e)}')
+            
+        return redirect('fund_settings')
+
+    def put(self, request, *args, **kwargs):
+        try:
+            from core.service import FundService
+            data = json.loads(request.body)
+            fund_id = data.get('fund_id')
+            if not fund_id:
+                return JsonResponse({'success': False, 'message': 'No fund_id provided.'}, status=400)
+            
+            update_data = {}
+            if 'name' in data: update_data['name'] = data['name']
+            if 'emp_contribution' in data: update_data['emp_contribution'] = int(data['emp_contribution'])
+            if 'org_contribution' in data: update_data['org_contribution'] = int(data['org_contribution'])
+                
+            fund = FundService.update_fund(int(fund_id), **update_data)
+            if fund:
+                return JsonResponse({'success': True, 'message': 'Fund type updated successfully!'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Failed to update fund type.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            from core.service import FundService
+            data = json.loads(request.body)
+            fund_id = data.get('fund_id')
+            if fund_id:
+                success = FundService.delete_fund(int(fund_id))
+                if success:
+                    return JsonResponse({'success': True, 'message': 'Fund type deleted successfully!'})
+                else:
+                    return JsonResponse({'success': False, 'message': 'Failed to delete fund type.'}, status=400)
+            return JsonResponse({'success': False, 'message': 'No fund_id provided.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 class TaxSettingsView(LoginRequiredMixin, SuperAdminRequiredMixin, TemplateView):
     template_name = 'systemsettings/tax_settings.html'

@@ -13,53 +13,38 @@
 
     .table-wrapper { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    thead th {background: var(--bg-light);padding: 0.75rem 1rem;text-align: left;font-weight: 600;color: var(--text-secondary);border-bottom: 1px solid var(--border);font-size: 0.78rem;text-transform: uppercase;letter-spacing: 0.04em}
+    thead th { background: var(--bg-light); padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
     tbody td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: var(--bg-light); }
 
-    .badge {display: inline-block;font-size: 0.75rem;font-weight: 600;padding: 0.2rem 0.65rem;border-radius: 9999px;white-space: nowrap;}
-    
-    .badge-blue  { background: #DBEAFE; color: #1D4ED8; }
-    .badge-amber { background: #FEF3C7; color: #B45309; }
-    .badge-green { background: #D1FAE5; color: #047857; }
-    .badge-gray  { background: #F3F4F6; color: #4B5563; }
-    .employee-name strong { display: block; font-weight: 600; }
-    .employee-name span { font-size: 0.8rem; color: var(--text-secondary); }
-    .action-btns { display: flex; gap: 0.4rem; }
+    .rate-cell { font-size: 1rem; font-weight: 700; }
     .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-secondary); }
     .empty-state-icon { font-size: 3rem; margin-bottom: 0.75rem; }
     .empty-state-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
-    
+
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal { background: white; border-radius: 0.75rem; width: 560px; max-width: 95vw; box-shadow: var(--shadow-lg); }
+    .modal { background: white; border-radius: 0.75rem; width: 480px; max-width: 95vw; box-shadow: var(--shadow-lg); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
     .modal-title { font-size: 1.1rem; font-weight: 600; }
     .modal-close { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-secondary); line-height: 1; }
     .modal-close:hover { color: var(--text-primary); }
     .modal-body { padding: 1.5rem; }
     .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; }
-    
+
     .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
     .page-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
     .page-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem; }
     .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; }
     .breadcrumb a { color: var(--primary); text-decoration: none; }
     .breadcrumb-sep { color: var(--border); }
-    
-    .toggle { position: relative; display: inline-block; width: 38px; height: 22px; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #D1D5DB; border-radius: 22px; transition: .2s; }
-    .toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .2s; }
-    .toggle input:checked + .toggle-slider { background: var(--primary); }
-    .toggle input:checked + .toggle-slider:before { transform: translateX(16px); }
 
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .card-header-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
     .card-header-sub { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
 
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
     .stat-mini { background: white; border-radius: 0.5rem; padding: 1rem 1.25rem; box-shadow: var(--shadow); border-left: 4px solid var(--primary); }
     .stat-mini-value { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
     .stat-mini-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px; }
@@ -67,6 +52,10 @@
     .btn-icon { background: none; border: 1px solid var(--border); border-radius: 0.375rem; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); transition: 0.2s; font-size: 0.9rem; }
     .btn-icon:hover { background: var(--bg-light); color: var(--primary); border-color: var(--primary); }
     .btn-icon.danger:hover { background: #FEF2F2; color: var(--danger); border-color: var(--danger); }
+
+    @media (max-width: 768px) {
+        .stats-row { grid-template-columns: 1fr; }
+    }
 </style>
 {% endblock %}
 
@@ -80,27 +69,23 @@
     <div class="page-header">
         <div>
             <div class="page-title">Allowance Settings</div>
-            <div class="page-subtitle">Manage allowance types and their configurations for payroll processing.</div>
+            <div class="page-subtitle">Manage allowance types and their amounts for payroll processing.</div>
         </div>
-        <button class="btn btn-primary" onclick="openModal()">+ Add Allowance</button>
+        <button class="btn btn-primary" onclick="openModalForAdd()">+ Add Allowance</button>
     </div>
 
     <div class="stats-row">
         <div class="stat-mini">
-            <div class="stat-mini-value">7</div>
+            <div class="stat-mini-value">{{ allowances|length }}</div>
             <div class="stat-mini-label">Total Allowances</div>
         </div>
         <div class="stat-mini" style="border-left-color: var(--secondary);">
-            <div class="stat-mini-value" style="color:var(--secondary);">5</div>
-            <div class="stat-mini-label">Active</div>
+            <div class="stat-mini-value" style="color:var(--secondary);">Rs. {{ total_allowance_amount }}</div>
+            <div class="stat-mini-label">Combined Amount</div>
         </div>
         <div class="stat-mini" style="border-left-color: var(--warning);">
-            <div class="stat-mini-value" style="color:var(--warning);">3</div>
-            <div class="stat-mini-label">Taxable</div>
-        </div>
-        <div class="stat-mini" style="border-left-color: var(--info);">
-            <div class="stat-mini-value" style="color:var(--info);">4</div>
-            <div class="stat-mini-label">% Based</div>
+            <div class="stat-mini-value" style="color:var(--warning);">Rs. {{ avg_allowance_amount }}</div>
+            <div class="stat-mini-label">Average Amount</div>
         </div>
     </div>
 
@@ -115,11 +100,6 @@
                     <span class="search-icon">🔍</span>
                     <input type="text" placeholder="Search allowances…">
                 </div>
-                <select class="form-control" style="width:auto; padding:0.5rem 2rem 0.5rem 0.75rem;">
-                    <option>All Types</option>
-                    <option>% Based</option>
-                    <option>Fixed</option>
-                </select>
             </div>
         </div>
         <div class="table-wrapper">
@@ -128,188 +108,160 @@
                     <tr>
                         <th>#</th>
                         <th>Allowance Name</th>
-                        <th>Type</th>
-                        <th>Value</th>
-                        <th>Taxable</th>
-                        <th>Applicable To</th>
-                        <th>Status</th>
+                        <th>Amount (Rs.)</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for allowance in allowances %}
                     <tr>
-                        <td style="color:var(--text-secondary);">1</td>
-                        <td><div class="employee-name"><strong>House Rent Allowance</strong><span>HRA — applied monthly</span></div></td>
-                        <td><span class="badge badge-blue">% of Basic</span></td>
-                        <td>50%</td>
-                        <td><span class="badge badge-amber">Taxable</span></td>
-                        <td>All Employees</td>
-                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
-                        <td><div class="action-btns">
-                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
-                            <button class="btn-icon danger" title="Delete">🗑️</button>
+                        <td style="color:var(--text-secondary);">{{ forloop.counter }}</td>
+                        <td><strong>{{ allowance.name }}</strong></td>
+                        <td><span class="rate-cell" style="color:var(--secondary);">Rs. {{ allowance.amount }}</span></td>
+                        <td><div style="display:flex;gap:0.4rem;">
+                            <button type="button" class="btn btn-outline btn-sm" onclick="viewAllowance({{ allowance.id }}, '{{ allowance.name|escapejs }}', {{ allowance.amount }})">View</button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="editAllowance({{ allowance.id }}, '{{ allowance.name|escapejs }}', {{ allowance.amount }})">Edit</button>
+                            <button type="button" class="btn-icon danger" title="Delete" onclick="deleteAllowance({{ allowance.id }})">🗑️</button>
                         </div></td>
                     </tr>
+                    {% empty %}
                     <tr>
-                        <td style="color:var(--text-secondary);">2</td>
-                        <td><div class="employee-name"><strong>Dearness Allowance</strong><span>DA — applied monthly</span></div></td>
-                        <td><span class="badge badge-blue">% of Basic</span></td>
-                        <td>12%</td>
-                        <td><span class="badge badge-amber">Taxable</span></td>
-                        <td>All Employees</td>
-                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
-                        <td><div class="action-btns">
-                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
-                            <button class="btn-icon danger" title="Delete">🗑️</button>
-                        </div></td>
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">💰</div>
+                                <div class="empty-state-title">No allowances configured yet</div>
+                                <div>Add your first allowance type to include it in payroll.</div>
+                            </div>
+                        </td>
                     </tr>
-                    <tr>
-                        <td style="color:var(--text-secondary);">3</td>
-                        <td><div class="employee-name"><strong>Transport Allowance</strong><span>TA — applied monthly</span></div></td>
-                        <td><span class="badge badge-gray">Fixed Amount</span></td>
-                        <td>Rs. 2,000</td>
-                        <td><span class="badge badge-green">Non-taxable</span></td>
-                        <td>Selected Employees</td>
-                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
-                        <td><div class="action-btns">
-                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
-                            <button class="btn-icon danger" title="Delete">🗑️</button>
-                        </div></td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-secondary);">4</td>
-                        <td><div class="employee-name"><strong>Medical Allowance</strong><span>MA — applied monthly</span></div></td>
-                        <td><span class="badge badge-gray">Fixed Amount</span></td>
-                        <td>Rs. 1,500</td>
-                        <td><span class="badge badge-green">Non-taxable</span></td>
-                        <td>All Employees</td>
-                        <td><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></td>
-                        <td><div class="action-btns">
-                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
-                            <button class="btn-icon danger" title="Delete">🗑️</button>
-                        </div></td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-secondary);">5</td>
-                        <td><div class="employee-name"><strong>Festival Allowance</strong><span>Dashain — annual</span></div></td>
-                        <td><span class="badge badge-blue">% of Basic</span></td>
-                        <td>8.33%</td>
-                        <td><span class="badge badge-amber">Taxable</span></td>
-                        <td>All Employees</td>
-                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
-                        <td><div class="action-btns">
-                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
-                            <button class="btn-icon danger" title="Delete">🗑️</button>
-                        </div></td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-secondary);">6</td>
-                        <td><div class="employee-name"><strong>Mobile Allowance</strong><span>Monthly reimbursement</span></div></td>
-                        <td><span class="badge badge-gray">Fixed Amount</span></td>
-                        <td>Rs. 500</td>
-                        <td><span class="badge badge-green">Non-taxable</span></td>
-                        <td>Managers &amp; Above</td>
-                        <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
-                        <td><div class="action-btns">
-                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
-                            <button class="btn-icon danger" title="Delete">🗑️</button>
-                        </div></td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-secondary);">7</td>
-                        <td><div class="employee-name"><strong>Fuel Allowance</strong><span>For vehicle users</span></div></td>
-                        <td><span class="badge badge-gray">Fixed Amount</span></td>
-                        <td>Rs. 3,000</td>
-                        <td><span class="badge badge-amber">Taxable</span></td>
-                        <td>Selected Employees</td>
-                        <td><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></td>
-                        <td><div class="action-btns">
-                            <button class="btn-icon" title="Edit" onclick="openModal()">✏️</button>
-                            <button class="btn-icon danger" title="Delete">🗑️</button>
-                        </div></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 
 
-<!-- ADD / EDIT MODAL -->
+<!-- ADD / EDIT / VIEW MODAL -->
 <div class="modal-overlay" id="allowanceModal">
     <div class="modal">
-        <div class="modal-header">
-            <div class="modal-title">Add Allowance</div>
-            <button class="modal-close" onclick="closeModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-grid" style="margin-bottom:1rem;">
-                <div class="form-group">
+        <form id="allowanceForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="allowance_id" id="allowance_id">
+            <div class="modal-header">
+                <div class="modal-title">Add Allowance</div>
+                <button type="button" class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom:1rem;">
                     <label class="form-label">Allowance Name <span>*</span></label>
-                    <input type="text" class="form-control" placeholder="e.g. House Rent Allowance">
+                    <input type="text" name="name" class="form-control" placeholder="e.g. House Rent Allowance" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Short Code</label>
-                    <input type="text" class="form-control" placeholder="e.g. HRA">
+                    <label class="form-label">Amount (Rs.) <span>*</span></label>
+                    <input type="number" name="amount" class="form-control" placeholder="e.g. 2000" min="0" required>
                 </div>
             </div>
-            <div class="form-grid" style="margin-bottom:1rem;">
-                <div class="form-group">
-                    <label class="form-label">Allowance Type <span>*</span></label>
-                    <select class="form-control" id="allowanceType" onchange="toggleValueField()">
-                        <option value="">-- Select --</option>
-                        <option value="percent">Percentage of Basic</option>
-                        <option value="fixed">Fixed Amount</option>
-                        <option value="gross">Percentage of Gross</option>
-                    </select>
-                </div>
-                <div class="form-group" id="valueField">
-                    <label class="form-label">Value <span>*</span></label>
-                    <input type="text" class="form-control" placeholder="e.g. 50 or 2000">
-                    <span class="form-hint" id="valueHint">Enter % or fixed amount</span>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Allowance</button>
             </div>
-            <div class="form-grid" style="margin-bottom:1rem;">
-                <div class="form-group">
-                    <label class="form-label">Taxable</label>
-                    <select class="form-control">
-                        <option>Taxable</option>
-                        <option>Non-taxable</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Applicable To</label>
-                    <select class="form-control">
-                        <option>All Employees</option>
-                        <option>Selected Employees</option>
-                        <option>Managers &amp; Above</option>
-                        <option>By Department</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Description</label>
-                <textarea class="form-control" rows="2" placeholder="Optional description…"></textarea>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-primary">Save Allowance</button>
-        </div>
+        </form>
     </div>
 </div>
 
 <script>
-    // Modal
     function openModal(){ document.getElementById('allowanceModal').classList.add('open'); }
     function closeModal(){ document.getElementById('allowanceModal').classList.remove('open'); }
     document.getElementById('allowanceModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
 
-    function toggleValueField(){
-        var t = document.getElementById('allowanceType').value;
-        var hint = document.getElementById('valueHint');
-        if(t==='percent'||t==='gross') hint.textContent='Enter percentage (e.g. 50 for 50%)';
-        else if(t==='fixed') hint.textContent='Enter amount in Rs.';
-        else hint.textContent='Enter % or fixed amount';
+    function openModalForAdd() {
+        document.getElementById('allowanceForm').reset();
+        document.getElementById('allowance_id').value = '';
+
+        document.querySelectorAll('#allowanceForm input').forEach(input => input.removeAttribute('readonly'));
+        document.querySelector('#allowanceForm button[type="submit"]').style.display = 'block';
+
+        document.querySelector('.modal-title').textContent = 'Add Allowance';
+        document.querySelector('#allowanceForm button[type="submit"]').textContent = 'Add Allowance';
+        openModal();
+    }
+
+    function viewAllowance(id, name, amount) {
+        document.getElementById('allowance_id').value = id;
+        document.querySelector('input[name="name"]').value = name;
+        document.querySelector('input[name="amount"]').value = amount;
+
+        document.querySelectorAll('#allowanceForm input:not([type="hidden"])').forEach(input => input.setAttribute('readonly', true));
+
+        document.querySelector('.modal-title').textContent = 'View Allowance';
+        document.querySelector('#allowanceForm button[type="submit"]').style.display = 'none';
+        openModal();
+    }
+
+    function editAllowance(id, name, amount) {
+        document.getElementById('allowance_id').value = id;
+        document.querySelector('input[name="name"]').value = name;
+        document.querySelector('input[name="amount"]').value = amount;
+
+        document.querySelectorAll('#allowanceForm input').forEach(input => input.removeAttribute('readonly'));
+        document.querySelector('#allowanceForm button[type="submit"]').style.display = 'block';
+
+        document.querySelector('.modal-title').textContent = 'Edit Allowance';
+        document.querySelector('#allowanceForm button[type="submit"]').textContent = 'Update Allowance';
+        openModal();
+    }
+
+    document.getElementById('allowanceForm').addEventListener('submit', function(e) {
+        var allowanceId = document.getElementById('allowance_id').value;
+        if (allowanceId) {
+            e.preventDefault();
+            var data = {
+                allowance_id: allowanceId,
+                name: document.querySelector('input[name="name"]').value,
+                amount: document.querySelector('input[name="amount"]').value
+            };
+            fetch('{% url "allowance_settings" %}', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to update allowance.');
+                }
+            }).catch(err => {
+                console.error(err);
+                alert('An error occurred.');
+            });
+        }
+    });
+
+    function deleteAllowance(allowanceId) {
+        if (confirm('Are you sure you want to delete this allowance?')) {
+            fetch('{% url "allowance_settings" %}', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ 'allowance_id': allowanceId })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to delete allowance.');
+                }
+            }).catch(err => {
+                console.error(err);
+                alert('An error occurred.');
+            });
+        }
     }
 </script>
 {% endblock %}

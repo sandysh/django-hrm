@@ -88,6 +88,7 @@ class Employee(AbstractUser):
     start_time = models.TimeField(null=True,blank=True)
     end_time = models.TimeField(null=True,blank=True)
     basic_salary=models.DecimalField(max_digits=12, decimal_places=2)
+    allowance=models.ForeignKey("reports.allowance", on_delete=models.CASCADE , null=True , blank=True)
     
     # Biometric Information
     biometric_user_id = models.IntegerField(unique=True, null=True, blank=True, db_index=True,

@@ -114,10 +114,10 @@ def delete_employee_tax(tax_id: int) -> bool:
         return True
     return False
 
-def create_fund_type(name: str, emp_contribution: int, org_comntribution: int) -> FundsType:
+def create_fund_type(name: str, emp_contribution: int, org_contribution: int) -> FundsType:
     """Create a new FundsType record."""
     return FundsType.objects.create(
-        name=name, emp_contribution=emp_contribution, org_comntribution=org_comntribution
+        name=name, emp_contribution=emp_contribution, org_contribution=org_contribution
     )
 
 def get_all_fund_types() -> QuerySet[FundsType]:
