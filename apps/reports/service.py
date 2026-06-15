@@ -9,8 +9,6 @@ from django.db.models import Sum, Count, Q
 from nepali_datetime import datetime
 from hrm_project.utility import get_dates
 
-
-
 class AuditLogService:
     
     def __init__(self, user):

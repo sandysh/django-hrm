@@ -109,3 +109,5 @@ class EmployeeReportDataView(LoginRequiredMixin, UserPassesTestMixin, TemplateVi
         fine_deduction = request.POST.get('fine_deduction', 0)
         messages.success(request, f'Report data for {employee.get_full_name()} approved and saved successfully.')
         return redirect('employee_list')
+    
+    
