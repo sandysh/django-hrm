@@ -67,24 +67,55 @@ class EmployeeTax(BaseModel):
 class FundsType(BaseModel):
     name=models.CharField(max_length=50)
     emp_contribution=models.IntegerField()
-    org_comntribution=models.IntegerField()
+    org_contribution=models.IntegerField()
     
-    
-class EmployeeFund(BaseModel):
+    @property
+    def employee_count(self):
+        return self.employeefund_set.count() if hasattr(self, 'employeefund_set') else 0
+     
+class EmployeeFund(BaseModel): # M:M table for employee and fund since  employee can have multiple funds
     employee=models.ForeignKey("employees.Employee", on_delete=models.CASCADE)
     funds=models.ForeignKey(FundsType , on_delete=models.CASCADE)
-      
-      
+        
 class Payroll(models.Model):
     employee=models.ForeignKey("employees.Employee" , on_delete=models.CASCADE)
-    total_payable=models.DecimalField(decimal_places=2 , max_digits=2)
-    fine_deduction=models.IntegerField()
-    
+    date = models.DateField(null=True, blank=True) # To specify which month it is
+
+    # Profile & Shift
+    effective_working_days = models.IntegerField(default=0)
+
+    # Attendance Summary
+    days_present = models.IntegerField(default=0)
+    total_hours_worked = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    leave_days_taken = models.IntegerField(default=0)
+    unpaid_absent_days = models.IntegerField(default=0)
+
+    # Violations Summary
+    late_arrivals = models.IntegerField(default=0)
+    early_departures = models.IntegerField(default=0)
+    missing_checkouts = models.IntegerField(default=0)
+    three_late_arrivals = models.IntegerField(default=0)
+
+    # Calculated Salary (Earnings)
+    base_salary = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    earned_salary = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    bonus = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    allowance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    total_earnings = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    # Calculated Salary (Deductions)
+    late_penalty = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    three_late_penalty = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    tax_deduction = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    # Final
+    total_payable=models.DecimalField(decimal_places=2 , max_digits=12, default=0)
+    fine_deduction=models.DecimalField(decimal_places=2, max_digits=12, default=0)
     
 class Allowance(BaseModel):
     name=models.CharField(max_length=70)
     amount=models.IntegerField()
     
-class EmployeeAllowance(BaseModel):
+class EmployeeAllowance(BaseModel): # M:M table for employee and allowance since  employee can have multiple allowance
     emp=models.ForeignKey("employees.Employee" , on_delete=models.CASCADE)
     allowance=models.ForeignKey("Allowance", on_delete=models.CASCADE)

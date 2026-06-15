@@ -3,12 +3,23 @@
 {% block title %}Report Data - {{ profile.full_name }}{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-    <h1>Generate Report Data for {{ profile.full_name }}</h1>
-    <a href="{% url 'employee_list' %}" class="btn btn-secondary">Back to Employees</a>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <h1 style="margin: 0;">Generate Report Data for {{ profile.full_name }}</h1>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'employee_list' %}" class="btn btn-secondary" style="padding: 0.5rem 1.5rem; font-size: 1rem;">Back to Employees</a>
+        <button type="submit" form="report-form" name="action_type" value="mail" class="btn btn-secondary" style="padding: 0.5rem 1.5rem; font-size: 1rem;">
+            📄 Mail Report
+        </button>
+        <button type="submit" form="report-form" name="action_type" value="download" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 1rem;">
+            ⬇ Download Report
+        </button>
+        <button type="submit" form="report-form" name="action_type" value="save" class="btn btn-success" style="padding: 0.5rem 1.5rem; font-size: 1rem;">
+            ✓ Save and Approve Data
+        </button>
+    </div>
 </div>
 
-<form method="post" action="{% url 'employee_report_data' employee.id %}">
+<form method="post" action="{% url 'employee_report_data' employee.id %}" id="report-form">
     {% csrf_token %}
     <div class="grid grid-2">
         <!-- Profile & Shift -->
@@ -48,17 +59,19 @@
         <div class="card">
             <div class="card-header">Calculated Salary</div>
             <table class="table">
-                <tr><th style="width: 40%;">Base Salary</th><td><input type="number" step="0.01" name="base_salary" value="{{ salary.earnings.base_salary }}" class="form-control"></td></tr>
-                <tr><th>Earned Salary</th><td><input type="number" step="0.01" name="earned_salary" value="{{ salary.earnings.earned_salary }}" class="form-control"></td></tr>
-                <tr><th>Bonus</th><td><input type="number" step="0.01" name="bonus" value="{{ salary.earnings.bonus }}" class="form-control"></td></tr>
-                <tr><th>Total Earnings</th><td><input type="number" step="0.01" name="total_earnings" value="{{ salary.earnings.total_earnings }}" class="form-control" style="font-weight: bold;"></td></tr>
-                <tr><th>Late Penalty</th><td><input type="number" step="0.01" name="late_penalty" value="{{ salary.deductions.late_penalty }}" class="form-control"></td></tr>
-                <tr><th>3-Late Penalty</th><td><input type="number" step="0.01" name="three_late_penalty" value="{{ salary.deductions.three_late_penalty }}" class="form-control"></td></tr>
+                <tr><th style="width: 40%;">Base Salary</th><td><input type="number" step="0.01" name="base_salary" value="{{ salary.earnings.base_salary }}" class="form-control" readonly></td></tr>
+                <tr><th>Earned Salary</th><td><input type="number" step="0.01" name="earned_salary" value="{{ salary.earnings.earned_salary }}" class="form-control" readonly></td></tr>
+                <tr><th>Bonus</th><td><input type="number" step="0.01" name="bonus" value="{{ salary.earnings.bonus }}" class="form-control" readonly></td></tr>
+                <tr><th>Allowance</th><td><input type="number" step="0.01" name="allowance" value="{{ salary.earnings.allowance }}" class="form-control" readonly></td></tr>
+                <tr><th>Total Earnings</th><td><input type="number" step="0.01" name="total_earnings" value="{{ salary.earnings.total_earnings }}" class="form-control" style="font-weight: bold;" readonly></td></tr>
+                <tr><th>Late Penalty</th><td><input type="number" step="0.01" name="late_penalty" value="{{ salary.deductions.late_penalty }}" class="form-control" readonly></td></tr>
+                <tr><th>3-Late Penalty</th><td><input type="number" step="0.01" name="three_late_penalty" value="{{ salary.deductions.three_late_penalty }}" class="form-control" readonly></td></tr>
+                <tr><th>Tax Deduction</th><td><input type="number" step="0.01" name="tax_deduction" value="{{ salary.deductions.tax_deduction }}" class="form-control" readonly></td></tr>
             </table>
         </div>
     </div>
 
-    <!-- Approval Form -->
+    <!-- Approval Form Bottom section without buttons -->
     <div class="card" style="margin-top: 2rem;">
         <div class="card-header">Review and Approve Data</div>
         <div class="grid grid-2">
@@ -74,12 +87,44 @@
                        value="{% if existing_payroll %}{{ existing_payroll.fine_deduction }}{% else %}{{ salary.deductions.total_deductions|floatformat:'0' }}{% endif %}" required style="font-weight: bold; font-size: 1.1rem; color: var(--danger);">
             </div>
         </div>
-        
-        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn btn-success" style="padding: 0.75rem 2rem; font-size: 1.1rem;">
-                ✓ Save and Approve Data
-            </button>
-        </div>
     </div>
 </form>
+
+<!-- Log Context to Console for Debugging -->
+{{ profile|json_script:"ctx-profile" }}
+{{ attendance_summary|json_script:"ctx-attendance_summary" }}
+{{ violation_summary|json_script:"ctx-violation_summary" }}
+{{ leave_balance|json_script:"ctx-leave_balance" }}
+{{ approved_leaves|json_script:"ctx-approved_leaves" }}
+{{ attendance_logs|json_script:"ctx-attendance_logs" }}
+{{ salary|json_script:"ctx-salary" }}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const getCtx = (id) => {
+            const el = document.getElementById(id);
+            return el ? JSON.parse(el.textContent) : null;
+        };
+
+        const contextData = {
+            profile: getCtx('ctx-profile'),
+            attendance_summary: getCtx('ctx-attendance_summary'),
+            violation_summary: getCtx('ctx-violation_summary'),
+            leave_balance: getCtx('ctx-leave_balance'),
+            approved_leaves: getCtx('ctx-approved_leaves'),
+            attendance_logs: getCtx('ctx-attendance_logs'),
+            salary: getCtx('ctx-salary')
+        };
+
+        console.group("🚀 Django Backend Context");
+        console.log("Profile:", contextData.profile);
+        console.log("Attendance Summary:", contextData.attendance_summary);
+        console.log("Violation Summary:", contextData.violation_summary);
+        console.log("Leave Balance:", contextData.leave_balance);
+        console.log("Approved Leaves:", contextData.approved_leaves);
+        console.log("Attendance Logs:", contextData.attendance_logs);
+        console.log("Salary Calculation:", contextData.salary);
+        console.groupEnd();
+    });
+</script>
 {% endblock %}
