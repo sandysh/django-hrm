@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}HRM System{% endblock %}</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -666,7 +668,11 @@
                         <div class="nav-item-dropdown-menu">
                             <a href="{% url 'audit_log_list' %}" class="nav-dropdown-item">Audit Logs</a>
                             {% if user.is_superuser %}
-                            <a href="{% url 'settings' %}" class="nav-dropdown-item">⚙️ Settings</a>
+                            <a href="{% url 'settings' %}" class="nav-dropdown-item">General Settings</a>
+                            <a href="{% url 'system_settings' %}" class="nav-dropdown-item">System Settings</a>
+                            <a href="{% url 'allowance_settings' %}" class="nav-dropdown-item">Allowance Settings</a>
+                            <a href="{% url 'fund_settings' %}" class="nav-dropdown-item">Fund Settings</a>
+                            <a href="{% url 'tax_settings' %}" class="nav-dropdown-item">Tax Settings</a>
                             {% endif %}
                         </div>
                     </li>
