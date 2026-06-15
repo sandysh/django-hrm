@@ -19,7 +19,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
+      
   web:
     build: .
     container_name: hrm_web
