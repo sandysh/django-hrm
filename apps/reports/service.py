@@ -1,16 +1,22 @@
+from decimal import Decimal
+from io import BytesIO
+
 from django.utils import timezone
 import nepali_datetime
 from employees.models import Employee
 from leaves.models import LeaveBalance, LeaveRequest, LeaveType
-from reports.models import AuditLog, logType
+from reports.models import AuditLog, TaxSlab, logType
 from core.models import SystemSettings
 from attendance.models import DailyAttendance
 from django.db.models import Sum, Count, Q
 from nepali_datetime import datetime
 from hrm_project.utility import get_dates
+from datetime import date
+from weasyprint import HTML
+from django.template.loader import get_template
+
 
 class AuditLogService:
-    
     def __init__(self, user):
         self.user = user
 
@@ -48,8 +54,8 @@ class ReportService:
     def __init__(self , employee):
         self.employee=employee
         dates=get_dates()
-        self.start_date=dates['start_ad']
-        self.end_date=dates['end_ad']
+        self.start_date = date(2026, 5, 15)
+        self.end_date = date(2026, 6, 15)
     
     def collecet_emp_data(emp_id):
         """ Collecet all data required for monthly report generation"""
@@ -263,42 +269,77 @@ class ReportService:
 
     def salary_calculation(self):
         # Convert Decimal basic_salary to float
-        worked_days = self.attendance_summary()['days_present']
+        worked_days = int(self.attendance_summary()['days_present']) + int(self.attendance_summary()['approved_leave_days_taken'])
         violation_summary = self.voilation_summary()
         total_late = violation_summary['late_arrivals']
         three_late_arrivals = violation_summary['three_late_arrivals']
         total_absent = self.attendance_summary()['unpaid_absent_days']
         daily_rate = float(self.employee.basic_salary) / 24
+        total_leave=len(self.approved_leaves()['logs'])
 
         earned_salary = worked_days * daily_rate
 
         late_penalty = total_late * (0.30 * daily_rate)
         three_late_penalty = three_late_arrivals * daily_rate
 
-        if total_late == 0 and total_absent == 0:
+        if total_late == 0 and total_absent == 0 and total_leave== 0:
             bonus = 0.10 * earned_salary
         else:
             bonus = 0.0
 
-        total_earnings = earned_salary + bonus
-        total_deductions = late_penalty + three_late_penalty
+        # Allowances
+        allowance_amount = 0.0
+        if getattr(self.employee, 'allowance', None):
+            allowance_amount = float(self.employee.allowance.amount)
+
+        # Tax
+        tax_deduction = float((
+            (
+                TaxSlab.objects.get(
+                    min_salary__lte=self.employee.basic_salary,
+                    max_salary__gte=self.employee.basic_salary
+                ).tax_rate
+                if self.employee.basic_salary > 0
+                else 0
+            ) / Decimal(100)
+        ) * self.employee.basic_salary)
+                
+        total_earnings = earned_salary + bonus + allowance_amount
+        total_deductions = late_penalty + three_late_penalty + tax_deduction
 
         net_salary = total_earnings - total_deductions
 
         return {
             "earnings": {
+                "base_salary": round(float(self.employee.basic_salary), 2),
                 "earned_salary": round(earned_salary, 2),
                 "bonus": round(bonus, 2),
+                "allowance": round(allowance_amount, 2),
                 "total_earnings": round(total_earnings, 2),
             },
             "deductions": {
                 "late_penalty": round(late_penalty, 2),
                 "three_late_penalty": round(three_late_penalty, 2),
+                "tax_deduction": round(tax_deduction, 2),
                 "total_deductions": round(total_deductions, 2),
             },
             "net_salary": round(net_salary, 2)
         }
-    
+        
+    def render_pdf(self):
+        template=get_template('reports/salary_report.html')
+        context={
+        "profile" : self.profile(),
+        "attendance_summary" : self.attendance_summary(),
+        "violation_summary" : self.voilation_summary(),
+        "leave_balance" : self.leave_balance_summary(),
+        "approved_leaves" : self.approved_leaves(),
+        "attendance_logs" : self.attendanec_records(),
+        "salary" : self.salary_calculation(),  
+        }
+        html_str=template.render(context)
+        pdf_bytes = HTML(string=html_str).write_pdf()
+        return pdf_bytes
 
 
     
