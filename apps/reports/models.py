@@ -26,6 +26,7 @@ class TaxSlab(BaseModel):
     min_salary = models.DecimalField(max_digits=12, decimal_places=2)
     max_salary = models.DecimalField(max_digits=12, decimal_places=2)
     tax_rate = models.IntegerField()
+    fiscal_year=models.ForeignKey("reports.FiscalYear", on_delete=models.CASCADE, null=True, blank=True)
     
 class FiscalYear(BaseModel):
     name=models.CharField(max_length=50)
@@ -34,7 +35,21 @@ class FiscalYear(BaseModel):
     is_active=models.BooleanField()
     
     def save(self, *args , **kwargs):
-        self.name=f'FY {self.start_date.year}-{self.end_date.year}'
+        from django.utils.dateparse import parse_date
+        
+        start = self.start_date
+        end = self.end_date
+        
+        if isinstance(start, str):
+            start = parse_date(start)
+        if isinstance(end, str):
+            end = parse_date(end)
+            
+        if start and end:
+            self.name=f'FY {start.year}-{end.year}'
+        else:
+            self.name='FY Unknown'
+            
         return super().save(*args,**kwargs)
     
 class EmployeeTax(BaseModel):
