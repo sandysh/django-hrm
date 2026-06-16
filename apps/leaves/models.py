@@ -1,5 +1,5 @@
 from django.db import models
-from employees.models import Employee
+from employees.models import Employee, EmploymentType
 
 
 class LeaveType(models.Model):
@@ -13,7 +13,8 @@ class LeaveType(models.Model):
     is_paid = models.BooleanField(default=True)
     requires_approval = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
-    
+    applicable_to=models.JSONField(choices=EmploymentType.choices , default=list )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

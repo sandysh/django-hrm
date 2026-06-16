@@ -13,6 +13,7 @@ from django.views.decorators.http import require_http_methods
 import json
 from leaves.models import LeaveRequest, LeaveType, Holiday
 from reports.service import AuditLogService
+from employees.models import EmploymentType
 
 
 @login_required
@@ -20,6 +21,10 @@ def leave_apply(request):
     """Apply for leave."""
     leave_types = LeaveType.objects.filter(is_active=True)
     current_year = timezone.now().year
+    
+    if request.user.employment_type== EmploymentType.INTERN:
+        messages.error(request,'Interns cannot apply for leave for more information contact HR .')
+        return redirect('my_leaves')
     
     # Calculate remaining days for each leave type
     leave_type_data = []
@@ -47,7 +52,13 @@ def leave_apply(request):
             leave_type = LeaveType.objects.get(id=request.POST['leave_type'])
             start_date = datetime.strptime(request.POST['start_date'], '%Y-%m-%d').date()
             end_date = datetime.strptime(request.POST['end_date'], '%Y-%m-%d').date()
+            print(type(leave_type.applicable_to))
             
+            # use this to chnage logic to add other emloyment tyypes as well 
+            # if  request.user.employment_type not in leave_type.applicable_to: 
+            #     messages.error(request,'Interns cannot apply for leave for more information contact HR .')
+            #     return redirect('my_leaves')
+                         
             # Validate dates
             if end_date < start_date:
                 messages.error(request, 'End date must be after start date')

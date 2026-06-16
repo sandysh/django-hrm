@@ -4,7 +4,9 @@ Views for leave settings management (superadmin only).
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import LeaveType
+
+from employees.models import EmploymentType
+from leaves.models import LeaveType
 
 
 @login_required
@@ -49,21 +51,27 @@ def leave_type_create(request):
     
     if request.method == 'POST':
         try:
+            print(request.POST)
             leave_type = LeaveType.objects.create(
-                name=request.POST['name'],
-                code=request.POST['code'].upper(),
-                description=request.POST.get('description', ''),
-                default_days=int(request.POST.get('default_days', 0)),
-                is_paid=request.POST.get('is_paid') == 'on',
-                requires_approval=request.POST.get('requires_approval', 'on') == 'on',
-                is_active=True
-            )
+            name=request.POST['name'],
+            code=request.POST['code'].upper(),
+            description=request.POST.get('description', ''),
+            default_days=int(request.POST.get('default_days', 0)),
+            applicable_to=request.POST.getlist('employment_type'),  # add this
+            is_paid=request.POST.get('is_paid') == 'on',
+            requires_approval=request.POST.get('requires_approval', 'on') == 'on',
+            is_active=True
+        )
             messages.success(request, f'Leave type "{leave_type.name}" created successfully!')
             return redirect('settings')
         except Exception as e:
-            messages.error(request, f'Error creating leave type: {str(e)}')
-    
-    return render(request, 'leaves/leave_type_form.html', {'action': 'Create'})
+            messages.error(request, f'Error creating leave type: {str(e)}')\
+        
+    context={
+        "emp_types":EmploymentType.choices ,
+        'action': 'Create'
+    }
+    return render(request, 'leaves/leave_type_form.html',context)
 
 
 @login_required
@@ -84,6 +92,7 @@ def leave_type_edit(request, pk):
             leave_type.is_paid = request.POST.get('is_paid') == 'on'
             leave_type.requires_approval = request.POST.get('requires_approval', 'on') == 'on'
             leave_type.is_active = request.POST.get('is_active') == 'on'
+            leave_type.applicable_to = request.POST.getlist('employment_type')  
             leave_type.save()
             
             messages.success(request, f'Leave type "{leave_type.name}" updated successfully!')
@@ -92,6 +101,7 @@ def leave_type_edit(request, pk):
             messages.error(request, f'Error updating leave type: {str(e)}')
     
     context = {
+        "emp_types":EmploymentType.choices ,
         'leave_type': leave_type,
         'action': 'Edit'
     }

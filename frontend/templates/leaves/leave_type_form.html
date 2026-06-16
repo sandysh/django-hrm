@@ -40,6 +40,18 @@
                    value="{{ leave_type.default_days|default:'0' }}" required min="0" max="365">
             <small style="color: var(--text-secondary);">Number of days allocated to each employee annually</small>
         </div>
+        
+        <div class="form-group">
+            <label for="employment_type" class="form-label">Employment Types</label>
+            <select id="employment_type" name="employment_type" multiple class="form-control multiselect">
+                {% for value, label in emp_types %}
+                <option value="{{ value }}" {% if value in leave_type.applicable_to %}selected{% endif %}>                    
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+            <small style="color: var(--text-secondary);">Hold Ctrl (Windows) or ⌘ Cmd (Mac) to select multiple</small>
+        </div>
 
         <div class="form-group">
             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
