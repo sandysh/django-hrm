@@ -57,7 +57,7 @@ def leave_apply(request):
             total_days = (end_date - start_date).days + 1
             
             # Create leave request
-            LeaveRequest.objects.create(
+            leave_req=LeaveRequest.objects.create(
                 employee=request.user,
                 leave_type=leave_type,
                 start_date=start_date,
@@ -68,7 +68,11 @@ def leave_apply(request):
             )
             
             messages.success(request, 'Leave request submitted successfully!')
-            AuditLogService(request.user).create()
+            AuditLogService(request.user).create(
+                message=f"Applied for {total_days} days of {leave_type.name} leave",
+                instance=leave_req,
+                json_data={"leave_type_id": leave_type.id, "start_date": str(start_date), "end_date": str(end_date), "total_days": total_days}
+            )
             return redirect('my_leaves')
         except Exception as e:
             messages.error(request, f'Error submitting leave request: {str(e)}')
@@ -172,7 +176,11 @@ def leave_edit(request, pk):
             leave_request.save()
 
             messages.success(request, 'Leave request updated successfully!')
-            AuditLogService(request.user).update()
+            AuditLogService(request.user).update(
+                message=f"Updated leave request for {leave_request.total_days} days of {leave_type.name} leave",
+                instance=leave_request,
+                json_data={"leave_request_id": leave_request.id, "leave_type_id": leave_type.id}
+            )
             if request.user.is_staff:
                 return redirect('leave_requests')
             return redirect('my_leaves')
@@ -231,7 +239,11 @@ def leave_approve(request, pk):
     print(context)
     send_email.delay(request.user.email, 'emails/leave_approved.html', context)   
     messages.success(request, 'Leave request approved successfully!')
-    AuditLogService(request.user).update()
+    AuditLogService(request.user).update(
+        message=f"Approved leave request for {leave_request.employee.employee_id}",
+        instance=leave_request,
+        json_data={"leave_request_id": leave_request.id, "status": "AP"}
+    )
     return redirect('leave_requests')
 
 
@@ -254,7 +266,11 @@ def leave_reject(request, pk):
     leave_request.approval_notes = request.POST.get('notes', '')
     leave_request.save()
     messages.success(request, 'Leave request rejected!')
-    AuditLogService(request.user).update()
+    AuditLogService(request.user).update(
+        message=f"Rejected leave request for {leave_request.employee.employee_id}",
+        instance=leave_request,
+        json_data={"leave_request_id": leave_request.id, "status": "RJ"}
+    )
     return redirect('leave_requests')
 
 
@@ -304,6 +320,11 @@ def holiday_api(request):
                 return JsonResponse({'error': 'Holiday already exists for this date'}, status=400)
 
             holiday = Holiday.objects.create(date=date, name=name, is_optional=False)
+            AuditLogService(request.user).create(
+                instance=holiday,
+                message=f"Created holiday {name}",
+                json_data={"holiday_id": holiday.id, "name": name, "date": date}
+            )
             return JsonResponse({'id': holiday.id, 'message': 'Holiday created'})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
@@ -319,7 +340,14 @@ def holiday_delete(request, pk):
         
     try:
         holiday = Holiday.objects.get(pk=pk)
+        holiday_id = holiday.id
+        holiday_name = holiday.name
         holiday.delete()
+        AuditLogService(request.user).delete(
+            instance=None,
+            message=f"Deleted holiday {holiday_name}",
+            json_data={"holiday_id": holiday_id, "name": holiday_name}
+        )
         return JsonResponse({'message': 'Deleted'})
     except Holiday.DoesNotExist:
         return JsonResponse({'error': 'Not found'}, status=404)

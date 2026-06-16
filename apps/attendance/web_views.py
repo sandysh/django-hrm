@@ -58,6 +58,12 @@ def punch_attendance(request):
         # Update daily attendance
         update_daily_attendance(employee, today)
         
+        AuditLogService(request.user).create(
+            instance=employee,
+            message=f"Punched {punch_type.lower()}",
+            json_data={"punch_type": punch_type, "time": str(now)}
+        )
+        
         messages.success(request, f'Successfully punched {punch_type.lower()}!')
         return redirect('punch_attendance')
     

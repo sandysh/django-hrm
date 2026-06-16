@@ -229,7 +229,11 @@ def employee_create(request):
             else:
                 messages.warning(request, f'Employee created locally, but device sync failed: {msg}')
             
-            AuditLogService(request.user).create()
+            AuditLogService(request.user).create(
+                message=f"Created employee {employee.employee_id}",
+                instance=employee,
+                json_data={"employee_id": employee.employee_id, "username": employee.username}
+            )
             return redirect('employee_list')
         except Exception as e:
             messages.error(request, f'Error creating employee: {str(e)}')
@@ -287,7 +291,11 @@ def employee_edit(request, pk):
             else:
                 messages.warning(request, f'Employee updated locally, but device sync failed: {msg}')
             
-            AuditLogService(request.user).update()
+            AuditLogService(request.user).update(
+                message=f"Updated employee {employee.employee_id}",
+                instance=employee,
+                json_data={"employee_id": employee.employee_id, "username": employee.username}
+            )
             return redirect('employee_list')
         except Exception as e:
             messages.error(request, f'Error updating employee: {str(e)}')
@@ -344,7 +352,11 @@ def employee_delete(request, pk):
         else:
             messages.warning(request, f'Employee {employee_id} deleted from Database, but failed to delete from Device: {msg}')
             
-        AuditLogService(request.user).delete()    
+        AuditLogService(request.user).delete(
+            message=f"Deleted employee {employee_id}",
+            instance=employee,
+            json_data={"employee_id": employee_id, "db_id": db_id}
+        )
         return redirect('employee_list')
     
     return render(request, 'employees/employee_confirm_delete.html', {'employee': employee})

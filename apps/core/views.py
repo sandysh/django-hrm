@@ -26,7 +26,10 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            AuditLogService(user).login()
+            AuditLogService(user).login(
+                message=f"User {user.username} logged in",
+                json_data={"username": user.username}
+            )
             return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password')
@@ -36,7 +39,10 @@ def login_view(request):
 
 def logout_view(request):
     """Logout user."""
-    AuditLogService(request.user).logout()
+    AuditLogService(request.user).logout(
+        message=f"User {request.user.username} logged out",
+        json_data={"username": request.user.username}
+    )
     logout(request)
     messages.success(request, 'You have been logged out successfully')
     return redirect('login')

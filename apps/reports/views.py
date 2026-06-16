@@ -3,7 +3,7 @@ from django.views.generic import ListView , TemplateView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 
 from hrm_project.utility import get_dates
-from reports.service import ReportService
+from reports.service import ReportService, AuditLogService
 from .models import AuditLog, logType
 from django.db.models import Q
 from employees.models import Employee
@@ -133,10 +133,15 @@ class EmployeeReportDataView(LoginRequiredMixin, UserPassesTestMixin, TemplateVi
                 'fine_deduction': request.POST.get('fine_deduction', 0) or 0,
             }
             try:
-                Payroll.objects.update_or_create(
+                payroll, _ = Payroll.objects.update_or_create(
                     employee=employee,
                     date=payroll_date,
                     defaults=defaults
+                )
+                AuditLogService(request.user).report_generated(
+                    instance=payroll,
+                    message=f"Report data saved for {employee.employee_id}",
+                    json_data={"employee_id": employee.employee_id, "action": "save"}
                 )
                 messages.success(request, f'Report data for {employee.get_full_name()} approved and saved successfully.')
             except Exception as e:
@@ -147,7 +152,13 @@ class EmployeeReportDataView(LoginRequiredMixin, UserPassesTestMixin, TemplateVi
             try:
                 payroll = Payroll.objects.filter(employee=employee).first()
                 if payroll:
+                    payroll_id = payroll.pk
                     payroll.delete()
+                    AuditLogService(request.user).delete(
+                        instance=None,
+                        message=f"Report data deleted for {employee.employee_id}",
+                        json_data={"employee_id": employee.employee_id, "action": "delete"}
+                    )
                     messages.success(request, f'Report data for {employee.get_full_name()} deleted successfully.')
             except Exception as e:
                 messages.error(request, f'Error deleting payroll data: {e}')
@@ -156,12 +167,22 @@ class EmployeeReportDataView(LoginRequiredMixin, UserPassesTestMixin, TemplateVi
         elif action_type == 'download':
             service = ReportService(employee=employee)
             pdf = service.render_pdf()
+            AuditLogService(request.user).report_generated(
+                instance=employee,
+                message=f"Report downloaded for {employee.employee_id}",
+                json_data={"employee_id": employee.employee_id, "action": "download"}
+            )
             response = HttpResponse(pdf, content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="salary_report_{employee.employee_id}.pdf"'
             return response
             
         elif action_type == 'mail':
             # TODO: Implement actual Email sending logic here using django.core.mail
+            AuditLogService(request.user).email_sent(
+                instance=employee,
+                message=f"Report emailed for {employee.employee_id}",
+                json_data={"employee_id": employee.employee_id, "action": "mail"}
+            )
             messages.success(request, f'Report data for {employee.get_full_name()} has been emailed successfully.')
             return redirect('employee_report_data', emp_id=emp_id)
 
