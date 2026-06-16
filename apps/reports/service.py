@@ -8,46 +8,60 @@ from leaves.models import LeaveBalance, LeaveRequest, LeaveType
 from reports.models import AuditLog, TaxSlab, logType
 from core.models import SystemSettings
 from attendance.models import DailyAttendance
-from django.db.models import Sum, Count, Q
+from django.db.models import Model, Sum, Count, Q
 from nepali_datetime import datetime
 from hrm_project.utility import get_dates
 from datetime import date
 from weasyprint import HTML
 from django.template.loader import get_template
+from django.contrib.contenttypes.models import ContentType
+
 
 
 class AuditLogService:
     def __init__(self, user):
         self.user = user
 
-    def log(self, action: logType):
+    def log(self, action: logType, instance : Model,  message: str = None, json_data: dict = None ):
+        content_type = None
+        object_id = None
+        module_name = None
         user_obj = self.user if hasattr(self.user, 'is_authenticated') and self.user.is_authenticated else None
+        if instance:
+            content_type = ContentType.objects.get_for_model(instance)
+            object_id = str(instance.pk)
+            module_name = instance._meta.app_label
         return AuditLog.objects.create(
             user=user_obj,
             action=action,
-            timestamp=timezone.now()
+            message=message,
+            json_data=json_data,
+            timestamp=timezone.now(),
+            content_type=content_type,
+            object_id=object_id,
+            module_name=module_name,
         )
-        
-    def login(self):
-        return self.log(logType.LOGIN)
+    
+    def login(self, message: str = None, json_data: dict = None):
+        return self.log(logType.LOGIN, instance=None, message=message, json_data=json_data)
 
-    def logout(self):
-        return self.log(logType.LOGOUT)
+    def logout(self, message: str = None, json_data: dict = None):
+        return self.log(logType.LOGOUT, instance=None, message=message, json_data=json_data)
 
-    def create(self):
-        return self.log(logType.CREATE)
+    def create(self, instance=None, message=None, json_data=None):
+        return self.log(logType.CREATE, instance=instance, message=message, json_data=json_data)
 
-    def update(self):
-        return self.log(logType.UPDATE)
+    def update(self, instance=None, message=None, json_data=None):
+        return self.log(logType.UPDATE, instance=instance, message=message, json_data=json_data)
 
-    def delete(self):
-        return self.log(logType.DELETE)
+    def delete(self, instance=None, message=None, json_data=None):
+        return self.log(logType.DELETE, instance=instance, message=message, json_data=json_data)
 
-    def email_sent(self):
-        return self.log(logType.EMAIL_SENT)
+    def email_sent(self, instance=None, message: str = None, json_data: dict = None):
+        return self.log(logType.EMAIL_SENT, instance=instance, message=message, json_data=json_data)
 
-    def report_generated(self):
-        return self.log(logType.REPORT_GENERATED)
+    def report_generated(self, instance=None, message: str = None, json_data: dict = None):
+        return self.log(logType.REPORT_GENERATED, instance=instance, message=message, json_data=json_data)
     
     
 class ReportService:
