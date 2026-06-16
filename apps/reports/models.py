@@ -1,6 +1,8 @@
 from django.db import models
 from core.models import BaseModel
 from decimal import ROUND_HALF_UP, Decimal
+from django.contrib.contenttypes.models import ContentType
+
 
 class logType(models.TextChoices):
     LOGIN = 'LOGIN', 'Login'
@@ -14,9 +16,18 @@ class logType(models.TextChoices):
 # Create your models here.
 class AuditLog(models.Model):
     user= models.ForeignKey("employees.Employee", on_delete=models.CASCADE , null=True, blank=True)
-
     action = models.CharField(max_length=50, choices=logType.choices)
     timestamp = models.DateTimeField(auto_now_add=True)
+    message = models.TextField(null=True, blank=True)
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    object_id = models.CharField(max_length=64, null=True, blank=True)
+    module_name=models.CharField(max_length=50, null=True, blank=True)
+    json_data = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user} - {self.action} at {self.timestamp}"
