@@ -3,6 +3,13 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.utils import timezone
 
+class EmploymentType(models.TextChoices):
+    FULL_TIME = 'FT', 'Full Time',
+    PART_TIME = 'PT', 'Part Time',
+    CONTARCT = 'CT', 'Contract',
+    INTERN = 'IN', 'Intern',
+        
+
 
 class Department(models.Model):
     """Department model for organizational structure."""
@@ -74,14 +81,8 @@ class Employee(AbstractUser):
     designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
     date_joined = models.DateTimeField(default=timezone.now)
     employment_type = models.CharField(
-        max_length=2,
-        choices=[
-            ('FT', 'Full Time'),
-            ('PT', 'Part Time'),
-            ('CT', 'Contract'),
-            ('IN', 'Intern'),
-        ],
-        default='FT'
+        choices=EmploymentType.choices,
+        default=EmploymentType.FULL_TIME
     )
     
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='AC')
