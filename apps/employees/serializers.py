@@ -20,6 +20,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             'casual_leave_balance', 'total_leave_balance', 'is_active', 'is_staff',
             'created_at', 'updated_at'
         ]
+        
         read_only_fields = ['biometric_synced', 'biometric_sync_date', 'created_at', 'updated_at']
         extra_kwargs = {
             'password': {'write_only': True}
