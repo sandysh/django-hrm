@@ -1,0 +1,588 @@
+{% extends 'base.html' %}
+
+{% block title %}Audit Logs - HRM System{% endblock %}
+
+{% block content %}
+<style>
+    .audit-filters {
+        background: var(--bg-card, #fff);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .audit-filters .form-group {
+        flex: 1;
+        min-width: 200px;
+        margin-bottom: 0;
+    }
+
+    .audit-card {
+        background: var(--bg-card, #fff);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .audit-card-header {
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: var(--bg-light, #f8f9fa);
+    }
+
+    .audit-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+
+    .audit-table thead th {
+        padding: 0.7rem 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-light, #f8f9fa);
+        white-space: nowrap;
+    }
+
+    .audit-table tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+    }
+
+    .audit-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .audit-table tbody tr:hover {
+        background: var(--bg-light, #f8f9fa);
+    }
+
+    .audit-table td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+        color: var(--text-primary);
+    }
+
+    .audit-timestamp {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+
+    .audit-user strong {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-primary);
+    }
+
+    .audit-user span {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-block;
+        padding: 0.25em 0.65em;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 6px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .badge-info    { background: #e0f0ff; color: #1565c0; }
+    .badge-success { background: #e6f4ea; color: #1b5e20; }
+    .badge-warning { background: #fff8e1; color: #7c5800; }
+    .badge-danger  { background: #fdecea; color: #b71c1c; }
+    .badge-secondary { background: #f0f0f0; color: #555; }
+
+    /* JSON viewer button */
+    .btn-json {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0.3rem 0.75rem;
+        font-size: 0.78rem;
+        font-weight: 500;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background: #1e1e1e;
+        color: #d4d4d4;
+        cursor: pointer;
+        transition: background 0.15s;
+        font-family: 'Consolas', 'Fira Code', monospace;
+    }
+
+    .btn-json:hover {
+        background: #2d2d2d;
+    }
+
+    .btn-json::before {
+        content: "{ }";
+        font-size: 0.75rem;
+        color: #9cdcfe;
+    }
+
+    /* JSON Modal */
+    .json-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .json-modal-overlay.active {
+        display: flex;
+    }
+
+    .json-modal-box {
+        background: #1e1e1e;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 720px;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .json-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #333;
+        background: #252526;
+    }
+
+    .json-modal-title {
+        font-family: 'Consolas', 'Fira Code', monospace;
+        font-size: 0.8rem;
+        color: #9cdcfe;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .json-modal-title .dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .dot-red    { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green  { background: #28c840; }
+
+    .json-modal-close {
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 1.1rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        transition: color 0.15s;
+    }
+
+    .json-modal-close:hover { color: #ccc; }
+
+    .json-modal-tabs {
+        display: flex;
+        gap: 0;
+        background: #252526;
+        border-bottom: 1px solid #333;
+        padding: 0 0.75rem;
+    }
+
+    .json-tab {
+        padding: 0.45rem 1rem;
+        font-size: 0.75rem;
+        font-family: 'Consolas', 'Fira Code', monospace;
+        color: #888;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: color 0.15s;
+        user-select: none;
+    }
+
+    .json-tab.active {
+        color: #9cdcfe;
+        border-bottom-color: #9cdcfe;
+    }
+
+    .json-modal-body {
+        overflow-y: auto;
+        flex: 1;
+        padding: 1rem;
+        font-family: 'Consolas', 'Fira Code', monospace;
+        font-size: 0.82rem;
+        line-height: 1.7;
+        color: #d4d4d4;
+    }
+
+    .json-modal-body::-webkit-scrollbar { width: 6px; }
+    .json-modal-body::-webkit-scrollbar-track { background: #1e1e1e; }
+    .json-modal-body::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+    /* Syntax highlight colors (VS Code Dark+) */
+    .json-key    { color: #9cdcfe; }
+    .json-string { color: #ce9178; }
+    .json-number { color: #b5cea8; }
+    .json-bool   { color: #569cd6; }
+    .json-null   { color: #569cd6; }
+    .json-brace  { color: #ffd700; }
+    .json-line-num {
+        display: inline-block;
+        min-width: 2rem;
+        color: #555;
+        text-align: right;
+        margin-right: 1rem;
+        user-select: none;
+    }
+
+    /* Tree view */
+    .json-tree { padding: 0; }
+    .json-tree-node { margin: 2px 0; }
+    .json-tree-toggle {
+        cursor: pointer;
+        user-select: none;
+        color: #888;
+        font-size: 0.7rem;
+        display: inline-block;
+        width: 14px;
+    }
+    .json-tree-toggle:hover { color: #ccc; }
+    .json-tree-children { margin-left: 1.5rem; border-left: 1px solid #333; padding-left: 0.5rem; }
+    .json-tree-children.collapsed { display: none; }
+
+    /* Pagination */
+    .audit-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 1.25rem;
+        flex-wrap: wrap;
+    }
+
+    .audit-pagination a,
+    .audit-pagination span {
+        padding: 0.35rem 0.75rem;
+        font-size: 0.82rem;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        text-decoration: none;
+        color: var(--text-primary);
+        background: var(--bg-card, #fff);
+        transition: background 0.15s;
+    }
+
+    .audit-pagination a:hover {
+        background: var(--bg-light, #f5f5f5);
+    }
+
+    .audit-pagination span.current {
+        background: var(--primary, #007bff);
+        color: #fff;
+        border-color: var(--primary, #007bff);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3.5rem 1rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+</style>
+
+<!-- Filters -->
+<div class="audit-filters">
+    <form method="get" style="display: contents;">
+        <div class="form-group">
+            <label for="search" class="form-label">Search Employee</label>
+            <input type="text" id="search" name="search" class="form-control"
+                placeholder="Employee ID, Name..." value="{{ search_query|default:'' }}">
+        </div>
+
+        <div class="form-group" style="min-width: 180px;">
+            <label for="action" class="form-label">Action</label>
+            <select id="action" name="action" class="form-control">
+                <option value="">All Actions</option>
+                {% for value, label in log_types %}
+                <option value="{{ value }}" {% if action_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{% url 'audit_log_list' %}" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+
+<!-- Logs List -->
+<div class="audit-card">
+    <div class="audit-card-header">
+        {{ paginator.count }} Log{{ paginator.count|pluralize }} Found
+    </div>
+
+    {% if logs %}
+    <div style="overflow-x: auto;">
+        <table class="audit-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Target</th>
+                    <th>Message</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td class="audit-timestamp">{{ log.timestamp|date:"M d, Y h:i A" }}</td>
+                    <td class="audit-user">
+                        {% if log.user %}
+                        <strong>{{ log.user.employee_id }}</strong>
+                        <span>{{ log.user.get_full_name }}</span>
+                        {% else %}
+                        <span style="color: var(--text-secondary);">System / Anonymous</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if log.action == 'LOGIN' or log.action == 'LOGOUT' %}
+                        <span class="badge badge-info">{{ log.get_action_display }}</span>
+                        {% elif log.action == 'CREATE' %}
+                        <span class="badge badge-success">{{ log.get_action_display }}</span>
+                        {% elif log.action == 'UPDATE' %}
+                        <span class="badge badge-warning">{{ log.get_action_display }}</span>
+                        {% elif log.action == 'DELETE' %}
+                        <span class="badge badge-danger">{{ log.get_action_display }}</span>
+                        {% elif log.action == 'REPORT_GENERATED' %}
+                        <span class="badge badge-primary">{{ log.get_action_display }}</span>
+                        {% elif log.action == 'EMAIL_SENT' %}
+                        <span class="badge badge-dark">{{ log.get_action_display }}</span>
+                        {% else %}
+                        <span class="badge badge-secondary">{{ log.get_action_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if log.module_name %}
+                            <span style="font-family: 'Consolas', monospace; font-size: 0.8rem; background: var(--bg-light, #f8f9fa); padding: 0.2rem 0.4rem; border-radius: 4px; border: 1px solid var(--border);">
+                                {{ log.module_name|title }} #{{ log.object_id|default:"-" }}
+                            </span>
+                        {% else %}
+                            <span style="color: var(--text-secondary);">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if log.message %}{{ log.message }}{% else %}<span style="color: var(--text-secondary);">—</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if log.json_data %}
+                        <button class="btn-json" onclick="openJsonModal('modal-{{ log.id }}')">View</button>
+                        {% else %}
+                        <span style="color: var(--text-secondary);">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="audit-pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter %}&action={{ action_filter }}{% endif %}">&laquo; First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter %}&action={{ action_filter }}{% endif %}">Previous</a>
+        {% endif %}
+
+        <span class="current">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter %}&action={{ action_filter }}{% endif %}">Next</a>
+        <a href="?page={{ paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if action_filter %}&action={{ action_filter }}{% endif %}">Last &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">No audit logs found.</div>
+    {% endif %}
+</div>
+
+
+<!-- JSON Modals -->
+{% for log in logs %}
+{% if log.json_data %}
+<div class="json-modal-overlay" id="modal-{{ log.id }}" onclick="closeOnOverlay(event, 'modal-{{ log.id }}')">
+    <div class="json-modal-box">
+        <div class="json-modal-header">
+            <div class="json-modal-title">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+                &nbsp; log_detail.json
+            </div>
+            <button class="json-modal-close" onclick="closeJsonModal('modal-{{ log.id }}')">&#x2715;</button>
+        </div>
+
+        <div class="json-modal-tabs">
+            <div class="json-tab active" onclick="switchTab(this, 'pretty-{{ log.id }}')">Pretty</div>
+            <div class="json-tab" onclick="switchTab(this, 'tree-{{ log.id }}')">Tree</div>
+            <div class="json-tab" onclick="switchTab(this, 'raw-{{ log.id }}')">Raw</div>
+        </div>
+
+        <div class="json-modal-body">
+            <!-- Pretty view (default) -->
+            <div id="pretty-{{ log.id }}" class="json-view">
+                <pre id="pretty-pre-{{ log.id }}" style="margin:0; white-space: pre-wrap; word-break: break-all;"></pre>
+            </div>
+            <!-- Tree view -->
+            <div id="tree-{{ log.id }}" class="json-view" style="display:none;">
+                <div id="tree-content-{{ log.id }}" class="json-tree"></div>
+            </div>
+            <!-- Raw view -->
+            <div id="raw-{{ log.id }}" class="json-view" style="display:none;">
+                <pre style="margin:0; white-space: pre-wrap; word-break: break-all; color: #d4d4d4;" id="raw-pre-{{ log.id }}"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var rawData = {{ log.json_data|safe }};
+    var logId = '{{ log.id }}';
+
+    function syntaxHighlight(json) {
+        json = JSON.stringify(json, null, 2);
+        var lines = json.split('\n');
+        return lines.map(function(line, i) {
+            var highlighted = line.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+                var cls = 'json-number';
+                if (/^"/.test(match)) {
+                    cls = /:$/.test(match) ? 'json-key' : 'json-string';
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-bool';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+            highlighted = highlighted.replace(/([{}\[\]])/g, '<span class="json-brace">$1</span>');
+            return '<span class="json-line-num">' + (i + 1) + '</span>' + highlighted;
+        }).join('\n');
+    }
+
+    function buildTree(data, container) {
+        if (typeof data === 'object' && data !== null) {
+            var isArray = Array.isArray(data);
+            var keys = Object.keys(data);
+            keys.forEach(function(key) {
+                var val = data[key];
+                var node = document.createElement('div');
+                node.className = 'json-tree-node';
+
+                if (typeof val === 'object' && val !== null) {
+                    var toggle = document.createElement('span');
+                    toggle.className = 'json-tree-toggle';
+                    toggle.textContent = '▾';
+                    var label = document.createElement('span');
+                    label.innerHTML = '<span class="json-key">' + (isArray ? '[' + key + ']' : '"' + key + '"') + '</span><span style="color:#888">: ' + (Array.isArray(val) ? '[' : '{') + '</span>';
+                    var children = document.createElement('div');
+                    children.className = 'json-tree-children';
+                    buildTree(val, children);
+                    toggle.onclick = function() {
+                        var collapsed = children.classList.toggle('collapsed');
+                        toggle.textContent = collapsed ? '▸' : '▾';
+                    };
+                    node.appendChild(toggle);
+                    node.appendChild(label);
+                    node.appendChild(children);
+                } else {
+                    var valClass = typeof val === 'string' ? 'json-string' : (typeof val === 'number' ? 'json-number' : (val === null ? 'json-null' : 'json-bool'));
+                    var valStr = typeof val === 'string' ? '"' + val + '"' : String(val);
+                    node.innerHTML = '<span style="color:#888; display:inline-block; width:14px;"></span><span class="json-key">' + (isArray ? '[' + key + ']' : '"' + key + '"') + '</span><span style="color:#888">: </span><span class="' + valClass + '">' + valStr + '</span>';
+                }
+                container.appendChild(node);
+            });
+        }
+    }
+
+    window['initModal_' + logId] = function() {
+        var prettyPre = document.getElementById('pretty-pre-' + logId);
+        if (!prettyPre._initialized) {
+            prettyPre.innerHTML = syntaxHighlight(rawData);
+            document.getElementById('raw-pre-' + logId).textContent = JSON.stringify(rawData);
+            buildTree(rawData, document.getElementById('tree-content-' + logId));
+            prettyPre._initialized = true;
+        }
+    };
+})();
+</script>
+{% endif %}
+{% endfor %}
+
+<script>
+function openJsonModal(id) {
+    document.getElementById(id).classList.add('active');
+    var fnName = 'initModal_' + id.replace('modal-', '');
+    if (typeof window[fnName] === 'function') window[fnName]();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeJsonModal(id) {
+    document.getElementById(id).classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function closeOnOverlay(e, id) {
+    if (e.target === document.getElementById(id)) closeJsonModal(id);
+}
+
+function switchTab(tabEl, viewId) {
+    var modal = tabEl.closest('.json-modal-box');
+    modal.querySelectorAll('.json-tab').forEach(function(t) { t.classList.remove('active'); });
+    modal.querySelectorAll('.json-view').forEach(function(v) { v.style.display = 'none'; });
+    tabEl.classList.add('active');
+    document.getElementById(viewId).style.display = 'block';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.json-modal-overlay.active').forEach(function(m) {
+            m.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+});
+</script>
+
+{% endblock %}

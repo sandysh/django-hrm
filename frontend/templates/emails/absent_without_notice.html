@@ -1,0 +1,24 @@
+{% extends "emails/base_email.html" %}
+
+{% block subject %}Absence Without Notice — Clarification Required{% endblock %}
+{% block accent_color %}#EF4444{% endblock %}
+{% block badge_class %}badge-red{% endblock %}
+{% block badge_text %}Urgent{% endblock %}
+
+{% block email_content %}
+<div class="subject-line">Absence Without Notice — Clarification Required</div>
+<div class="greeting">Dear {{ employee_name }},</div>
+<p class="para">We note that you were absent from work on <strong>{{ absent_dates }}</strong> without prior notification
+  or approved leave. This is a formal request for clarification.</p>
+
+<div class="detail-box">
+  <div class="detail-title">Absence Record</div>
+  <div class="detail-row"><span class="dk">Date of Absence</span><span class="dv">{{ absent_dates }}</span></div>
+  <div class="detail-row"><span class="dk">Department</span><span class="dv">{{ department }}</span></div>
+</div>
+
+<div class="callout callout-red">
+  <strong>Action Required:</strong> Please write a written explanation and supporting documentation (if applicable) to
+  HR by <strong>{{ today }}</strong>. Failure to respond may result in the days being marked as LWP (Leave Without Pay).
+</div>
+{% endblock %}

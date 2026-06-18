@@ -14,6 +14,15 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     musl-dev \
     libpq-dev \
+    libcairo2-dev \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libffi-dev \
+    shared-mime-info \
+    libgdk-pixbuf-xlib-2.0-0 \
+    pkg-config \
+    python3-dev \
+    build-essential\
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -25,7 +34,7 @@ RUN pip install --upgrade pip && \
 COPY . /app/
 
 # Create necessary directories
-RUN mkdir -p /app/staticfiles /app/media
+RUN mkdir -p /app/public/staticfiles /app/public/media
 
 # Expose port
 EXPOSE 8000

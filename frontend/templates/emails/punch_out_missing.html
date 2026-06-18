@@ -1,0 +1,30 @@
+{% extends "emails/base_email.html" %}
+
+{% block subject %}Missing Punch-Out Record — {{ attendance_date }}{% endblock %}
+{% block accent_color %}#F59E0B{% endblock %}
+{% block badge_class %}badge-yellow{% endblock %}
+{% block badge_text %}⚠ Missing Punch-Out{% endblock %}
+
+{% block email_content %}
+<div class="subject-line">Missing Punch-Out Record — {{ today }}</div>
+<div class="greeting">Dear {{ employee_name }},</div>
+<p class="para">Our attendance system has flagged that your <strong>punch-out record is missing</strong> for <strong>{{ attendance_date }}</strong>. This may have occurred if you left without checking out or if the device was unavailable at the time of exit.</p>
+
+<div class="detail-box">
+  <div class="detail-title">Attendance Record</div>
+  <div class="detail-row"><span class="dk">Employee ID</span><span class="dv">{{ employee_id }}</span></div>
+  <div class="detail-row"><span class="dk">Department</span><span class="dv">{{ department }}</span></div>
+  <div class="detail-row"><span class="dk">Date</span><span class="dv">{{ today }}</span></div>
+  <div class="detail-row"><span class="dk">Punch-Out Status</span><span class="dv">Not Recorded</span></div>
+</div>
+
+<div class="status-banner sb-yellow">⚠ No punch-out detected for this date. Action required.</div>
+
+<div class="callout callout-yellow">
+  <strong>What to do:</strong> Please submit a regularization request through the employee portal by <strong>{{ regularization_deadline }}</strong>, providing the actual time you left and the reason for the missing entry. Unresolved records may affect your total working hours calculation and payroll for this period.
+</div>
+
+<a class="cta-btn cta-primary" href="{{ portal_url }}">Submit Regularization Request →</a>
+{% endblock %}
+
+{% block sig_role %}HR Department{% endblock %}

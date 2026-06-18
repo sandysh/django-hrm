@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Report - {{ profile.full_name }}</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 12mm 14mm 12mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            print-color-adjust: exact;
+        }
+
+        html,
+        body {
+            print-color-adjust: exact;
+        }
+
+        body {
+            font-family: Calibri, Arial, sans-serif;
+            font-size: 9pt;
+            color: #000;
+            background: #fff;
+            line-height: 1.25;
+            padding: 20px;
+            print-color-adjust: exact;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #1e4d7b;
+            color: #fff;
+            padding: 12px 16px;
+            margin-bottom: 0;
+            border-radius: 4px 4px 0 0;
+            print-color-adjust: exact;
+        }
+
+        .header h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 0 0 4px 0;
+            color: #fff;
+        }
+
+        .header p {
+            font-size: 8pt;
+            margin: 0;
+            color: #fff;
+            font-style: italic;
+        }
+
+        .section-header {
+            background-color: #2e5a8f;
+            color: #fff;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 9pt;
+            margin-top: 12px;
+            print-color-adjust: exact;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4px;
+            background-color: #fff;
+            print-color-adjust: exact;
+        }
+
+        th {
+            background-color: #e8f0f7;
+            color: #000;
+            padding: 6px 8px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 9pt;
+            border: 1px solid #999;
+            print-color-adjust: exact;
+        }
+
+        td {
+            padding: 5px 8px;
+            text-align: left;
+            font-size: 9pt;
+            border: 1px solid #999;
+            color: #000;
+            print-color-adjust: exact;
+        }
+
+        tr:nth-child(odd) td {
+            background-color: #f5f9fd;
+            print-color-adjust: exact;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #fff;
+            print-color-adjust: exact;
+        }
+
+        .highlight-yellow td,
+        .highlight-yellow {
+            background-color: #ffff99;
+            print-color-adjust: exact;
+        }
+
+        .highlight-green {
+            background-color: #c6efce;
+            print-color-adjust: exact;
+        }
+
+        .highlight-gold {
+            background-color: #ffd966;
+            print-color-adjust: exact;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 12mm 14mm;
+                print-color-adjust: exact;
+            }
+
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            table,
+            th,
+            td,
+            tr:nth-child(odd) td,
+            tr:nth-child(even) td,
+            .highlight-yellow,
+            .highlight-green,
+            .highlight-gold {
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <h1>{{ profile.full_name }}</h1>
+            <p>
+                Employee ID: {{ profile.employee_id }} |
+                Department: {{ profile.department }} |
+                Status: {% if violation_summary.late_arrivals > 0 %}Minor Penalty{% else %}Good Standing{% endif %}
+            </p>
+        </div>
+
+        <!-- SECTION 1: PROFILE & SHIFT -->
+        <div class="section-header">1. PROFILE &amp; SHIFT</div>
+        <table>
+            <tr>
+                <th width="35%">Employee ID</th>
+                <td>{{ profile.employee_id }}</td>
+            </tr>
+            <tr>
+                <th>Full Name</th>
+                <td>{{ profile.full_name }}</td>
+            </tr>
+            <tr>
+                <th>Department</th>
+                <td>{{ profile.department }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ profile.email }}</td>
+            </tr>
+            <tr>
+                <th>Scheduled Shift</th>
+                <td>{{ profile.scheduled_shift }}</td>
+            </tr>
+            <tr>
+                <th>Effective Working Days</th>
+                <td>{{ profile.effective_working_days }}</td>
+            </tr>
+            <tr>
+                <th>New Joiner?</th>
+                <td>{{ profile.new_joiner|yesno:"Yes,No" }}</td>
+            </tr>
+        </table>
+
+        <!-- SECTION 2: ATTENDANCE SUMMARY -->
+        <div class="section-header">2. ATTENDANCE SUMMARY</div>
+        <table>
+            <tr>
+                <th width="35%">Days Present (punched in)</th>
+                <td>{{ attendance_summary.days_present }}</td>
+            </tr>
+            <tr>
+                <th>Total Hours Worked</th>
+                <td>{{ attendance_summary.total_hours_worked }}</td>
+            </tr>
+            <tr>
+                <th>Average Hours / Day</th>
+                <td>{{ attendance_summary.average_hours_per_day }}</td>
+            </tr>
+            <tr>
+                <th>Approved Leave Days Taken</th>
+                <td>{{ attendance_summary.approved_leave_days_taken }}</td>
+            </tr>
+            <tr>
+                <th>Unpaid / Absent Days</th>
+                <td>{{ attendance_summary.unpaid_absent_days|default:"0" }}</td>
+            </tr>
+            <tr>
+                <th>Attendance % (vs. working days)</th>
+                <td>{{ attendance_summary.attendance_percentage }}%</td>
+            </tr>
+        </table>
+
+        <!-- SECTION 3: VIOLATIONS SUMMARY -->
+        <div class="section-header">3. VIOLATIONS SUMMARY</div>
+        <table>
+            <tr>
+                <th width="35%">Late Arrivals (effective)</th>
+                <td {% if violation_summary.late_arrivals %}class="highlight-yellow" {% endif %}>{{ violation_summary.late_arrivals }}</td>
+            </tr>
+            <tr>
+                <th>Early Departures</th>
+                <td>{{ violation_summary.early_departures }}</td>
+            </tr>
+            <tr>
+                <th>Missing Check-outs</th>
+                <td {% if violation_summary.missing_checkouts %}class="highlight-yellow" {% endif %}>{{ violation_summary.missing_checkouts }}</td>
+            </tr>
+            <tr>
+                <th>3-Late Trigger Days (100% pay deduct)</th>
+                <td>{{ violation_summary.three_late_arrivals }}</td>
+            </tr>
+            <tr>
+                <th>Short-Hours Days (worked &lt;7h)</th>
+                <td>{{ violation_summary.short_hours_days }}</td>
+            </tr>
+        </table>
+
+        <!-- SECTION 4: LEAVE BALANCE -->
+        <div class="section-header">4. LEAVE BALANCE (Annual)</div>
+        <table>
+            <tr style="background-color:#1e4d7b;">
+                <th style="background-color:#1e4d7b;color:#fff;">Leave Type</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Allocated</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Used (This Month)</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Used (Annual)</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Remaining</th>
+            </tr>
+            {% for leave_name, bal in leave_balance.items %}
+
+            <tr>
+                <td>{{ leave_name }}</td>
+                <td>{{ bal.allocated }}</td>
+                <td>{{ bal.usedthismonth }}</td>
+                <td>{{ bal.used }}</td>
+                <td>{{ bal.remain }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No leave balance data available.</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <!-- SECTION 5: APPROVED LEAVES -->
+        <div class="section-header">5. APPROVED LEAVES</div>
+        <table>
+            <tr style="background-color:#1e4d7b;">
+                <th style="background-color:#1e4d7b;color:#fff;">Day</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Leave Type</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Days</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Reason</th>
+            </tr>
+            {% for leave in approved_leaves.logs %}
+            <tr>
+                <td>{{ leave.day }}</td>
+                <td>{{ leave.leave_type }}</td>
+                <td>{{ leave.days }}</td>
+                <td>{{ leave.reason }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No approved leaves this month.</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <!-- SECTION 6: DAILY ATTENDANCE LOG -->
+        <div class="section-header">6. DAILY ATTENDANCE LOG</div>
+        <table>
+            <tr style="background-color:#1e4d7b;">
+                <th style="background-color:#1e4d7b;color:#fff;">Day</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Weekday</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Check In</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Check Out</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Hours</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Status</th>
+                <th style="background-color:#1e4d7b;color:#fff;">Notes</th>
+            </tr>
+            {% for log in attendance_logs %}
+            <tr {% if log.notes %}class="highlight-yellow" {% endif %}>
+                <td>{{ log.day }}</td>
+                <td>{{ log.weekday }}</td>
+                <td>{{ log.check_in|default:"—" }}</td>
+                <td>{{ log.check_out|default:"—" }}</td>
+                <td>{{ log.hours }}</td>
+                <td>{{ log.status }}</td>
+                <td>{{ log.notes }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No attendance records found.</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <!-- SECTION 7: SALARY CALCULATION -->
+        <div class="section-header">7. SALARY CALCULATION</div>
+        <table>
+            <tr style="background-color:#1e4d7b;">
+                <th style="color:#fff;" width="50%">EARNINGS</th>
+                <th style="color:#fff;"></th>
+                <th style="color:#fff;">DEDUCTIONS</th>
+                <th style="color:#fff;"></th>
+            </tr>
+            <tr>
+                <td>Earned Salary ({{ attendance_summary.days_present }} days)</td>
+                <td>NPR {{ salary.earnings.earned_salary }}</td>
+                <td>Late Penalty ({{ violation_summary.late_arrivals }} × 30%)</td>
+                <td>NPR {{ salary.deductions.late_penalty }}</td>
+            </tr>
+            <tr>
+                <td>Reward / Bonus</td>
+                <td>NPR {{ salary.earnings.bonus }}</td>
+                <td>3-Late Trigger ({{ violation_summary.three_late_arrivals }} × 100%)</td>
+                <td>NPR {{ salary.deductions.three_late_penalty }}</td>
+            </tr>
+            <tr style="background-color:#1e4d7b;">
+                <td style="color:#fff;font-weight:bold;">Total Earnings</td>
+                <td style="color:#fff;font-weight:bold;">NPR {{ salary.earnings.total_earnings }}</td>
+                <td style="color:#fff;font-weight:bold;">Total Deductions</td>
+                <td style="color:#fff;font-weight:bold;">NPR {{ salary.deductions.total_deductions }}</td>
+            </tr>
+        </table>
+
+        <!-- SALARY SUMMARY -->
+        <table>
+            <tr style="background-color:#1e4d7b;">
+                <td colspan="4" style="color:#fff;font-weight:bold;text-align:center;">SALARY PAYABLE</td>
+                <td style="color:#fff;font-weight:bold;text-align:right;">NPR {{ salary.net_salary }}</td>
+            </tr>
+            <tr class="highlight-gold">
+                <td colspan="4" style="font-weight:bold;">NET SALARY PAYABLE</td>
+                <td style="font-weight:bold;text-align:right;">NPR {{ salary.net_salary }}</td>
+            </tr>
+        </table>
+
+    </div>
+</body>
+
+</html>

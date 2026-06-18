@@ -13,6 +13,7 @@ urlpatterns = [
     path('attendance/', include('attendance.web_urls')),
     path('leaves/', include('leaves.web_urls')),
     path('biometric/', include('biometric.web_urls')),
+    path('reports/', include('reports.urls')),
     path('api/employees/', include('employees.urls')),
     path('api/attendance/', include('attendance.urls')),
     path('api/leaves/', include('leaves.urls')),

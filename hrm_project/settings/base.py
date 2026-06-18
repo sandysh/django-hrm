@@ -1,0 +1,199 @@
+"""
+Django settings for hrm_project project.
+"""
+
+import os
+from pathlib import Path
+from decouple import config
+from celery.schedules import crontab
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = config('SECRET_KEY')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DEBUG', default=True, cast=bool)
+
+
+# Custom User Model
+AUTH_USER_MODEL = 'employees.Employee'
+
+# Application definition
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    #utility_tools
+    'django_extensions',
+    
+    # Third party apps
+    'rest_framework',
+    'corsheaders',
+    'django_filters',
+    'django_celery_beat',
+    
+    # Local apps
+    'core',
+    'employees',
+    'attendance',
+    'leaves',
+    'biometric',
+    'reports'
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'hrm_project.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'frontend' / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'hrm_project.wsgi.application'
+
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', default='hrm_db'),
+        'USER': config('DB_USER', default='hrm_user'),
+        'PASSWORD': config('DB_PASSWORD', default='hrm_password_2024'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
+    }
+}
+
+# Password validation
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+# Internationalization
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'Asia/Kathmandu'
+USE_I18N = True
+USE_TZ = True
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'public' / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'frontend' / 'static']
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'public' / 'media'
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 50,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+
+#Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' 
+EMAIL_HOST = config('EMAIL_HOST_NAME')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+
+# Celery Configuration
+CELERY_BROKER_URL = config('LOCAL_CELERY_BROKER_URL', default=config('CELERY_BROKER_URL', default='redis://redis:6379/0'))
+CELERY_RESULT_BACKEND = config('LOCAL_CELERY_RESULT_BACKEND', default=config('CELERY_RESULT_BACKEND', default='redis://redis:6379/0'))
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULE = {
+    "punch_in_reminder": {
+        "task": "hrm_project.task.send_reminder",
+        "schedule": crontab(hour=11,minute=12), 
+    },
+    #  NOTE : remove this line if further notice
+    "punch_out_reminder": {
+        "task": "hrm_project.task.send_punch_out_reminder",
+        "schedule": crontab(hour=18,minute=30), 
+    },
+}
+
+print('loggin added')
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}
+
+# Biometric Device Settings
+BIOMETRIC_DEVICE_IP = config('BIOMETRIC_DEVICE_IP', default='192.168.1.201')
+BIOMETRIC_DEVICE_PORT = config('BIOMETRIC_DEVICE_PORT', default=4370, cast=int)
+BIOMETRIC_DEVICE_PASSWORD = config('BIOMETRIC_DEVICE_PASSWORD', default=0, cast=int)
+BIOMETRIC_DEVICE_TIMEOUT = config('BIOMETRIC_DEVICE_TIMEOUT', default=5, cast=int)
+
+# Attendance Sync Interval (in seconds)
+ATTENDANCE_SYNC_INTERVAL = config('ATTENDANCE_SYNC_INTERVAL', default=300, cast=int)
+
+# Login settings
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'login'

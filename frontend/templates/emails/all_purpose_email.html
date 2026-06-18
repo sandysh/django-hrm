@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HRM Email Templates</title>
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-dark: #4338CA;
+      --secondary: #10B981;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+      --info: #3B82F6;
+      --bg-light: #F9FAFB;
+      --bg-white: #FFFFFF;
+      --text-primary: #1F2937;
+      --text-secondary: #6B7280;
+      --border: #E5E7EB;
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* ── Page Chrome ── */
+    .page-header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .page-header .logo {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .page-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .page-header span {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-left: 4px;
+    }
+
+    /* ── Sidebar + Content layout ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 65px);
+    }
+
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--bg-white);
+      border-right: 1px solid var(--border);
+      padding: 20px 0;
+      position: sticky;
+      top: 65px;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      margin-bottom: 24px;
+    }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      padding: 0 16px;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 16px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-primary);
+      text-align: left;
+      transition: background .15s;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-btn:hover {
+      background: var(--bg-light);
+    }
+
+    .sidebar-btn.active {
+      background: #EEF2FF;
+      color: var(--primary);
+      border-left-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .sidebar-btn .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Main content ── */
+    .main {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    .template-section {
+      display: none;
+    }
+
+    .template-section.visible {
+      display: block;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .section-head h2 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .section-head p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    /* ── Email Card ── */
+    .email-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+
+    .email-card-header {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .email-card-header .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: .04em;
+    }
+
+    .badge-approve {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .badge-reject {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .badge-pending {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .badge-info {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    .badge-neutral {
+      background: #F3F4F6;
+      color: #374151;
+    }
+
+    .email-card-header .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .email-body {
+      padding: 24px 28px;
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text-primary);
+      background: var(--bg-white);
+    }
+
+    /* rendered email styles */
+    .email-body .e-logo-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .email-body .e-logo-bar .e-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .email-body .e-logo-bar .e-company {
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .email-body .e-logo-bar .e-dept {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .email-body .e-subject {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .email-body .e-greeting {
+      margin-bottom: 14px;
+    }
+
+    .email-body .e-para {
+      margin-bottom: 12px;
+    }
+
+    .email-body .e-detail-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 18px 0;
+      background: var(--bg-light);
+    }
+
+    .email-body .e-detail-box .e-detail-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .email-body .e-detail-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      align-items: baseline;
+    }
+
+    .email-body .e-detail-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .email-body .e-detail-row .e-key {
+      min-width: 130px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .email-body .e-detail-row .e-val {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .email-body .e-status-banner {
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 18px 0;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .e-status-banner.approved {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .e-status-banner.rejected {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .e-status-banner.pending {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .e-status-banner.info {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    .email-body .e-reason-box {
+      border-left: 3px solid var(--danger);
+      padding: 10px 14px;
+      background: #FFF5F5;
+      border-radius: 0 6px 6px 0;
+      margin: 14px 0;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .email-body .e-reason-box.warn {
+      border-left-color: var(--warning);
+      background: #FFFBEB;
+    }
+
+    .email-body .e-reason-box.info {
+      border-left-color: var(--info);
+      background: #EFF6FF;
+    }
+
+    .email-body .e-reason-box.success {
+      border-left-color: var(--secondary);
+      background: #F0FDF4;
+    }
+
+    .email-body .e-cta {
+      display: inline-block;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      margin: 16px 0 8px;
+      color: #fff;
+      cursor: default;
+    }
+
+    .e-cta.primary {
+      background: var(--primary);
+    }
+
+    .e-cta.success {
+      background: var(--secondary);
+    }
+
+    .e-cta.danger {
+      background: var(--danger);
+    }
+
+    .email-body .e-signature {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .email-body .e-signature strong {
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* placeholder highlight */
+    .ph {
+      background: #EEF2FF;
+      color: var(--primary);
+      border-radius: 4px;
+      padding: 0 4px;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    /* ── Actions bar ── */
+    .card-actions {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: var(--bg-light);
+    }
+
+    .btn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: opacity .15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      opacity: .85;
+    }
+
+    .btn-outline {
+      background: var(--bg-white);
+      border-color: var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: var(--secondary);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    /* copy feedback */
+    .copy-toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--text-primary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+      z-index: 999;
+    }
+
+    .copy-toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="page-header">
+    <div class="logo">HR</div>
+    <div>
+      <h1>HRM Email Templates <span>— All Purpose Library</span></h1>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- ── Sidebar ── -->
+    <nav class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Leave</div>
+        <button class="sidebar-btn active" onclick="show('leave-approve',this)">
+          <span class="dot" style="background:var(--secondary)"></span> Leave Approved
+        </button>
+        <button class="sidebar-btn" onclick="show('leave-reject',this)">
+          <span class="dot" style="background:var(--danger)"></span> Leave Rejected
+        </button>
+        <button class="sidebar-btn" onclick="show('leave-pending',this)">
+          <span class="dot" style="background:var(--warning)"></span> Leave Pending
+        </button>
+        <button class="sidebar-btn" onclick="show('leave-cancel',this)">
+          <span class="dot" style="background:var(--text-secondary)"></span> Leave Cancelled
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Attendance</div>
+        <button class="sidebar-btn" onclick="show('attendance-warning',this)">
+          <span class="dot" style="background:var(--warning)"></span> Attendance Warning
+        </button>
+        <button class="sidebar-btn" onclick="show('attendance-absent',this)">
+          <span class="dot" style="background:var(--danger)"></span> Absent Without Notice
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Payroll</div>
+        <button class="sidebar-btn" onclick="show('payslip',this)">
+          <span class="dot" style="background:var(--info)"></span> Payslip Released
+        </button>
+        <button class="sidebar-btn" onclick="show('salary-revision',this)">
+          <span class="dot" style="background:var(--secondary)"></span> Salary Revision
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Onboarding</div>
+        <button class="sidebar-btn" onclick="show('welcome',this)">
+          <span class="dot" style="background:var(--primary)"></span> Welcome / Offer Letter
+        </button>
+        <button class="sidebar-btn" onclick="show('probation-complete',this)">
+          <span class="dot" style="background:var(--secondary)"></span> Probation Completion
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Performance</div>
+        <button class="sidebar-btn" onclick="show('appraisal-notice',this)">
+          <span class="dot" style="background:var(--info)"></span> Appraisal Notice
+        </button>
+        <button class="sidebar-btn" onclick="show('pip',this)">
+          <span class="dot" style="background:var(--danger)"></span> Performance Improvement
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Separation</div>
+        <button class="sidebar-btn" onclick="show('resignation-accept',this)">
+          <span class="dot" style="background:var(--text-secondary)"></span> Resignation Accepted
+        </button>
+        <button class="sidebar-btn" onclick="show('termination',this)">
+          <span class="dot" style="background:var(--danger)"></span> Termination Notice
+        </button>
+      </div>
+    </nav>
+
+    <!-- ── Main ── -->
+    <main class="main">
+
+      <!-- ====== LEAVE APPROVED ====== -->
+      <section id="leave-approve" class="template-section visible">
+        <div class="section-head">
+          <div>
+            <h2>Leave Approved</h2>
+            <p>Sent to employee when a leave request is formally approved.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Leave Approval Notification</span>
+            <span class="badge badge-approve">✓ Approved</span>
+          </div>
+          <div class="email-body" id="leave-approve-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Your Leave Request Has Been Approved</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">We are pleased to inform you that your leave request has been reviewed and
+              <strong>approved</strong> by your reporting manager.
+            </p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Leave Details</div>
+              <div class="e-detail-row"><span class="e-key">Employee ID</span><span class="e-val"><em
+                    class="ph">{{employee_id}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Leave Type</span><span class="e-val"><em
+                    class="ph">{{leave_type}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">From Date</span><span class="e-val"><em
+                    class="ph">{{from_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">To Date</span><span class="e-val"><em
+                    class="ph">{{to_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Total Days</span><span class="e-val"><em
+                    class="ph">{{total_days}}</em> working day(s)</span></div>
+              <div class="e-detail-row"><span class="e-key">Remaining Balance</span><span class="e-val"><em
+                    class="ph">{{leave_balance}}</em> day(s)</span></div>
+              <div class="e-detail-row"><span class="e-key">Approved By</span><span class="e-val"><em
+                    class="ph">{{approver_name}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Approved On</span><span class="e-val"><em
+                    class="ph">{{approval_date}}</em></span></div>
+            </div>
+            <div class="e-status-banner approved">✔ Status: Approved — Your leave is confirmed in the system.</div>
+            <p class="e-para">Please ensure your work is properly handed over before your leave begins. For any queries,
+              reach out to your HR representative.</p>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em><br />
+              <em class="ph">{{hr_email}}</em> · <em class="ph">{{hr_phone}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('leave-approve-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('leave-approve-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== LEAVE REJECTED ====== -->
+      <section id="leave-reject" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Leave Rejected</h2>
+            <p>Sent when a leave request is declined.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Leave Request Declined</span>
+            <span class="badge badge-reject">✗ Rejected</span>
+          </div>
+          <div class="email-body" id="leave-reject-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Your Leave Request Has Been Declined</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">Thank you for submitting your leave request. After review, we regret to inform you that
+              your request could not be approved at this time.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Request Details</div>
+              <div class="e-detail-row"><span class="e-key">Employee ID</span><span class="e-val"><em
+                    class="ph">{{employee_id}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Leave Type</span><span class="e-val"><em
+                    class="ph">{{leave_type}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Requested Dates</span><span class="e-val"><em
+                    class="ph">{{from_date}}</em> – <em class="ph">{{to_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Reviewed By</span><span class="e-val"><em
+                    class="ph">{{reviewer_name}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Decision Date</span><span class="e-val"><em
+                    class="ph">{{decision_date}}</em></span></div>
+            </div>
+            <div class="e-status-banner rejected">✗ Status: Declined</div>
+            <div class="e-reason-box">
+              <strong>Reason for Rejection:</strong><br /><em class="ph">{{rejection_reason}}</em>
+            </div>
+            <p class="e-para">You are welcome to reapply for alternative dates or discuss with your manager. Please
+              contact HR if you need further assistance.</p>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em><br />
+              <em class="ph">{{hr_email}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('leave-reject-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('leave-reject-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== LEAVE PENDING ====== -->
+      <section id="leave-pending" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Leave Pending Review</h2>
+            <p>Acknowledgement sent when a request is received and awaiting approval.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Leave Request Received</span>
+            <span class="badge badge-pending">⏳ Pending</span>
+          </div>
+          <div class="email-body" id="leave-pending-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Leave Request Received — Under Review</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">We have received your leave application. It is currently <strong>pending approval</strong>
+              from your reporting manager <em class="ph">{{manager_name}}</em>.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Submitted Request</div>
+              <div class="e-detail-row"><span class="e-key">Request ID</span><span class="e-val"><em
+                    class="ph">{{request_id}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Leave Type</span><span class="e-val"><em
+                    class="ph">{{leave_type}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Dates</span><span class="e-val"><em
+                    class="ph">{{from_date}}</em> – <em class="ph">{{to_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Submitted On</span><span class="e-val"><em
+                    class="ph">{{submitted_date}}</em></span></div>
+            </div>
+            <div class="e-status-banner pending">⏳ Awaiting manager approval. You will be notified once a decision is
+              made.</div>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Department · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('leave-pending-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('leave-pending-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== LEAVE CANCELLED ====== -->
+      <section id="leave-cancel" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Leave Cancelled</h2>
+            <p>Confirmation when an employee or manager cancels an approved leave.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Leave Cancellation Confirmed</span>
+            <span class="badge badge-neutral">Cancelled</span>
+          </div>
+          <div class="email-body" id="leave-cancel-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Leave Cancellation Confirmed</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">Your leave has been successfully <strong>cancelled</strong>. Your leave balance has been
+              credited back accordingly.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Cancelled Leave Details</div>
+              <div class="e-detail-row"><span class="e-key">Leave Type</span><span class="e-val"><em
+                    class="ph">{{leave_type}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Original Dates</span><span class="e-val"><em
+                    class="ph">{{from_date}}</em> – <em class="ph">{{to_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Days Reinstated</span><span class="e-val"><em
+                    class="ph">{{days_reinstated}}</em> day(s)</span></div>
+              <div class="e-detail-row"><span class="e-key">Updated Balance</span><span class="e-val"><em
+                    class="ph">{{new_balance}}</em> day(s)</span></div>
+            </div>
+            <div class="e-reason-box info"><strong>Cancellation Reason:</strong> <em class="ph">{{cancel_reason}}</em>
+            </div>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Department · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('leave-cancel-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('leave-cancel-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== ATTENDANCE WARNING ====== -->
+      <section id="attendance-warning" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Attendance Warning</h2>
+            <p>Formal notice for irregular attendance patterns.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Attendance Improvement Notice</span>
+            <span class="badge badge-pending">⚠ Warning</span>
+          </div>
+          <div class="email-body" id="attendance-warning-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Attendance Improvement Required — <em class="ph">{{month_year}}</em></div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">This letter is to formally notify you that your attendance record during <em
+                class="ph">{{period}}</em> does not meet our company standards.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Attendance Summary</div>
+              <div class="e-detail-row"><span class="e-key">Working Days</span><span class="e-val"><em
+                    class="ph">{{working_days}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Days Present</span><span class="e-val"><em
+                    class="ph">{{days_present}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Days Absent</span><span class="e-val"><em
+                    class="ph">{{days_absent}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Late Arrivals</span><span class="e-val"><em
+                    class="ph">{{late_count}}</em> instance(s)</span></div>
+              <div class="e-detail-row"><span class="e-key">Attendance %</span><span class="e-val"><em
+                    class="ph">{{attendance_percent}}</em>%</span></div>
+            </div>
+            <div class="e-status-banner pending">⚠ Minimum required attendance is <em
+                class="ph">{{min_attendance}}</em>%.</div>
+            <div class="e-reason-box warn">Continued non-compliance may result in disciplinary action as per company
+              policy <em class="ph">{{policy_ref}}</em>.</div>
+            <p class="e-para">Please schedule a meeting with your HR representative within <em
+                class="ph">{{response_days}}</em> working days to discuss this matter.</p>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('attendance-warning-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('attendance-warning-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== ABSENT WITHOUT NOTICE ====== -->
+      <section id="attendance-absent" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Absent Without Notice</h2>
+            <p>Sent when an employee is absent without prior approval or communication.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Unexplained Absence — Action Required</span>
+            <span class="badge badge-reject">Urgent</span>
+          </div>
+          <div class="email-body" id="attendance-absent-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Absence Without Notice — Clarification Required</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">We note that you were absent from work on <em class="ph">{{absent_date(s)}}</em> without
+              prior notification or approved leave. This is a formal request for clarification.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Absence Record</div>
+              <div class="e-detail-row"><span class="e-key">Date(s) of Absence</span><span class="e-val"><em
+                    class="ph">{{absent_dates}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Total Days</span><span class="e-val"><em
+                    class="ph">{{total_absent_days}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Department</span><span class="e-val"><em
+                    class="ph">{{department}}</em></span></div>
+            </div>
+            <div class="e-reason-box"><strong>Action Required:</strong> Please submit a written explanation and
+              supporting documentation (if applicable) to HR by <em class="ph">{{deadline_date}}</em>. Failure to
+              respond may result in the days being marked as LWP (Leave Without Pay) and disciplinary proceedings.</div>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('attendance-absent-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('attendance-absent-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== PAYSLIP ====== -->
+      <section id="payslip" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Payslip Released</h2>
+            <p>Notification when monthly payslip is available.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Payslip Available</span>
+            <span class="badge badge-info">Payroll</span>
+          </div>
+          <div class="email-body" id="payslip-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Payroll Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Your Payslip for <em class="ph">{{month_year}}</em> is Available</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">Your salary has been processed and your payslip for <strong><em
+                  class="ph">{{month_year}}</em></strong> is now available on the employee portal.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Salary Summary</div>
+              <div class="e-detail-row"><span class="e-key">Employee ID</span><span class="e-val"><em
+                    class="ph">{{employee_id}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Pay Period</span><span class="e-val"><em
+                    class="ph">{{pay_period}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Gross Salary</span><span class="e-val"><em
+                    class="ph">{{currency}} {{gross_salary}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Total Deductions</span><span class="e-val"><em
+                    class="ph">{{currency}} {{deductions}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Net Pay</span><span class="e-val"><em
+                    class="ph">{{currency}} {{net_pay}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Payment Date</span><span class="e-val"><em
+                    class="ph">{{payment_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Bank Account</span><span class="e-val">****<em
+                    class="ph">{{last4_digits}}</em></span></div>
+            </div>
+            <a class="e-cta primary" href="#">View & Download Payslip →</a>
+            <div class="e-signature">
+              <strong><em class="ph">{{payroll_contact_name}}</em></strong>
+              Payroll Team · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('payslip-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('payslip-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== SALARY REVISION ====== -->
+      <section id="salary-revision" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Salary Revision</h2>
+            <p>Formal letter notifying an employee of a revised compensation package.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Salary Revision Letter</span>
+            <span class="badge badge-approve">Revised</span>
+          </div>
+          <div class="email-body" id="salary-revision-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Salary Revision Notification — Effective <em class="ph">{{effective_date}}</em></div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">We are pleased to inform you that following your performance review, your compensation has
+              been revised effective <strong><em class="ph">{{effective_date}}</em></strong>.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Revised Package</div>
+              <div class="e-detail-row"><span class="e-key">Previous CTC</span><span class="e-val"><em
+                    class="ph">{{currency}} {{previous_ctc}}</em> p.a.</span></div>
+              <div class="e-detail-row"><span class="e-key">Revised CTC</span><span class="e-val"><em
+                    class="ph">{{currency}} {{new_ctc}}</em> p.a.</span></div>
+              <div class="e-detail-row"><span class="e-key">Increment %</span><span class="e-val"><em
+                    class="ph">{{increment_percent}}</em>%</span></div>
+              <div class="e-detail-row"><span class="e-key">Effective From</span><span class="e-val"><em
+                    class="ph">{{effective_date}}</em></span></div>
+            </div>
+            <div class="e-status-banner approved">🎉 Congratulations on this achievement!</div>
+            <p class="e-para">A revised appointment letter will be shared with you separately. Please sign and return
+              the acknowledgement copy.</p>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('salary-revision-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('salary-revision-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== WELCOME ====== -->
+      <section id="welcome" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Welcome / Offer Letter</h2>
+            <p>Sent to new hires upon joining confirmation.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Welcome to the Team</span>
+            <span class="badge badge-info">Onboarding</span>
+          </div>
+          <div class="email-body" id="welcome-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Welcome Aboard, <em class="ph">{{employee_name}}</em>! 🎉</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">We are thrilled to welcome you to <strong><em class="ph">{{company_name}}</em></strong>!
+              We believe you will be a valuable addition to our team and we are excited to have you on board.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Your Employment Details</div>
+              <div class="e-detail-row"><span class="e-key">Employee ID</span><span class="e-val"><em
+                    class="ph">{{employee_id}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Designation</span><span class="e-val"><em
+                    class="ph">{{designation}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Department</span><span class="e-val"><em
+                    class="ph">{{department}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Reporting Manager</span><span class="e-val"><em
+                    class="ph">{{manager_name}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Date of Joining</span><span class="e-val"><em
+                    class="ph">{{joining_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Probation Period</span><span class="e-val"><em
+                    class="ph">{{probation_months}}</em> months</span></div>
+              <div class="e-detail-row"><span class="e-key">Work Location</span><span class="e-val"><em
+                    class="ph">{{work_location}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Office Timing</span><span class="e-val"><em
+                    class="ph">{{office_timing}}</em></span></div>
+            </div>
+            <div class="e-reason-box success">Please bring original documents for verification on your first day: <em
+                class="ph">{{document_list}}</em></div>
+            <a class="e-cta primary" href="#">Access Employee Portal →</a>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('welcome-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('welcome-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== PROBATION COMPLETE ====== -->
+      <section id="probation-complete" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Probation Completion</h2>
+            <p>Confirms an employee has successfully completed their probation period.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Probation Period Completion</span>
+            <span class="badge badge-approve">Confirmed</span>
+          </div>
+          <div class="email-body" id="probation-complete-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Confirmation of Successful Probation Completion</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">We are pleased to confirm that you have successfully completed your probationary period
+              and have been confirmed as a <strong>permanent employee</strong> effective <em
+                class="ph">{{confirmation_date}}</em>.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Confirmation Details</div>
+              <div class="e-detail-row"><span class="e-key">Designation</span><span class="e-val"><em
+                    class="ph">{{designation}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Department</span><span class="e-val"><em
+                    class="ph">{{department}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Date of Joining</span><span class="e-val"><em
+                    class="ph">{{joining_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Confirmed On</span><span class="e-val"><em
+                    class="ph">{{confirmation_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Performance Rating</span><span class="e-val"><em
+                    class="ph">{{rating}}</em></span></div>
+            </div>
+            <div class="e-status-banner approved">🎉 You are now a confirmed, permanent employee of <em
+                class="ph">{{company_name}}</em>.</div>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('probation-complete-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('probation-complete-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== APPRAISAL NOTICE ====== -->
+      <section id="appraisal-notice" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Appraisal Notice</h2>
+            <p>Sent to employees ahead of the annual/bi-annual review cycle.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Performance Appraisal Cycle Notice</span>
+            <span class="badge badge-info">Appraisal</span>
+          </div>
+          <div class="email-body" id="appraisal-notice-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Performance Appraisal — <em class="ph">{{appraisal_cycle}}</em></div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">We are initiating the <strong><em class="ph">{{appraisal_cycle}}</em></strong> performance
+              appraisal cycle. You are requested to complete your self-assessment on the portal within the specified
+              timeline.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Appraisal Timeline</div>
+              <div class="e-detail-row"><span class="e-key">Self-Assessment Start</span><span class="e-val"><em
+                    class="ph">{{self_start_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Self-Assessment Deadline</span><span class="e-val"><em
+                    class="ph">{{self_end_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Manager Review</span><span class="e-val"><em
+                    class="ph">{{manager_review_dates}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Results Announcement</span><span class="e-val"><em
+                    class="ph">{{results_date}}</em></span></div>
+            </div>
+            <div class="e-reason-box info">Please log in to the portal and complete your self-assessment honestly and
+              thoroughly. This will form the basis for your review discussion.</div>
+            <a class="e-cta primary" href="#">Start Self-Assessment →</a>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Department · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('appraisal-notice-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('appraisal-notice-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== PIP ====== -->
+      <section id="pip" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Performance Improvement Plan</h2>
+            <p>Formal PIP notice issued to an underperforming employee.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Performance Improvement Plan (PIP)</span>
+            <span class="badge badge-reject">Action Required</span>
+          </div>
+          <div class="email-body" id="pip-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Performance Improvement Plan — Confidential</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">This letter is to inform you that based on your performance review for <em
+                class="ph">{{review_period}}</em>, a formal <strong>Performance Improvement Plan (PIP)</strong> has been
+              initiated.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">PIP Details</div>
+              <div class="e-detail-row"><span class="e-key">PIP Start Date</span><span class="e-val"><em
+                    class="ph">{{pip_start_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">PIP Duration</span><span class="e-val"><em
+                    class="ph">{{pip_duration}}</em> (e.g. 60 days)</span></div>
+              <div class="e-detail-row"><span class="e-key">Review Date</span><span class="e-val"><em
+                    class="ph">{{pip_review_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Assigned HR Partner</span><span class="e-val"><em
+                    class="ph">{{hr_partner_name}}</em></span></div>
+            </div>
+            <div class="e-reason-box"><strong>Areas Requiring Improvement:</strong><br /><em
+                class="ph">{{improvement_areas}}</em></div>
+            <div class="e-reason-box warn"><strong>Expected Outcomes:</strong><br /><em
+                class="ph">{{expected_outcomes}}</em></div>
+            <p class="e-para">A detailed PIP document with measurable goals and milestones is attached. Please review,
+              sign, and return it to HR within <em class="ph">{{response_days}}</em> working days. We are committed to
+              supporting your growth throughout this process.</p>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('pip-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('pip-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== RESIGNATION ACCEPTED ====== -->
+      <section id="resignation-accept" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Resignation Accepted</h2>
+            <p>Formal acknowledgement of employee resignation.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Resignation Acceptance Letter</span>
+            <span class="badge badge-neutral">Separation</span>
+          </div>
+          <div class="email-body" id="resignation-accept-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Acceptance of Resignation — <em class="ph">{{employee_name}}</em></div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">We have received and accept your resignation letter dated <em
+                class="ph">{{resignation_date}}</em>. We sincerely appreciate your contributions during your tenure at
+              <em class="ph">{{company_name}}</em>.
+            </p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Separation Details</div>
+              <div class="e-detail-row"><span class="e-key">Resignation Date</span><span class="e-val"><em
+                    class="ph">{{resignation_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Last Working Day</span><span class="e-val"><em
+                    class="ph">{{last_working_day}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Notice Period</span><span class="e-val"><em
+                    class="ph">{{notice_period}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Handover To</span><span class="e-val"><em
+                    class="ph">{{handover_person}}</em></span></div>
+            </div>
+            <div class="e-reason-box info">Pending items before separation: <em
+                class="ph">{{exit_checklist_items}}</em>. Please complete the exit formalities by <em
+                class="ph">{{exit_deadline}}</em>.</div>
+            <p class="e-para">We wish you all the best in your future endeavours. A relieving letter and experience
+              certificate will be issued on your last working day upon completion of all formalities.</p>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('resignation-accept-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('resignation-accept-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== TERMINATION ====== -->
+      <section id="termination" class="template-section">
+        <div class="section-head">
+          <div>
+            <h2>Termination Notice</h2>
+            <p>Formal notice of employment termination. Use with legal review.</p>
+          </div>
+        </div>
+        <div class="email-card">
+          <div class="email-card-header">
+            <span class="card-title">Termination of Employment</span>
+            <span class="badge badge-reject">Confidential</span>
+          </div>
+          <div class="email-body" id="termination-body">
+            <div class="e-logo-bar">
+              <div class="e-logo" style="background:var(--primary)">HR</div>
+              <div>
+                <div class="e-company"><em class="ph">{{company_name}}</em></div>
+                <div class="e-dept">Human Resources Department</div>
+              </div>
+            </div>
+            <div class="e-subject">Notice of Termination of Employment — Confidential</div>
+            <div class="e-greeting">Dear <em class="ph">{{employee_name}}</em>,</div>
+            <p class="e-para">This letter is to formally notify you that your employment with <em
+                class="ph">{{company_name}}</em> is being terminated, effective <strong><em
+                  class="ph">{{termination_date}}</em></strong>.</p>
+            <div class="e-detail-box">
+              <div class="e-detail-title">Termination Details</div>
+              <div class="e-detail-row"><span class="e-key">Employee ID</span><span class="e-val"><em
+                    class="ph">{{employee_id}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Designation</span><span class="e-val"><em
+                    class="ph">{{designation}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Termination Date</span><span class="e-val"><em
+                    class="ph">{{termination_date}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Reason</span><span class="e-val"><em
+                    class="ph">{{termination_reason}}</em></span></div>
+              <div class="e-detail-row"><span class="e-key">Final Settlement Date</span><span class="e-val"><em
+                    class="ph">{{settlement_date}}</em></span></div>
+            </div>
+            <div class="e-reason-box"><strong>Final Settlement will include:</strong><br /><em
+                class="ph">{{settlement_items}}</em> (e.g. pending salary, unused leave encashment, gratuity if
+              applicable)</div>
+            <p class="e-para">You are required to return all company property including <em
+                class="ph">{{company_assets}}</em> before your last day. Access to company systems will be revoked on
+              <em class="ph">{{access_revoke_date}}</em>.
+            </p>
+            <p class="e-para">Please note that all confidentiality and non-disclosure obligations as per your employment
+              agreement remain in effect after your separation.</p>
+            <div class="e-signature">
+              <strong><em class="ph">{{hr_name}}</em></strong>
+              HR Manager · <em class="ph">{{company_name}}</em>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-outline" onclick="copyTemplate('termination-body')">📋 Copy HTML</button>
+            <button class="btn btn-outline" onclick="copyPlain('termination-body')">📄 Copy Plain Text</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="copy-toast" id="toast">Copied to clipboard!</div>
+
+  <script>
+    function show(id, btn) {
+      document.querySelectorAll('.template-section').forEach(s => s.classList.remove('visible'));
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('visible');
+      btn.classList.add('active');
+    }
+
+    function copyTemplate(id) {
+      const el = document.getElementById(id);
+      const html = el.innerHTML;
+      try {
+        const item = new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([el.innerText], { type: 'text/plain' }) });
+        navigator.clipboard.write([item]);
+      } catch (e) {
+        navigator.clipboard.writeText(html);
+      }
+      showToast('HTML copied!');
+    }
+
+    function copyPlain(id) {
+      const el = document.getElementById(id);
+      navigator.clipboard.writeText(el.innerText);
+      showToast('Plain text copied!');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+  </script>
+</body>
+
+</html>
